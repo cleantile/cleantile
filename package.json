@@ -23,12 +23,11 @@
     "url": "https://github.com/cleantile/cleantile/issues"
   },
   "homepage": "https://github.com/cleantile/cleantile#readme",
-  "dependencies": {
-    "coffee-script": "^1.12.1",
-    "bluebird": "^3.4.6"
-  },
+  "dependencies": {},
   "devDependencies": {
     "coffee-script": "^1.12.1",
-    "bluebird": "^3.4.6"
+    "bluebird": "^3.4.6",
+    "blade": "^3.3.0",
+    "chalk": "^1.1.3"
   }
 }

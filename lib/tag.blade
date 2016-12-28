@@ -1,0 +1,19 @@
+/*
+  Abstract template for a Polymer tag.
+  Usage:
+    - var id = "my-tag"
+    include "tag.blade" exposing id
+*/
+/**
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+*/
+block imports
+  link(rel="import", href="../polymer/polymer.html")
+
+dom-module(id=id)
+  template
+    block style
+    block template
+  block script
