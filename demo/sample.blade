@@ -1,0 +1,22 @@
+!!! 5
+include "../lib/license"
+include "../lib/blade-warning"
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
+    title CleanTile Demo
+    script(src="../../webcomponentsjs/lite.js")
+    link(rel="import", href="../../font-roboto/roboto.html")
+    link(rel="import", href="../container/cleantile-container.html")
+    link(rel="import", href="../pane/cleantile-pane.html")
+    style(is="custom-style")
+      :plain-stylus
+        body
+          margin 0
+          font-family "Roboto", "Noto", sans-serif
+          background-color #eee
+  body
+    template#app(is="dom-bind")
+      cleantile-container
+        cleantile-pane

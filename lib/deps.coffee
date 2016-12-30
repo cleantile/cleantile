@@ -9,6 +9,14 @@ raw =
     "^1.1.3": ["dev"]
   "stylus":
     "^0.54.5": ["dev"]
+  "vulcanize":
+    "^1.15.2": ["dev"]
+  "webcomponentsjs":
+    "^1.0.2": ["dev"]
+  "@polymer/font-roboto":
+    "^0.0.3": ["dev"]
+  "@polymer/polymer":
+    "1.2.5-npm-test.2": ["*"]
 
 ###
 Checks that a version of a package isn't just used for "dev".
