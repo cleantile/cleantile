@@ -1,7 +1,18 @@
 - var id="cleantile-pane"
 include "../lib/tag" exposing id
 
+replace template
+  div#contents
+    content
+
 replace script
   :coffeescript
     Polymer
       is: "cleantile-pane"
+      refreshList: ->
+        for child in @$.contents.children
+          return if child.tagName.toLowerCase() is "cleantile-tabs"
+          return unless child.getAttribute("ct-attrs")
+          console.log "#{child.tagName} is a valid child"
+      ready: ->
+        @refreshList()

@@ -7,7 +7,9 @@
 Most of the examples in this guide will demonstrate Clean Tile being used for a text editor.  Fictitious elements like
 `<file-editor>` are used as filler content.
 
-### cleantile-pane
+### Elements
+
+#### cleantile-pane
 
 :soon: This element is partially finished, and will be included in the next release.
 
@@ -31,7 +33,7 @@ To disable tab-like behavior, the `singular` attribute will enforce that only on
 </cleantile-pane>
 ```
 
-### cleantile-split
+#### cleantile-split
 
 :soon: This element is planned for the next release.
 
@@ -59,7 +61,7 @@ Each side of the split needs to be either a `cleantile-pane` or a nested `cleant
 </cleantile-split>
 ```
 
-### cleantile-container
+#### cleantile-container
 
 :soon: This element is partially finished, and will be included in the next release.
 
@@ -79,7 +81,7 @@ and splits.
 Panes and splits expect to be wrapped in a container.  All interactive features will require that content is enclosed
 inside a `<cleantile-container>`.
 
-### cleantile-tabs
+#### cleantile-tabs
 
 :memo: This element will be included in a future release.
 
@@ -94,7 +96,7 @@ inside a `<cleantile-container>`.
 </cleantile-pane>
 ```
 
-### cleantile-rearrange
+#### cleantile-rearrange
 
 :memo: This element will be included in a future release.
 
