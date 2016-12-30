@@ -90,8 +90,8 @@ Clean Tile imposes an API on elements used as view elements to pass information 
 Views are given attributes, including if they are currently active.  They are also sent events when a split changes the
 size of the pane, and when they are moved between different panes.
 
-Views are expected to report to Clean Tile the name to display in the tab, impose minimum or maximum widths, or an icon
-to display.
+Views can report to Clean Tile the name to display in the tab, impose minimum or maximum widths, or give an icon to
+display in the tab, like a favicon.
 
 When designing application elements, we suggest that you have them conform to the Clean Tile API.  However, third-party
 and legacy elements can be easily wrapped.
