@@ -81,6 +81,50 @@ and splits.
 Panes and splits expect to be wrapped in a container.  All interactive features will require that content is enclosed
 inside a `<cleantile-container>`.
 
+### Views
+
+As mentioned above, **views** are application-specific elements that are inserted into Clean Tile layout elements.
+
+Clean Tile imposes an API on elements used as view elements to pass information between the application and the layout.
+
+Views are given attributes, including if they are currently active.  They are also sent events when a split changes the
+size of the pane, and when they are moved between different panes.
+
+Views are expected to report to Clean Tile the name to display in the tab, impose minimum or maximum widths, or an icon
+to display.
+
+When designing application elements, we suggest that you have them conform to the Clean Tile API.  However, third-party
+and legacy elements can be easily wrapped.
+
+**Note**: The following example defines a Polymer element inside the main HTML document.  Please see the
+[appropriate warnings](polymer-doc-def) in the Polymer documentation.
+
+```html
+<body>
+  <dom-module id="wrapper-file-preview">
+    <template>
+      <file-preview></file-preview>
+    </template>
+    <script>
+      HTMLImports.whenReady(function() {
+        Polymer({
+          is: "wrapper-file-preview",
+          properties: {}, // Can define properties that can communicate with Clean Tile
+          // Can listen to Clean Tile events (like resize) by adding event listeners
+        })
+      });
+    </script>
+  </dom-module>
+  <cleantile-container>
+    <cleantile-pane>
+      <wrapper-file-preview></wrapper-file-preview>
+    </cleantile-pane>
+  </cleantile-container>
+</body>
+```
+
+### Future Elements
+
 #### cleantile-tabs
 
 :memo: This element will be included in a future release.
@@ -106,3 +150,4 @@ once.  A proposed overlay would allow manipulating the layout at a higher level.
 ![CleanTile rearrange mockup](rearrange.png)
 
 [Polymer]: https://www.polymer-project.org/1.0/
+[polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
