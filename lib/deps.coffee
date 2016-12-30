@@ -7,6 +7,8 @@ raw =
     "^3.3.0": ["dev"]
   "chalk":
     "^1.1.3": ["dev"]
+  "stylus":
+    "^0.54.5": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".
