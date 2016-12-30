@@ -4,8 +4,8 @@
 ## Guide
 *This is not extensive documentation.  See [COMING SOON] for the full documentation.*
 
-Most of the examples in this guide will demonstrate Clean Tile being used for a text editor.  Fictitious elements like
-`<file-editor>` are used as filler content.
+Most of the examples in this guide will demonstrate Clean Tile being used in an integrated development environment.
+Fictitious elements such as `<file-editor>` are used as filler content.
 
 ### Elements
 
