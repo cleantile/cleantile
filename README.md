@@ -101,6 +101,6 @@ inside a `<cleantile-container>`.
 Splits can be manually resized, created, and deleted, but that can be tedious when trying to rearrange many views at
 once.  A proposed overlay would allow manipulating the layout at a higher level.  A mockup is below.
 
-![CleanTile rearrange mockup](rearrange.svg)
+![CleanTile rearrange mockup](rearrange.png)
 
 [Polymer]: https://www.polymer-project.org/1.0/
