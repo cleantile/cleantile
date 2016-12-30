@@ -79,4 +79,28 @@ and splits.
 Panes and splits expect to be wrapped in a container.  All interactive features will require that content is enclosed
 inside a `<cleantile-container>`.
 
+### cleantile-tabs
+
+:memo: This element will be included in a future release.
+
+`<cleantile-split>` can contain multiple views, but doesn't display views that are not currently active.
+`<cleantile-tabs>` adds an automatically-created tab bar, with room for additional buttons and layout controls.
+
+```html
+<cleantile-pane>
+  <cleantile-tabs></cleantile-tabs>
+  <file-editor file="README.md" syntax="markdown"></file-editor>
+  <file-editor file="LICENSE" syntax="text"></file-editor>
+</cleantile-pane>
+```
+
+### cleantile-rearrange
+
+:memo: This element will be included in a future release.
+
+Splits can be manually resized, created, and deleted, but that can be tedious when trying to rearrange many views at
+once.  A proposed overlay would allow manipulating the layout at a higher level.  A mockup is below.
+
+![CleanTile rearrange mockup](rearrange.svg)
+
 [Polymer]: https://www.polymer-project.org/1.0/
