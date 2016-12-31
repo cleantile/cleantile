@@ -1,7 +1,7 @@
 # Clean Tile
 **Clean Tile** is a flexible tiling layout system, written for [Polymer][].
 
-[![Travis CI](https://travis-ci.org/cleantile/cleantile.svg?branch=master)](https://travis-ci.org/cleantile/cleantile)
+[![Travis CI](https://travis-ci.org/cleantile/cleantile.svg?branch=master)](https://travis-ci.org/cleantile/cleantile)  
 [![Sauce Labs ](https://saucelabs.com/browser-matrix/codelenny-cleantile.svg)](https://saucelabs.com/u/codelenny-cleantile)
 
 ## Guide
