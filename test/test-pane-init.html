@@ -19414,9 +19414,18 @@ cleantile-container {
       first = container.querySelector("#first p");
       return second = container.querySelector("#second p");
     });
-    return it("places both views", function() {
+    it("should have both views visible", function() {
       expect(first).to.not.be["null"];
+      expect(second).to.not.be["null"];
+      expect(first.offsetParent).to.not.be["null"];
       return expect(second.offsetParent).to.not.be["null"];
+    });
+    return it("should layer views with no offset", function() {
+      var firstRect, secondRect;
+      firstRect = first.getBoundingClientRect();
+      secondRect = second.getBoundingClientRect();
+      expect(first.top).to.equal(second.top);
+      return expect(first.left).to.equal(second.left);
     });
   });
 

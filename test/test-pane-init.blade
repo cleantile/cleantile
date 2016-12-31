@@ -33,6 +33,14 @@ append tests
         first = container.querySelector "#first p"
         second = container.querySelector "#second p"
       
-      it "places both views", ->
+      it "should have both views visible", ->
         expect(first).to.not.be.null
+        expect(second).to.not.be.null
+        expect(first.offsetParent).to.not.be.null
         expect(second.offsetParent).to.not.be.null
+      
+      it "should layer views with no offset", ->
+        firstRect = first.getBoundingClientRect()
+        secondRect = second.getBoundingClientRect()
+        expect(first.top).to.equal second.top
+        expect(first.left).to.equal second.left
