@@ -13,4 +13,5 @@ before_script:
   - npm install
 
 script:
-  - xvfb-run $(npm bin)/wct -s 'default'
+  - xvfb-run $(npm bin)/wct --skip-plugin sauce
+  - $(npm bin)/wct --skip-plugin local
