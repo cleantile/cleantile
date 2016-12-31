@@ -33,7 +33,7 @@
         {
           "browserName": "chrome",
           "platform": "Linux",
-          "version": "dev"
+          "version": ""
         },
         {
           "browserName": "chrome",
