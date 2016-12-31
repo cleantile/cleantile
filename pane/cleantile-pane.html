@@ -7,22 +7,114 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-pane"><template><div id="contents"><content></content></div></template><script type="text/javascript">
+--><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-pane"><template><style type="text/css">
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#contents,
+#contents ::content > :not(cleantile-tabs),
+#contents::after {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#contents ::content > cleantile-tabs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+}
+#contents ::content > cleantile-tabs ~ :not(cleantile-tabs) {
+  top: 50px;
+  height: calc(100% - 50px);
+}
+#contents ::content > :not(cleantile-tabs)[active] {
+  z-index: 10;
+}
+#contents ::content > :not(cleantile-tabs):not([active]) {
+  z-index: -10;
+}
+#contents::after {
+  content: " ";
+  background-color: #fff;
+  z-index: 0;
+}
+
+</style><div id="contents"><content></content></div></template><script type="text/javascript">
 (function() {
   Polymer({
     is: "cleantile-pane",
-    refreshList: function() {
-      var child, i, len, ref, results;
-      ref = this.$.contents.children;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        child = ref[i];
-        results.push(console.log(child));
+    properties: {
+      views: {
+        type: Array,
+        readOnly: true
       }
-      return results;
+    },
+    listeners: {
+      "changed-name": "changed-name"
+    },
+    refreshList: function() {
+      var active, child, j, len, ref, ref1, views;
+      views = [];
+      active = null;
+      ref = this.$.contents.children;
+      for (j = 0, len = ref.length; j < len; j++) {
+        child = ref[j];
+        if ((ref1 = child.tagName.toLowerCase()) === "cleantile-tabs" || ref1 === "template" || ref1 === "span" || ref1 === "div") {
+          continue;
+        }
+        views.push({
+          element: child,
+          name: child.name
+        });
+        if (child.active || child.getAttribute("active") === "active") {
+          active = views.length - 1;
+        }
+      }
+      if (active == null) {
+        active = views.length - 1;
+      }
+      this._setViews(views);
+      return this.activate(active);
     },
     ready: function() {
       return this.refreshList();
+    },
+    "changed-name": function(e) {
+      var child, i, j, len, ref;
+      ref = this.views;
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        child = ref[i];
+        if (!(e.target === child.element)) {
+          continue;
+        }
+        e.preventDefault();
+        this.views[i].name = e.detail;
+        this.set(["views", i], this.views[i]);
+        return;
+      }
+      return console.log("Couldn't find child to update name.");
+    },
+
+    /*
+    Activate a specific view
+    @param [Integer] i the view to activate
+     */
+    activate: function(i) {
+      var el, j, len, ref;
+      ref = this.$.contents.querySelectorAll("#contents > [active]");
+      for (j = 0, len = ref.length; j < len; j++) {
+        el = ref[j];
+        el.removeAttribute("active");
+      }
+      return this.views[i].element.setAttribute("active", "active");
     }
   });
 

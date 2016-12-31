@@ -1,0 +1,33 @@
+- var id={id: "cleantile-text-view", path: "../../../"};
+include "../../lib/tag" exposing id
+
+append imports
+  link(rel="import", href="../../view-behavior/cleantile-view-behavior.html")
+
+replace template
+  p
+    | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at lorem hendrerit, tincidunt diam vitae, iaculis
+    | arcu. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent
+    | ultricies et lacus sed luctus. Morbi tincidunt mattis nisi facilisis sollicitudin. Nam consectetur, erat eu
+    | aliquam iaculis, nulla mi pulvinar tortor, volutpat consectetur diam magna vitae sapien. Integer risus dui,
+    | efficitur ac molestie vitae, euismod non risus. Pellentesque euismod erat enim. Suspendisse potenti. Mauris nunc
+    | magna, rhoncus quis nisi tempor, tempus sodales metus.
+  p
+    | Nunc pharetra congue metus, ut accumsan lacus ultrices vel. Nunc condimentum elit ut lorem suscipit, quis dictum
+    | tortor euismod. Donec semper elit eget consectetur pharetra. Donec pretium finibus leo sed egestas. Maecenas
+    | hendrerit leo eu congue efficitur. Donec hendrerit tellus at sem vulputate efficitur a a ligula. Donec condimentum
+    | et turpis vitae placerat. Nullam vitae mattis ex. Maecenas fermentum urna id viverra placerat. Aliquam sit amet
+    | tempor sem, at mattis sem. Proin vel lacus rhoncus, ullamcorper ex ac, fringilla purus. Phasellus nec malesuada
+    | massa.
+  button(on-click="done") Mark as Done
+
+replace script
+  :coffeescript
+    Polymer
+      is: "cleantile-text-view"
+      behaviors: [CleanTile.ViewBehavior]
+      ready: ->
+        @name = "Text View"
+      done: (e) ->
+        return if @name.indexOf("done") > -1
+        @set "name", "#{@name} (done)"

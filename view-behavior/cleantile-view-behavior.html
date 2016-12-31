@@ -1,0 +1,39 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><script type="text/javascript">
+(function() {
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+  window.CleanTile.ViewBehavior = {
+    properties: {
+      name: {
+        type: String,
+        notify: true,
+        reflectToAttribute: true,
+        observer: '_nameChanged'
+      },
+      active: {
+        type: Boolean,
+        observer: '_activeChanged'
+      }
+    },
+    _nameChanged: function() {
+      return this.fire("changed-name", this.name);
+    },
+    _activeChanged: function() {
+      return console.log("Active: " + this.active);
+    }
+  };
+
+}).call(this);
+
+</script>

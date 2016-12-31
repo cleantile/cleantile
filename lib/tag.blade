@@ -6,8 +6,12 @@
 */
 include "./license"
 include "./blade-warning"
+- var path = "../../"
+- if(typeof id === "object")
+  - path = id.path ? id.path : path
+  - id = id.id
 block imports
-  link(rel="import", href="../../polymer/polymer.html")
+  link(rel="import", href=path+"polymer/polymer.html")
 
 dom-module(id=id)
   template

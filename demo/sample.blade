@@ -10,14 +10,21 @@ html
     link(rel="import", href="../../font-roboto/roboto.html")
     link(rel="import", href="../container/cleantile-container.html")
     link(rel="import", href="../pane/cleantile-pane.html")
+    link(rel="import", href="./text-view/cleantile-text-view.html")
     style(is="custom-style")
       :plain-stylus
         body
           margin 0
           font-family "Roboto", "Noto", sans-serif
           background-color #eee
+        html, body
+          width 100%
+          height 100%
+        cleantile-container
+          height 50%
   body
-    template#app(is="dom-bind")
-      cleantile-container
-        cleantile-pane
-          cleantile-tabs
+    cleantile-container
+      cleantile-pane
+        // cleantile-tabs
+        cleantile-text-view(active)
+        cleantile-text-view

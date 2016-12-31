@@ -7,7 +7,12 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-container"><template></template><script type="text/javascript">
+--><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-container"><template><style type="text/css">
+:host {
+  display: block;
+}
+
+</style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
     is: "cleantile-container"

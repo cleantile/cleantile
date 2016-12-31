@@ -20,7 +20,7 @@ task "tags:build", "Build all of the tags for CleanTile", (opts) ->
 buildTags = (opts) ->
   tags = require "#{__dirname}/lib/tags"
   builds = for tag in tags
-    compileTemplate opts, tag
+    compileTemplate opts, tag, tag
   Promise.all builds
     
 task "demos:build", "Build all of the demos for CleanTile", (opts) ->
@@ -41,12 +41,16 @@ vulcanize = ->
     if p.indexOf("@") is 0
       plain = p.replace(/^\@[^\/]+\//, "")
       redirects.push "#{path.resolve "../"+plain}|#{__dirname}/node_modules/#{p}"
-  vulcan = new Vulcanizer {redirects}
+  vulcan = new Vulcanizer {redirects, inlineScripts: yes, inlineCss: yes}
   vulcan.processAsync = Promise.promisify vulcan.process
   _vulcanize = vulcan
 
 buildDemos = (opts) ->
-  buildTags opts
+  Promise
+    .all [
+      buildTags opts
+      compileTemplate opts, "demo/text-view", "text-view"
+    ]
     .then ->
       Promise.all [
         compileDemo opts, "demo/sample"
@@ -70,14 +74,14 @@ plainStylus = (text, opts={}) ->
     ret = "\n#{css}"
   ret
 
-compileTemplate = (opts, tag) ->
+compileTemplate = (opts, dir, tag) ->
   blade
-    .renderFileAsync "#{__dirname}/#{tag}/#{tag}.blade", {}
+    .renderFileAsync "#{__dirname}/#{dir}/#{tag}.blade", {}
     .then (html) ->
-      fs.writeFileAsync "#{__dirname}/#{tag}/#{pkg.name}-#{tag}.html", html
+      fs.writeFileAsync "#{__dirname}/#{dir}/#{pkg.name}-#{tag}.html", html
     .then ->
-      b = "#{tag}/#{tag}.blade"
-      h = "#{tag}/#{pkg.name}-#{tag}.html"
+      b = "#{dir}/#{tag}.blade"
+      h = "#{dir}/#{pkg.name}-#{tag}.html"
       console.log "Compiled #{chalk.blue b} to #{chalk.blue h}"
 
 compileDemo = (opts, demo) ->

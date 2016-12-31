@@ -1,0 +1,18 @@
+include "../lib/license"
+include "../lib/blade-warning"
+:coffeescript
+  window.CleanTile ?= {}
+  window.CleanTile.ViewBehavior =
+    properties:
+      name:
+        type: String
+        notify: yes
+        reflectToAttribute: yes
+        observer: '_nameChanged'
+      active:
+        type: Boolean
+        observer: '_activeChanged'
+    _nameChanged: ->
+      @fire "changed-name", @name
+    _activeChanged: ->
+      console.log "Active: #{@active}"

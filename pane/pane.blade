@@ -1,6 +1,44 @@
 - var id="cleantile-pane"
 include "../lib/tag" exposing id
 
+replace style
+  :stylus
+    :host
+      display block
+      width 100%
+      height 100%
+      position relative
+    $fill
+      display block
+      width 100%
+      height 100%
+      position absolute
+      top 0
+      left 0
+    #contents
+      @extend $fill
+    #contents ::content > cleantile-tabs
+      tab-height = 50px
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height tab-height
+      ~ :not(cleantile-tabs)
+        top tab-height
+        height "calc(100% - %s)" % tab-height
+    #contents ::content > :not(cleantile-tabs)
+      @extend $fill
+      &[active]
+        z-index 10
+      &:not([active])
+        z-index -10
+    #contents::after
+      @extend $fill
+      content: " "
+      background-color white
+      z-index 0
+
 replace template
   div#contents
     content
@@ -9,10 +47,40 @@ replace script
   :coffeescript
     Polymer
       is: "cleantile-pane"
+      properties:
+        views:
+          type: Array
+          readOnly: yes
+      listeners:
+        "changed-name": "changed-name"
       refreshList: ->
+        views = []
+        active = null
         for child in @$.contents.children
-          return if child.tagName.toLowerCase() is "cleantile-tabs"
-          return unless child.getAttribute("ct-attrs")
-          console.log "#{child.tagName} is a valid child"
+          continue if child.tagName.toLowerCase() in ["cleantile-tabs", "template", "span", "div"]
+          views.push
+            element: child
+            name: child.name
+          active = (views.length - 1) if child.active or child.getAttribute("active") is "active"
+        # @TODO: check if elements are marked as not active, and default to the last element not marked
+        active ?= views.length - 1
+        @_setViews views
+        @activate active
       ready: ->
         @refreshList()
+      "changed-name": (e) ->
+        for child, i in @views when e.target is child.element
+          e.preventDefault()
+          @views[i].name = e.detail
+          @set ["views", i], @views[i]
+          return
+        console.log "Couldn't find child to update name."
+      ###
+      Activate a specific view
+      @param [Integer] i the view to activate
+      ###
+      activate: (i) ->
+        for el in @$.contents.querySelectorAll("#contents > [active]")
+          el.removeAttribute "active"
+        @views[i].element.setAttribute "active", "active"
+      

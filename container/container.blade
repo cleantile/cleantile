@@ -1,6 +1,14 @@
 - var id="cleantile-container"
 include "../lib/tag" exposing id
 
+replace style
+  :stylus
+    :host
+      display block
+
+replace template
+  content
+
 replace script
   :coffeescript
     Polymer
