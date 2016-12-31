@@ -36,7 +36,7 @@ replace style
     #contents::after
       @extend $fill
       content: " "
-      background-color white
+      background-color unquote("var(--cleantile-pane-background, white)")
       z-index 0
 
 replace template
