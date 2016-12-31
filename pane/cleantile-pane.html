@@ -90,6 +90,9 @@
     },
     "changed-name": function(e) {
       var child, i, j, len, ref;
+      if (!this.views) {
+        return;
+      }
       ref = this.views;
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         child = ref[i];
