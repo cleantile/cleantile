@@ -11,8 +11,5 @@ include "../lib/blade-warning"
         observer: '_nameChanged'
       active:
         type: Boolean
-        observer: '_activeChanged'
     _nameChanged: ->
       @fire "changed-name", @name
-    _activeChanged: ->
-      console.log "Active: #{@active}"

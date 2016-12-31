@@ -19354,15 +19354,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         observer: '_nameChanged'
       },
       active: {
-        type: Boolean,
-        observer: '_activeChanged'
+        type: Boolean
       }
     },
     _nameChanged: function() {
       return this.fire("changed-name", this.name);
-    },
-    _activeChanged: function() {
-      return console.log("Active: " + this.active);
     }
   };
 
