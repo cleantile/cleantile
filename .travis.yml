@@ -1,0 +1,16 @@
+language: node_js
+dist: trusty
+node_js: 6
+addons:
+  firefox: latest
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+before_script:
+  - npm install
+
+script:
+  - xvfb-run $(npm bin)/wct
