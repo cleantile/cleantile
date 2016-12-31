@@ -14,7 +14,7 @@ Fictitious elements such as `<file-editor>` are used as filler content.
 
 #### cleantile-pane
 
-:soon: This element is partially finished, and will be included in the next release.
+:soon: This element is prototyped, and will be included in the next release.
 
 `<cleantile-pane>` is one of the essential items for Clean Tile.  A pane defines a space where dynamic application
 content can be inserted.  Inserted application contents are called **views**.
@@ -28,7 +28,7 @@ Clean Tile is designed with tabs in mind.  If you are using tabs, you can insert
 </cleantile-pane>
 ```
 
-To disable tab-like behavior, the `singular` attribute will enforce that only one **view** is inserted into a pane.
+To disable tab-like behavior, the `singular` attribute will enforce that only one view is inserted into a pane.
 
 ```html
 <cleantile-pane singular>
@@ -38,7 +38,7 @@ To disable tab-like behavior, the `singular` attribute will enforce that only on
 
 #### cleantile-split
 
-:soon: This element is planned for the next release.
+:soon: This element is partially finished, and will be included in the next release.
 
 `<cleantile-split>` allows dividing a container into two sections, in either a `vertical` or `horizontal` direction.
 Each side of the split needs to be either a `cleantile-pane` or a nested `cleantile-split`.
@@ -66,7 +66,7 @@ Each side of the split needs to be either a `cleantile-pane` or a nested `cleant
 
 #### cleantile-container
 
-:soon: This element is partially finished, and will be included in the next release.
+:soon: This element is prototyped, and will be included in the next release.
 
 Splits can be collapsed, and panes can be split.  `<cleantile-container>` provides a consistent shell wrapping panes
 and splits.
@@ -99,10 +99,16 @@ display in the tab, like a favicon.
 When designing application elements, we suggest that you have them conform to the Clean Tile API.  However, third-party
 and legacy elements can be easily wrapped.
 
+Required properties are provided in a Polymer behavior that can be imported and used in custom elements.  However,
+optional event listeners are not included in the behavior definition.
+
 **Note**: The following example defines a Polymer element inside the main HTML document.  Please see the
 [appropriate warnings](polymer-doc-def) in the Polymer documentation.
 
 ```html
+<head>
+  <link rel="import" href="path-to-cleantile/cleantile-view-behavior.html" />
+</head>
 <body>
   <dom-module id="wrapper-file-preview">
     <template>
@@ -112,7 +118,10 @@ and legacy elements can be easily wrapped.
       HTMLImports.whenReady(function() {
         Polymer({
           is: "wrapper-file-preview",
-          properties: {}, // Can define properties that can communicate with Clean Tile
+          behaviors: [CleanTile.ViewBehavior],
+          ready: function() {
+            this.title = "File Preview";
+          }
           // Can listen to Clean Tile events (like resize) by adding event listeners
         })
       });
@@ -132,7 +141,7 @@ and legacy elements can be easily wrapped.
 
 :memo: This element will be included in a future release.
 
-`<cleantile-split>` can contain multiple views, but doesn't display views that are not currently active.
+`<cleantile-pane>` can contain multiple views, but doesn't display views that are not currently active.
 `<cleantile-tabs>` adds an automatically-created tab bar, with room for additional buttons and layout controls.
 
 ```html
@@ -141,6 +150,22 @@ and legacy elements can be easily wrapped.
   <file-editor file="README.md" syntax="markdown"></file-editor>
   <file-editor file="LICENSE" syntax="text"></file-editor>
 </cleantile-pane>
+```
+
+#### cleantile-drag
+
+:memo: This element will be included in a future release.
+
+`<cleantile-drag>` can be included in a `<cleantile-split>` to provide a draggable bar to change the split's width.
+
+By having the drag bar be an explicit element, styling and behavior options are more localized.
+
+```html
+<cleantile-split>
+  <cleantile-pane> <!-- ... --> </cleantile-pane>
+  <cleantile-drag width="5px" move="clone"></cleantile-drag>
+  <cleantile-pane> <!-- ... --> </cleantile-pane>
+</cleantile-split>
 ```
 
 #### cleantile-rearrange
