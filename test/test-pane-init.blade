@@ -28,7 +28,7 @@ append tests
     describe "fullscreen cleantile-container", ->
       [container, first, second] = []
       
-      before ->
+      beforeEach ->
         container = fixture "testInit"
         first = container.querySelector "#first p"
         second = container.querySelector "#second p"

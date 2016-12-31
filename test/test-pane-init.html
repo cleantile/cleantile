@@ -19409,7 +19409,7 @@ cleantile-container {
   describe("fullscreen cleantile-container", function() {
     var container, first, ref, second;
     ref = [], container = ref[0], first = ref[1], second = ref[2];
-    before(function() {
+    beforeEach(function() {
       container = fixture("testInit");
       first = container.querySelector("#first p");
       return second = container.querySelector("#second p");
