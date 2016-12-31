@@ -13,4 +13,4 @@ before_script:
   - npm install
 
 script:
-  - xvfb-run $(npm bin)/wct
+  - xvfb-run $(npm bin)/wct -s 'default'

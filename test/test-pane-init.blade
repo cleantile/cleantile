@@ -16,24 +16,23 @@ append style
       height 100%
 
 append fixtures
-  text-fixture#testInit
+  test-fixture#testInit
     template
       cleantile-container
         cleantile-pane
-          text-view#first
-          text-view#second
+          cleantile-text-view#first
+          cleantile-text-view#second
 
 append tests
   :coffeescript
-    should = chai.should()
     describe "fullscreen cleantile-container", ->
-      container = null
+      [container, first, second] = []
       
       before ->
         container = fixture "testInit"
-      
-      it "places both views", ->
         first = container.querySelector "#first p"
         second = container.querySelector "#second p"
-        should.not.be.null first.offsetParent
-        should.not.be.null second.offsetParent
+      
+      it "places both views", ->
+        expect(first).to.not.be.null
+        expect(second.offsetParent).to.not.be.null

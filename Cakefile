@@ -126,8 +126,11 @@ compileTest = (opts, source) ->
   blade
     .renderFileAsync source, {}
     .then (html) ->
-      return html if opts["no-vulcanize"]
-      vulcan = vulcanize()
-      vulcan.processAsync out
-    .then (html) ->
       fs.writeFileAsync out, html
+    .then ->
+      return if opts["no-vulcanize"]
+      vulcan = vulcanize()
+      vulcan
+        .processAsync out
+        .then (html) ->
+          fs.writeFileAsync out, html
