@@ -58,6 +58,7 @@ buildDemos = (opts) ->
     .then ->
       Promise.all [
         compileDemo opts, "demo/pane"
+        compileDemo opts, "demo/split"
       ]
 
 task "test:build", "Compile the testing files", (opts) ->

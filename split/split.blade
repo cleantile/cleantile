@@ -1,0 +1,45 @@
+- var id="cleantile-split"
+include "../lib/tag" exposing id
+
+replace style
+  :stylus
+    :host, #contents
+      display block
+      width 100%
+      height 100%
+    #contents
+      position relative
+    :host
+      #contents ::content > cleantile-pane
+        position absolute
+      &[direction="vertical"] #contents ::content
+        > cleantile-pane
+          width 100%
+          height 50%
+          left 0
+        > cleantile-pane:first-of-type
+          top 0
+        > cleantile-pane:last-of-type
+          bottom 0
+      &:not([direction="vertical"]) #contents ::content
+        > cleantile-pane
+          width 50%
+          height 100%
+          top 0
+        > cleantile-pane:first-of-type
+          left 0
+        > cleantile-pane:last-of-type
+          right 0
+
+replace template
+  div#contents
+    content
+
+replace script
+  :coffeescript
+    Polymer
+      is: "cleantile-split"
+      properties:
+        direction:
+          type: "String"
+          value: "horizontal"
