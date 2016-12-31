@@ -1,0 +1,10 @@
+- var opts = {title: "Clean Tile tests", path: "../../"}
+include "../lib/test" exposing opts
+
+replace imports
+
+replace tests
+  :coffeescript
+    WCT.loadSuites [
+      "./test-pane-init.html"
+    ]

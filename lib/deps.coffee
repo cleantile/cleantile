@@ -17,6 +17,12 @@ raw =
     "^0.0.3": ["dev"]
   "@polymer/polymer":
     "1.2.5-npm-test.2": ["*"]
+  "web-component-tester":
+    "4.3.1": ["dev"]
+  "@polymer/test-fixture":
+    "^0.0.3": ["dev"]
+  "glob-promise":
+    "^3.1.0": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".

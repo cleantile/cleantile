@@ -3,28 +3,7 @@ fs = Promise.promisifyAll require "fs"
 blade = Promise.promisifyAll require "blade"
 chalk = require "chalk"
 pkg = require "#{__dirname}/lib/package"
-
-task "all", (opts) ->
-  packageJSON opts
-    .then ->
-      buildDemos opts
-
-option "", "--no-vulcanize", "Prevents files from being vulcanized"
-
-task "package.json", "Write package.json", (opts) ->
-  packageJSON opts
-
-task "tags:build", "Build all of the tags for CleanTile", (opts) ->
-  buildTags opts
-
-buildTags = (opts) ->
-  tags = require "#{__dirname}/lib/tags"
-  builds = for tag in tags
-    compileTemplate opts, tag, tag
-  Promise.all builds
-    
-task "demos:build", "Build all of the demos for CleanTile", (opts) ->
-  buildDemos opts
+glob = require "glob-promise"
 
 _vulcanize = no
 vulcanize = ->
@@ -45,6 +24,31 @@ vulcanize = ->
   vulcan.processAsync = Promise.promisify vulcan.process
   _vulcanize = vulcan
 
+task "all", (opts) ->
+  packageJSON opts
+    .then ->
+      Promise.all [
+        buildDemos opts
+        buildTests opts
+      ]
+
+option "", "--no-vulcanize", "Prevents files from being vulcanized"
+
+task "package.json", "Write package.json", (opts) ->
+  packageJSON opts
+
+task "tags:build", "Build all of the tags for CleanTile", (opts) ->
+  buildTags opts
+
+buildTags = (opts) ->
+  tags = require "#{__dirname}/lib/tags"
+  builds = for tag in tags
+    compileTemplate opts, tag, tag
+  Promise.all builds
+    
+task "demos:build", "Build all of the demos for CleanTile", (opts) ->
+  buildDemos opts
+
 buildDemos = (opts) ->
   Promise
     .all [
@@ -55,6 +59,12 @@ buildDemos = (opts) ->
       Promise.all [
         compileDemo opts, "demo/sample"
       ]
+
+task "test:build", "Compile the testing files", (opts) ->
+  buildTests opts
+
+buildTests = (opts) ->
+  compileTests opts, "test/"
 
 packageJSON = (opts) ->
   deps = require "#{__dirname}/lib/deps"
@@ -103,3 +113,21 @@ compileDemo = (opts, demo) ->
           fs.writeFileAsync "#{__dirname}/#{demo}.compiled.html", html
         .then ->
           console.log "Vulcanized #{chalk.blue h}"
+
+compileTests = (opts, dir) ->
+  Promise
+    .resolve glob "#{__dirname}/#{dir}*.blade"
+    .map (t) -> compileTest opts, t
+    .then (files) ->
+      console.log "Compiled all tests in #{chalk.blue dir} (#{chalk.yellow files.length} files)"
+
+compileTest = (opts, source) ->
+  out = source.replace(".blade", ".html")
+  blade
+    .renderFileAsync source, {}
+    .then (html) ->
+      return html if opts["no-vulcanize"]
+      vulcan = vulcanize()
+      vulcan.processAsync out
+    .then (html) ->
+      fs.writeFileAsync out, html
