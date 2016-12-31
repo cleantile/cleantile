@@ -1,0 +1,59 @@
+- var opts = {title: "cleantile-pane view detection", path: "../../"}
+include "../lib/test" exposing opts
+
+append imports
+  link(rel="import", href="../container/cleantile-container.html")
+  link(rel="import", href="../pane/cleantile-pane.html")
+  link(rel="import", href="../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+append fixtures
+  test-fixture#testViews
+    template
+      cleantile-container
+        cleantile-pane
+          cleantile-text-view#first
+          cleantile-text-view#second
+
+append tests
+  :coffeescript
+    describe "<cleantile-pane> view detection", ->
+      [container, pane] = []
+      
+      beforeEach ->
+        container = fixture "testViews"
+        pane = container.querySelector "cleantile-pane"
+      
+      it "should have find the view", ->
+        expect(pane).to.not.be.null
+      
+      it "should find two views", ->
+        expect(pane.views).to.be.an.array
+        expect(pane.views.length).to.equal 2
+      
+      it "should find view names", ->
+        expect(pane.views[0].name).to.equal "Text View"
+        expect(pane.views[1].name).to.equal "Text View"
+    
+    describe "<cleantile-pane> name updating", ->
+      [container, pane, button] = []
+      
+      beforeEach ->
+        container = fixture "testViews"
+        pane = container.querySelector "cleantile-pane"
+        button = pane.querySelector "button"
+        button.click()
+      
+      it "should change the first view's name", ->
+        expect(pane.views[0].name).to.equal "Text View (done)"
+      
+      it "should retain the second view's name", ->
+        expect(pane.views[1].name).to.equal "Text View"
