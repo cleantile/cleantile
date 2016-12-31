@@ -32,7 +32,7 @@
   bottom: 0;
 }
 :host:not([direction="vertical"]) #contents ::content > cleantile-pane {
-  width: calc(50% - 1px);
+  width: 50%;
   height: 100%;
   top: 0;
 }
@@ -50,7 +50,8 @@
     properties: {
       direction: {
         type: "String",
-        value: "horizontal"
+        value: "horizontal",
+        reflectToAttribute: true
       }
     }
   });
