@@ -19420,12 +19420,16 @@ cleantile-container {
       expect(first.offsetParent).to.not.be["null"];
       return expect(second.offsetParent).to.not.be["null"];
     });
-    return it("should layer views with no offset", function() {
+    it("should layer views with no offset", function() {
       var firstRect, secondRect;
       firstRect = first.getBoundingClientRect();
       secondRect = second.getBoundingClientRect();
       expect(first.top).to.equal(second.top);
       return expect(first.left).to.equal(second.left);
+    });
+    return it("should show the paragraph", function() {
+      expect(first.clientHeight).to.be.above(10);
+      return expect(first.clientWidth).to.be.above(100);
     });
   });
 

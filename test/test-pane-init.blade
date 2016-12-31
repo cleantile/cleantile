@@ -44,3 +44,7 @@ append tests
         secondRect = second.getBoundingClientRect()
         expect(first.top).to.equal second.top
         expect(first.left).to.equal second.left
+      
+      it "should show the paragraph", ->
+        expect(first.clientHeight).to.be.above 10
+        expect(first.clientWidth).to.be.above 100
