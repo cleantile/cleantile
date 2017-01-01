@@ -17451,29 +17451,30 @@ cleantile-container {
       firstRect = first.getBoundingClientRect();
       return secondRect = second.getBoundingClientRect();
     });
-    describe("<cleantile-pane>", function() {});
-    it("should be visible", function() {
-      expect(first).to.not.be["null"];
-      expect(second).to.not.be["null"];
-      expect(first.offsetParent).to.not.be["null"];
-      return expect(second.offsetParent).to.not.be["null"];
-    });
-    it("should be equal-sized", function() {
-      expect(firstRect.width).to.equal(secondRect.width);
-      return expect(firstRect.height).to.equal(secondRect.height);
-    });
-    it("should be above one another", function() {
-      return expect(firstRect.left).to.equal(secondRect.left);
-    });
-    it("should be at the left-side of the page", function() {
-      expect(firstRect.left).to.equal(0);
-      return expect(secondRect.left).to.equal(0);
-    });
-    return it("should fill the width", function() {
-      var width;
-      width = container.getBoundingClientRect().width;
-      expect(firstRect.width).to.equal(width);
-      return expect(secondRect.width).to.equal(width);
+    return describe("<cleantile-pane>", function() {
+      it("should be visible", function() {
+        expect(first).to.not.be["null"];
+        expect(second).to.not.be["null"];
+        expect(first.offsetParent).to.not.be["null"];
+        return expect(second.offsetParent).to.not.be["null"];
+      });
+      it("should be equal-sized", function() {
+        expect(firstRect.width).to.equal(secondRect.width);
+        return expect(firstRect.height).to.equal(secondRect.height);
+      });
+      it("should be above one another", function() {
+        return expect(firstRect.left).to.equal(secondRect.left);
+      });
+      it("should be at the left-side of the page", function() {
+        expect(firstRect.left).to.equal(0);
+        return expect(secondRect.left).to.equal(0);
+      });
+      return it("should fill the width", function() {
+        var width;
+        width = container.getBoundingClientRect().width;
+        expect(firstRect.width).to.equal(width);
+        return expect(secondRect.width).to.equal(width);
+      });
     });
   });
 

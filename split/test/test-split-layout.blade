@@ -76,24 +76,24 @@ append tests
         secondRect = second.getBoundingClientRect()
       
       describe "<cleantile-pane>", ->
-      it "should be visible", ->
-        expect(first).to.not.be.null
-        expect(second).to.not.be.null
-        expect(first.offsetParent).to.not.be.null
-        expect(second.offsetParent).to.not.be.null
-      
-      it "should be equal-sized", ->
-        expect(firstRect.width).to.equal secondRect.width
-        expect(firstRect.height).to.equal secondRect.height
-      
-      it "should be above one another", ->
-        expect(firstRect.left).to.equal secondRect.left
-      
-      it "should be at the left-side of the page", ->
-        expect(firstRect.left).to.equal 0
-        expect(secondRect.left).to.equal 0
-      
-      it "should fill the width", ->
-        width = container.getBoundingClientRect().width
-        expect(firstRect.width).to.equal width
-        expect(secondRect.width).to.equal width
+        it "should be visible", ->
+          expect(first).to.not.be.null
+          expect(second).to.not.be.null
+          expect(first.offsetParent).to.not.be.null
+          expect(second.offsetParent).to.not.be.null
+        
+        it "should be equal-sized", ->
+          expect(firstRect.width).to.equal secondRect.width
+          expect(firstRect.height).to.equal secondRect.height
+        
+        it "should be above one another", ->
+          expect(firstRect.left).to.equal secondRect.left
+        
+        it "should be at the left-side of the page", ->
+          expect(firstRect.left).to.equal 0
+          expect(secondRect.left).to.equal 0
+        
+        it "should fill the width", ->
+          width = container.getBoundingClientRect().width
+          expect(firstRect.width).to.equal width
+          expect(secondRect.width).to.equal width
