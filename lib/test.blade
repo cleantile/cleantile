@@ -6,13 +6,14 @@ html
     meta(charset="UTF-8")
     title= opts.title
     meta(name="viewport", content="width=device-width, initial-scale=1.0, minimum-scale=1.0")
-    block core-imports
+    block imports(core)
+      - if(!core)
+        script(src=opts.path+"webcomponentsjs/lite.js")
       script(src=opts.path+"web-component-tester/browser.js")
-    block imports
-      script(src=opts.path+"webcomponentsjs/lite.js")
-      script(src=opts.path+"web-component-tester/browser.js")
-      script(src=opts.path+"test-fixture/test-fixture-mocha.js")
-      link(rel="import", href=opts.path+"test-fixture/test-fixture.html")
+      - if(!core)
+        script(src=opts.path+"test-fixture/test-fixture-mocha.js")
+        link(rel="import", href=opts.path+"test-fixture/test-fixture.html")
+    render imports(false)
     block style
   body
     block fixtures
