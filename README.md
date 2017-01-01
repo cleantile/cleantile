@@ -41,7 +41,7 @@ To disable tab-like behavior, the `singular` attribute will enforce that only on
 
 #### cleantile-split
 
-:soon: This element is partially finished, and will be included in the next release.
+:soon: This element is prototyped, and will be included in the next release.
 
 `<cleantile-split>` allows dividing a container into two sections, in either a `vertical` or `horizontal` direction.
 Each side of the split needs to be either a `cleantile-pane` or a nested `cleantile-split`.
@@ -86,6 +86,23 @@ and splits.
 
 Panes and splits expect to be wrapped in a container.  All interactive features will require that content is enclosed
 inside a `<cleantile-container>`.
+
+#### cleantile-tabs
+
+:soon: This element is planned for the next release.
+
+`<cleantile-tabs>` adds an automatically generated tab bar to `<cleantile-pane>` elements, allowing the user to switch
+between the views inside a pane.
+
+:memo: In a later release, `<cleantile-tabs>` will support additional buttons and layout controls.
+
+```html
+<cleantile-pane>
+  <cleantile-tabs></cleantile-tabs>
+  <file-editor file="README.md" syntax="markdown"></file-editor>
+  <file-editor file="LICENSE" syntax="text"></file-editor>
+</cleantile-pane>
+```
 
 ### Views
 
@@ -139,21 +156,6 @@ optional event listeners are not included in the behavior definition.
 ```
 
 ### Future Elements
-
-#### cleantile-tabs
-
-:memo: This element will be included in a future release.
-
-`<cleantile-pane>` can contain multiple views, but doesn't display views that are not currently active.
-`<cleantile-tabs>` adds an automatically-created tab bar, with room for additional buttons and layout controls.
-
-```html
-<cleantile-pane>
-  <cleantile-tabs></cleantile-tabs>
-  <file-editor file="README.md" syntax="markdown"></file-editor>
-  <file-editor file="LICENSE" syntax="text"></file-editor>
-</cleantile-pane>
-```
 
 #### cleantile-drag
 
