@@ -1,0 +1,99 @@
+- var opts = {title: "cleantile-split horizontal/vertical layout", path: "../../../"}
+include "../../lib/test" exposing opts
+
+append imports
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+function splitFixture(direction)
+  test-fixture(id=direction)
+    template
+      cleantile-split(direction=direction)
+        cleantile-pane#first
+          cleantile-text-view
+        cleantile-pane#second
+          cleantile-text-view
+
+append fixtures
+  call splitFixture("vertical")
+  call splitFixture("horizontal")
+
+
+append tests
+  :coffeescript
+    describe "<cleantile-split direction='horizontal'>", ->
+      [container, first, second, firstRect, secondRect] = []
+      
+      beforeEach ->
+        container = fixture "horizontal"
+        first = container.querySelector "#first"
+        second = container.querySelector "#second"
+        firstRect = first.getBoundingClientRect()
+        secondRect = second.getBoundingClientRect()
+      
+      describe "<cleantile-pane>", ->
+        it "should be visible", ->
+          expect(first).to.not.be.null
+          expect(second).to.not.be.null
+          expect(first.offsetParent).to.not.be.null
+          expect(second.offsetParent).to.not.be.null
+        
+        it "should be equal-sized", ->
+          expect(firstRect.width).to.equal secondRect.width
+          expect(firstRect.height).to.equal secondRect.height
+        
+        it "should be next to each other", ->
+          expect(firstRect.top).to.equal secondRect.top
+        
+        it "should be at the top of the page", ->
+          expect(firstRect.top).to.equal 0
+          expect(secondRect.top).to.equal 0
+        
+        it "should fill the height", ->
+          height = container.getBoundingClientRect().height
+          expect(firstRect.height).to.equal height
+          expect(secondRect.height).to.equal height
+    
+    describe "<cleantile-split direction='vertical'>", ->
+      [container, first, second, firstRect, secondRect] = []
+      
+      beforeEach ->
+        container = fixture "vertical"
+        first = container.querySelector "#first"
+        second = container.querySelector "#second"
+        firstRect = first.getBoundingClientRect()
+        secondRect = second.getBoundingClientRect()
+      
+      describe "<cleantile-pane>", ->
+      it "should be visible", ->
+        expect(first).to.not.be.null
+        expect(second).to.not.be.null
+        expect(first.offsetParent).to.not.be.null
+        expect(second.offsetParent).to.not.be.null
+      
+      it "should be equal-sized", ->
+        expect(firstRect.width).to.equal secondRect.width
+        expect(firstRect.height).to.equal secondRect.height
+      
+      it "should be above one another", ->
+        expect(firstRect.left).to.equal secondRect.left
+      
+      it "should be at the left-side of the page", ->
+        expect(firstRect.left).to.equal 0
+        expect(secondRect.left).to.equal 0
+      
+      it "should fill the width", ->
+        width = container.getBoundingClientRect().width
+        expect(firstRect.width).to.equal width
+        expect(secondRect.width).to.equal width

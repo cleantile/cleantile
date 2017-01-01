@@ -65,7 +65,11 @@ task "test:build", "Compile the testing files", (opts) ->
   buildTests opts
 
 buildTests = (opts) ->
-  compileTests opts, "test/"
+  Promise
+    .all [
+      compileTests opts, "test/"
+      compileTests opts, "split/test/"
+    ]
 
 packageJSON = (opts) ->
   deps = require "#{__dirname}/lib/deps"
