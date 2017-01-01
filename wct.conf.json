@@ -58,7 +58,7 @@
         {
           "browserName": "firefox",
           "platform": "Linux",
-          "version": "47"
+          "version": "45"
         },
         {
           "browserName": "internet explorer",
