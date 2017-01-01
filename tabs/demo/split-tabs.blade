@@ -1,0 +1,34 @@
+- var opts = {title: "Clean Tile Pane with Tabs", path: "../../../"}
+include "../../lib/demo" exposing opts
+
+append imports
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../../split/cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../cleantile-tabs.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+replace style
+  style(is="custom-style")
+    :plain-stylus
+      body
+        margin 0
+        font-family "Roboto", "Noto", sans-serif
+        background-color #eee
+      html, body
+        width 100%
+        height 100%
+      cleantile-container
+        height 50%
+
+append body
+  cleantile-container
+    cleantile-split
+      cleantile-pane
+        cleantile-tabs
+        cleantile-text-view(active)
+        cleantile-text-view
+      cleantile-pane
+        cleantile-tabs
+        cleantile-text-view(active)
+        cleantile-text-view

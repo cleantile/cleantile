@@ -1,0 +1,28 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-tab"><template><style type="text/css">
+:host {
+  display: inline;
+}
+
+</style><span>[[tab.name]]</span></template><script type="text/javascript">
+(function() {
+  Polymer({
+    is: "cleantile-tab",
+    properties: {
+      tab: {
+        type: Object
+      }
+    }
+  });
+
+}).call(this);
+
+</script></dom-module>

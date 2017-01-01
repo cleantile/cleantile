@@ -30,6 +30,7 @@
   left: 0;
   width: 100%;
   height: 50px;
+  z-index: 15;
 }
 #contents ::content > cleantile-tabs ~ :not(cleantile-tabs) {
   top: 50px;
@@ -54,8 +55,8 @@
     properties: {
       views: {
         type: Array,
-        readOnly: true,
-        value: []
+        notify: true,
+        readOnly: true
       }
     },
     listeners: {
@@ -83,10 +84,21 @@
         active = views.length - 1;
       }
       this._setViews(views);
-      return this.activate(active);
+      if (views.length > 0) {
+        return this.activate(active);
+      }
+    },
+    refreshTabs: function() {
+      var tabs;
+      if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
+        return;
+      }
+      return this.tabs = tabs;
     },
     ready: function() {
-      return this.refreshList();
+      this.views = [];
+      this.refreshList();
+      return this.refreshTabs();
     },
     "changed-name": function(e) {
       var child, i, j, len, ref;
@@ -100,8 +112,10 @@
           continue;
         }
         e.preventDefault();
-        this.views[i].name = e.detail;
-        this.set(["views", i], this.views[i]);
+        this.set(["views", i, "name"], e.detail);
+        if (this.tabs) {
+          this.tabs.set(["views", i, "name"], e.detail);
+        }
         return;
       }
       return console.log("Couldn't find child to update name.");
@@ -113,6 +127,9 @@
      */
     activate: function(i) {
       var el, j, len, ref;
+      if (!this.views[i]) {
+        return console.error(new ReferenceError("Can't activate view " + i + ": view not found.  Ignoring."));
+      }
       ref = this.$.contents.querySelectorAll("#contents > [active]");
       for (j = 0, len = ref.length; j < len; j++) {
         el = ref[j];

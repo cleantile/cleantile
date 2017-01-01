@@ -1,10 +1,11 @@
-- var opts = {title: "Clean Tile Pane", path: "../../"}
-include "../lib/demo" exposing opts
+- var opts = {title: "Clean Tile Pane with Tabs", path: "../../../"}
+include "../../lib/demo" exposing opts
 
 append imports
-  link(rel="import", href="../container/cleantile-container.html")
-  link(rel="import", href="../pane/cleantile-pane.html")
-  link(rel="import", href="./text-view/cleantile-text-view.html")
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../cleantile-tabs.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
 
 replace style
   style(is="custom-style")
@@ -22,6 +23,6 @@ replace style
 append body
   cleantile-container
     cleantile-pane
-      // cleantile-tabs
+      cleantile-tabs
       cleantile-text-view(active)
       cleantile-text-view

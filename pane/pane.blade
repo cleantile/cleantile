@@ -24,6 +24,7 @@ replace style
       left 0
       width 100%
       height tab-height
+      z-index 15
       ~ :not(cleantile-tabs)
         top tab-height
         height "calc(100% - %s)" % tab-height
@@ -50,8 +51,8 @@ replace script
       properties:
         views:
           type: Array
+          notify: yes
           readOnly: yes
-          value: []
       listeners:
         "changed-name": "changed-name"
       refreshList: ->
@@ -66,15 +67,22 @@ replace script
         # @TODO: check if elements are marked as not active, and default to the last element not marked
         active ?= views.length - 1
         @_setViews views
-        @activate active
+        @activate active if views.length > 0
+      refreshTabs: ->
+        return unless tabs = @$.contents.querySelector("cleantile-tabs")
+        @tabs = tabs
       ready: ->
+        @views = []
         @refreshList()
+        @refreshTabs()
       "changed-name": (e) ->
         return unless @views
         for child, i in @views when e.target is child.element
           e.preventDefault()
-          @views[i].name = e.detail
-          @set ["views", i], @views[i]
+          #@views[i].name = e.detail
+          @set ["views", i, "name"], e.detail
+          if @tabs
+            @tabs.set ["views", i, "name"], e.detail
           return
         console.log "Couldn't find child to update name."
       ###
@@ -82,7 +90,8 @@ replace script
       @param [Integer] i the view to activate
       ###
       activate: (i) ->
+        unless @views[i]
+          return console.error new ReferenceError("Can't activate view #{i}: view not found.  Ignoring.")
         for el in @$.contents.querySelectorAll("#contents > [active]")
           el.removeAttribute "active"
         @views[i].element.setAttribute "active", "active"
-      

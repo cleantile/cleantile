@@ -69,6 +69,8 @@ buildDemos = (opts) ->
       Promise.all [
         compileDemo opts, "demo/pane"
         compileDemo opts, "demo/split"
+        compileDemo opts, "tabs/demo/pane-tabs"
+        compileDemo opts, "tabs/demo/split-tabs"
       ]
 
 task "test:build", "Compile the testing files", (opts) ->
@@ -79,6 +81,7 @@ buildTests = (opts) ->
     .all [
       compileTests opts, "test/"
       compileTests opts, "split/test/"
+      compileTests opts, "tabs/test/"
     ]
 
 task "test", "Run tests via Web Component Tester", (opts) ->

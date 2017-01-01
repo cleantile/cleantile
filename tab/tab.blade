@@ -1,0 +1,18 @@
+- var id="cleantile-tab"
+include "../lib/tag" exposing id
+
+replace style
+  :stylus
+    :host
+      display inline
+
+replace template
+  span [[tab.name]]
+
+replace script
+  :coffeescript
+    Polymer
+      is: "cleantile-tab"
+      properties:
+        tab:
+          type: Object

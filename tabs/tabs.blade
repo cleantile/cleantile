@@ -1,0 +1,32 @@
+- var id="cleantile-tabs"
+include "../lib/tag" exposing id
+
+replace style
+  :stylus
+    :host
+      display block
+
+append imports
+  link(rel="import", href="../tab/cleantile-tab.html")
+
+replace template
+  template(is="dom-repeat", items="{{views}}")
+    cleantile-tab(tab="{{item}}", on-tap="activate")
+  content
+
+replace script
+  :coffeescript
+    Polymer
+      is: "cleantile-tabs"
+      properties:
+        views:
+          type: Array
+      ready: ->
+        @views = []
+        pane = Polymer.dom(@).parentNode
+        return unless pane.tagName.toLowerCase() is "cleantile-pane"
+        @pane = pane
+        for view in @pane.views
+          @push "views", view
+      activate: (e) ->
+        @pane.activate @views.indexOf e.model.item

@@ -1,0 +1,54 @@
+- var opts = {title: "cleantile-tabs listing views", path: "../../../"}
+include "../../lib/test" exposing opts
+
+append imports
+  link(rel="import", href="../../../polymer/polymer.html")
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../cleantile-tabs.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+function tabFixture(number)
+  test-fixture(id="fixture"+number)
+    template
+      cleantile-pane
+        cleantile-tabs
+        - for(var i=0; i<number; i++)
+          cleantile-text-view(data-i=i)
+
+append fixtures
+  call tabFixture(0)
+  call tabFixture(1)
+  call tabFixture(2)
+  call tabFixture(5)
+
+
+append tests
+  :coffeescript
+    for i in [0, 1, 2, 5]
+      do (i) ->
+        describe "<cleantile-tabs> with #{i} views", ->
+          [pane] = []
+          
+          beforeEach ->
+            pane = fixture "fixture#{i}"
+          
+          it "should have #{i} view#{if i is 1 then "" else "s"}", ->
+            for j in [0...i]
+              expect(pane.querySelector("[data-i='#{j}']")).to.exist
+          
+          it "should have #{i} <cleantile-tab> elements", (done) ->
+            tabContainer = pane.querySelector("cleantile-tabs")
+            flush ->
+              tabs = Polymer.dom(tabContainer.root).querySelectorAll("cleantile-tab")
+              expect(tabs.length).to.equal i
+              done()
