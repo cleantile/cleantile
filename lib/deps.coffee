@@ -23,6 +23,8 @@ raw =
     "^0.0.3": ["dev"]
   "glob-promise":
     "^3.1.0": ["dev"]
+  "child-process-promise":
+    "^2.2.0": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".

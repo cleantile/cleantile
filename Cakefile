@@ -1,4 +1,5 @@
 Promise = require "bluebird"
+{exec} = require "child-process-promise"
 fs = Promise.promisifyAll require "fs"
 blade = Promise.promisifyAll require "blade"
 chalk = require "chalk"
@@ -24,7 +25,16 @@ vulcanize = ->
   vulcan.processAsync = Promise.promisify vulcan.process
   _vulcanize = vulcan
 
+option "-l", "--test-local", "Only run tests locally"
+option "-s", "--test-sauce", "Only run tests on Sauce Labs"
+option "-p", "--persistent", "Run tests in persistent mode"
+
+option "", "--no-build", "Skip building files"
+
 task "all", (opts) ->
+  all opts
+
+all = (opts) ->
   packageJSON opts
     .then ->
       Promise.all [
@@ -70,6 +80,31 @@ buildTests = (opts) ->
       compileTests opts, "test/"
       compileTests opts, "split/test/"
     ]
+
+task "test", "Run tests via Web Component Tester", (opts) ->
+  test opts
+
+test = (opts) ->
+  Promise
+    .resolve null
+    .then ->
+      all(opts) unless opts["no-build"]
+    .then ->
+      cmd = "$(npm bin)/wct"
+      if opts["test-local"]
+        cmd = "#{cmd} --skip-plugin sauce"
+      else if opts["test-sauce"]
+        cmd = "#{cmd} --skip-plugin local"
+      if opts["persistent"]
+        cmd = "#{cmd} -p"
+      process.env["FORCE_COLOR"] = true
+      exec cmd, {env: process.env}
+    .then (res) ->
+      console.log res.stdout
+      console.log res.stderr
+    .catch (res) ->
+      console.log res.stdout
+      console.log res.stderr
 
 packageJSON = (opts) ->
   deps = require "#{__dirname}/lib/deps"
