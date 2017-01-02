@@ -14905,12 +14905,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
-    is: "cleantile-container",
-    properties: {
-      test: {
-        type: Boolean
-      }
-    }
+    is: "cleantile-container"
   });
 
 }).call(this);
@@ -14933,6 +14928,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <file-editor file="LICENSE" syntax="text"></file-editor>
       </cleantile-pane>
     </cleantile-split>
+
+@demo demo/split.compiled.html Split Demo
  --><dom-module id="cleantile-split" assetpath="../split/"><template><style type="text/css">
 :host,
 #contents {
@@ -15004,6 +15001,9 @@ Defaults to `horizontal`.
 See [`CleanTile.ViewBehavior`][] for the required properties and methods of views.
 
 [`CleanTile.ViewBehavior`]: #CleanTile.ViewBehavior
+
+@demo demo/simple-binding.compiled.html Polymer Binding between Panes
+@demo demo/pane.compiled.html Pane Demo
  --><dom-module id="cleantile-pane" assetpath="../pane/"><template><style type="text/css">
 :host {
   display: block;
