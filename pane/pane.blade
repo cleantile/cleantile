@@ -77,7 +77,6 @@ replace script
         return unless @views
         for child, i in @views when e.target is child.element
           e.preventDefault()
-          #@views[i].name = e.detail
           @set ["views", i, "name"], e.detail
           if @tabs
             @tabs.set ["views", i, "name"], e.detail
