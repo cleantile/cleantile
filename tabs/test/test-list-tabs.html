@@ -17324,8 +17324,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   font-size: var(--cleantile-tab-text-size, 10pt);
   padding-left: var(--cleantile-tab-pad-horiz, 10px);
   padding-right: var(--cleantile-tab-pad-horiz, 10px);
-  padding-top: var(--cleantile-tab-pad-top, 2px);
-  padding-bottom: var(--cleantile-tab-pad-bottom, 2px);
   margin-left: var(--cleantile-tab-trap-width, 10px);
   margin-right: var(--cleantile-tab-trap-width, 10px);
 }
@@ -17336,7 +17334,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   position: absolute;
   top: 0;
   border-bottom-width: var(--cleantile-tabs-height, 30px);
-  border-bottom-width: calc(calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px)) + calc(var(--cleantile-tab-pad-top, 2px) + var(--cleantile-tab-pad-bottom, 2px)));
+  border-bottom-width: calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px));
   border-bottom-color: var(--cleantile-tab-fill, #E0E0E0);
   border-bottom-style: solid;
 }
