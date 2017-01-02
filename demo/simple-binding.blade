@@ -30,10 +30,16 @@ append body
           cleantile-blank-view(name="Input")
             p
               | Type some stuff in the input box:
-            input(value="{{userInput::input}}")
+            input(type="text", value="{{userInput::input}}")
         cleantile-pane
           cleantile-tabs
-          cleantile-blank-view(name="Output [[userInput]]")
+          cleantile-blank-view(name="Output [[userInput]]", active)
             p
               | This box should update as you type:
-            input(value="[[userInput]]", disabled)
+            input(type="text", value="[[userInput]]", disabled)
+          cleantile-blank-view(name="Paragraph Usage")
+            p
+              | [[userInput]] is an important topic - many people have very strong opinions when it comes to
+              | [[userInput]], up to the point where it has divided families.
+              | In fact, new national legislation seeks to overhaul the approach to [[userInput]], with other countries
+              | intently watching the decision that will soon be made.

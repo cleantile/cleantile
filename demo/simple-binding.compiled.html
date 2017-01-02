@@ -15469,4 +15469,7 @@ body {
 cleantile-container {
   height: 50%;
 }
-</style></div><template is="dom-bind"><cleantile-container><cleantile-split><cleantile-pane><cleantile-tabs></cleantile-tabs><cleantile-blank-view name="Input"><p>Type some stuff in the input box:</p><input value="{{userInput::input}}"></cleantile-blank-view></cleantile-pane><cleantile-pane><cleantile-tabs></cleantile-tabs><cleantile-blank-view name="Output [[userInput]]"><p>This box should update as you type:</p><input value="[[userInput]]" disabled="disabled"></cleantile-blank-view></cleantile-pane></cleantile-split></cleantile-container></template></body></html>
+</style></div><template is="dom-bind"><cleantile-container><cleantile-split><cleantile-pane><cleantile-tabs></cleantile-tabs><cleantile-blank-view name="Input"><p>Type some stuff in the input box:</p><input type="text" value="{{userInput::input}}"></cleantile-blank-view></cleantile-pane><cleantile-pane><cleantile-tabs></cleantile-tabs><cleantile-blank-view name="Output [[userInput]]" active="active"><p>This box should update as you type:</p><input type="text" value="[[userInput]]" disabled="disabled"></cleantile-blank-view><cleantile-blank-view name="Paragraph Usage"><p>[[userInput]] is an important topic - many people have very strong opinions when it comes to
+[[userInput]], up to the point where it has divided families.
+In fact, new national legislation seeks to overhaul the approach to [[userInput]], with other countries
+intently watching the decision that will soon be made.</p></cleantile-blank-view></cleantile-pane></cleantile-split></cleantile-container></template></body></html>
