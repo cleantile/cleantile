@@ -8,7 +8,7 @@ release.
 [![Sauce Labs ](https://saucelabs.com/browser-matrix/codelenny-cleantile.svg)](https://saucelabs.com/u/codelenny-cleantile)
 
 ## Guide
-*This is not extensive documentation.  See [cleantile.github.io][] for the full documentation.*
+*This is not extensive documentation.  See [cleantile.codelenny.com][] for the full documentation.*
 
 Most of the examples in this guide will demonstrate Clean Tile being used in an integrated development environment.
 Fictitious elements such as `<file-editor>` are used as filler content.
@@ -185,5 +185,5 @@ once.  A proposed overlay would allow manipulating the layout at a higher level.
 [Polymer]: https://www.polymer-project.org/1.0/
 [polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
 
-[cleantile.github.io]: https://cleantile.github.io/cleantile/index.html
-[`<cleantile-pane>`]: https://cleantile.github.io/cleantile/index.html#cleantile-pane
+[cleantile.codelenny.com]: http://cleantile.codelenny.com/
+[`<cleantile-pane>`]: https://cleantile.codelenny.com/#cleantile-pane
