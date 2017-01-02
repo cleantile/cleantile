@@ -1,0 +1,39 @@
+- var opts = {title: "Clean Tile Pane", path: "../../"}
+include "../lib/demo" exposing opts
+
+append imports
+  link(rel="import", href="../container/cleantile-container.html")
+  link(rel="import", href="../split/cleantile-split.html")
+  link(rel="import", href="../pane/cleantile-pane.html")
+  link(rel="import", href="../tabs/cleantile-tabs.html")
+  link(rel="import", href="./blank-view/cleantile-blank-view.html")
+
+replace style
+  style(is="custom-style")
+    :plain-stylus
+      body
+        margin 0
+        font-family "Roboto", "Noto", sans-serif
+        background-color #eee
+      html, body
+        width 100%
+        height 100%
+      cleantile-container
+        height 50%
+
+append body
+  template(is="dom-bind")
+    cleantile-container
+      cleantile-split
+        cleantile-pane
+          cleantile-tabs
+          cleantile-blank-view(name="Input")
+            p
+              | Type some stuff in the input box:
+            input(value="{{userInput::input}}")
+        cleantile-pane
+          cleantile-tabs
+          cleantile-blank-view(name="Output [[userInput]]")
+            p
+              | This box should update as you type:
+            input(value="[[userInput]]", disabled)

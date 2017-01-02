@@ -1,0 +1,16 @@
+- var id={id: "cleantile-blank-view", path: "../../../"};
+include "../../lib/tag" exposing id
+
+append imports
+  link(rel="import", href="../../view-behavior/cleantile-view-behavior.html")
+
+replace template
+  content
+
+replace script
+  :coffeescript
+    Polymer
+      is: "cleantile-blank-view"
+      behaviors: [CleanTile.ViewBehavior]
+      ready: ->
+        @name = "Blank View"

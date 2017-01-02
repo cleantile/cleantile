@@ -17165,8 +17165,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   z-index: 15;
 }
 #contents ::content > cleantile-tabs ~ :not(cleantile-tabs) {
-  top: var(--cleantile-tabs-height, 20px);
-  height: calc(100% - var(--cleantile-tabs-height, 20px));
+  top: var(--cleantile-tabs-height, 30px);
+  height: calc(100% - var(--cleantile-tabs-height, 30px));
 }
 #contents ::content > :not(cleantile-tabs)[active] {
   z-index: 10;
@@ -17296,7 +17296,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (this.views[i].element.set) {
         return this.views[i].element.set("active", true);
       } else {
-        console.log("Element doesn't have '.set', setting attribute");
         return this.views[i].element.setAttribute("active", "active");
       }
     }

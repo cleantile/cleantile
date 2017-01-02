@@ -64,11 +64,13 @@ buildDemos = (opts) ->
     .all [
       buildTags opts
       compileTemplate opts, "demo/text-view", "text-view"
+      compileTemplate opts, "demo/blank-view", "blank-view"
     ]
     .then ->
       Promise.all [
         compileDemo opts, "demo/pane"
         compileDemo opts, "demo/split"
+        compileDemo opts, "demo/simple-binding"
         compileDemo opts, "tabs/demo/pane-tabs"
         compileDemo opts, "tabs/demo/split-tabs"
       ]
