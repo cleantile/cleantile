@@ -38,6 +38,7 @@
     "web-component-tester": "4.3.1",
     "@polymer/test-fixture": "^0.0.3",
     "glob-promise": "^3.1.0",
-    "child-process-promise": "^2.2.0"
+    "child-process-promise": "^2.2.0",
+    "@polymer/iron-component-page": "^0.0.3"
   }
 }

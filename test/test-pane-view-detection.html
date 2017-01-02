@@ -17157,7 +17157,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   @license
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
---><dom-module id="cleantile-pane" assetpath="../pane/"><template><style type="text/css">
+--><!--
+`<cleantile-pane>` displays a set of application-specific pages.
+
+    <cleantile-pane>
+      <file-editor file="README.md" syntax="markdown"></file-editor>
+      <file-editor file="LICENSE" syntax="text"></file-editor>
+    </cleantile-pane>
+
+@element cleantile-pane
+ --><dom-module id="cleantile-pane" assetpath="../pane/"><template><style type="text/css">
 :host {
   display: block;
   width: 100%;
@@ -17202,6 +17211,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   Polymer({
     is: "cleantile-pane",
     properties: {
+
+      /**
+Lists the **views** inside this pane.
+
+@type [{element: HTMLElement, name: String, active: Boolean}]
+       */
       views: {
         type: Array,
         notify: true,
@@ -17212,6 +17227,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       "changed-name": "changed-name",
       "changed-active": "changed-active"
     },
+
+    /**
+Manually refreshes `this.views`, the list of views inside this pane.  Uses low-level DOM queries.
+     */
     refreshList: function() {
       var active, child, j, len, ref, ref1, views;
       views = [];
@@ -17239,6 +17258,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return this.activate(active);
       }
     },
+
+    /**
+Manually finds a `cleantile-tabs` element inside this pane, if one exists.
+     */
     refreshTabs: function() {
       var tabs;
       if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
@@ -17251,6 +17274,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.refreshList();
       return this.refreshTabs();
     },
+
+    /**
+Listens to view name changes, and updates `this.views`.  If a `cleantile-tabs` element has been found in this pane
+view, also updates the list of views inside `cleantile-tabs`.
+     */
     "changed-name": function(e) {
       var child, i, j, len, ref;
       if (!this.views) {
@@ -17271,6 +17299,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       return console.log("Couldn't find child to update name.");
     },
+
+    /**
+Listens to view `active` changes, and updates `this.views`.  If a `cleantile-tabs` element has been found in this
+pane view, also updates the list of views inside `cleantile-tabs`.
+     */
     "changed-active": function(e) {
       var child, i, j, len, ref;
       if (!this.views) {
@@ -17292,9 +17325,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return console.log("Couldn't find child to update active status.");
     },
 
-    /*
-    Activate a specific view
-    @param [Integer] i the view to activate
+    /**
+Activate a specific view
+
+@param [Integer] i the view to activate
      */
     activate: function(i) {
       var el, j, len, ref;

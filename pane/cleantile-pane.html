@@ -7,7 +7,16 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-pane"><template><style type="text/css">
+--><link rel="import" href="../../polymer/polymer.html"/><!--
+`<cleantile-pane>` displays a set of application-specific pages.
+
+    <cleantile-pane>
+      <file-editor file="README.md" syntax="markdown"></file-editor>
+      <file-editor file="LICENSE" syntax="text"></file-editor>
+    </cleantile-pane>
+
+@element cleantile-pane
+ --><dom-module id="cleantile-pane"><template><style type="text/css">
 :host {
   display: block;
   width: 100%;
@@ -52,6 +61,12 @@
   Polymer({
     is: "cleantile-pane",
     properties: {
+
+      /**
+Lists the **views** inside this pane.
+
+@type [{element: HTMLElement, name: String, active: Boolean}]
+       */
       views: {
         type: Array,
         notify: true,
@@ -62,6 +77,10 @@
       "changed-name": "changed-name",
       "changed-active": "changed-active"
     },
+
+    /**
+Manually refreshes `this.views`, the list of views inside this pane.  Uses low-level DOM queries.
+     */
     refreshList: function() {
       var active, child, j, len, ref, ref1, views;
       views = [];
@@ -89,6 +108,10 @@
         return this.activate(active);
       }
     },
+
+    /**
+Manually finds a `cleantile-tabs` element inside this pane, if one exists.
+     */
     refreshTabs: function() {
       var tabs;
       if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
@@ -101,6 +124,11 @@
       this.refreshList();
       return this.refreshTabs();
     },
+
+    /**
+Listens to view name changes, and updates `this.views`.  If a `cleantile-tabs` element has been found in this pane
+view, also updates the list of views inside `cleantile-tabs`.
+     */
     "changed-name": function(e) {
       var child, i, j, len, ref;
       if (!this.views) {
@@ -121,6 +149,11 @@
       }
       return console.log("Couldn't find child to update name.");
     },
+
+    /**
+Listens to view `active` changes, and updates `this.views`.  If a `cleantile-tabs` element has been found in this
+pane view, also updates the list of views inside `cleantile-tabs`.
+     */
     "changed-active": function(e) {
       var child, i, j, len, ref;
       if (!this.views) {
@@ -142,9 +175,10 @@
       return console.log("Couldn't find child to update active status.");
     },
 
-    /*
-    Activate a specific view
-    @param [Integer] i the view to activate
+    /**
+Activate a specific view
+
+@param [Integer] i the view to activate
      */
     activate: function(i) {
       var el, j, len, ref;

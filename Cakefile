@@ -12,11 +12,44 @@ vulcanize = ->
   pkg = require "./package"
   path = require "path"
   Vulcanizer = require "vulcanize"
-  deps = {}
-  deps[p] = v for p, v of pkg.devDependencies
-  deps[p] = v for p, v of pkg.dependencies
-  redirects = []
-  for p, v of deps
+  deps = [
+    "hydrolysis"
+    "@polymer/iron-ajax"
+    "@polymer/iron-doc-viewer"
+    "@polymer/iron-flex-layout"
+    "@polymer/iron-selector"
+    "@polymer/paper-header-panel"
+    "@polymer/paper-styles"
+    "@polymer/paper-button"
+    "@polymer/marked-element"
+    "@polymer/paper-toolbar"
+    "@polymer/prism-element"
+    "@polymer/iron-meta"
+    "@polymer/paper-behaviors"
+    "@polymer/paper-material"
+    "@polymer/promise-polyfill"
+    "marked"
+    "@polymer/iron-behaviors"
+    "@polymer/paper-ripple"
+    "@polymer/iron-a11y-keys-behavior"
+    "@polymer/iron-iconset-svg"
+    "prism"
+  ]
+  deps.push p for p, v of pkg.devDependencies
+  deps.push p for p, v of pkg.dependencies
+  redirects = [
+    "#{path.resolve "../iron-icon/s/iron-icons.html"}|#{__dirname}/node_modules/@polymer/iron-icons/iron-icons.html"
+    "#{path.resolve "../iron-icons/et-svg/iron-iconset-svg.html"}|#{__dirname}/node_modules/@polymer/iron-iconset-svg/iron-iconset-svg.html"
+    "#{path.resolve "../iron-icons/iron-icons.html"}|#{__dirname}/node_modules/@polymer/iron-icons/iron-icons.html"
+    "#{path.resolve "../iron-icon/iron-icon.html"}|#{__dirname}/node_modules/@polymer/iron-icon/iron-icon.html"
+    "#{__dirname}/node_modules/prism/themes/prism.css|#{__dirname}/node_modules/prismjs-package/themes/prism.css"
+    "#{path.resolve "../prism/prism.js"}|#{__dirname}/node_modules/prismjs-package/lib/prism.js"
+  ]
+  try
+    fs.symlinkSync "#{__dirname}/node_modules/prismjs-package", "#{__dirname}/node_modules/prism"
+  catch err
+    yes
+  for p in deps
     redirects.push "#{path.resolve "../"+p}|#{__dirname}/node_modules/#{p}"
     if p.indexOf("@") is 0
       plain = p.replace(/^\@[^\/]+\//, "")
@@ -37,7 +70,11 @@ task "all", (opts) ->
 all = (opts) ->
   packageJSON opts
     .then ->
+      buildTags opts
+    .then ->
       Promise.all [
+        tagIndex opts
+        docIndex opts
         buildDemos opts
         buildTests opts
       ]
@@ -55,7 +92,42 @@ buildTags = (opts) ->
   builds = for tag in tags
     compileTemplate opts, tag, tag
   Promise.all builds
-    
+
+task "docs", "Build documentation", (opts) ->
+  Promise.join [
+    tagIndex opts
+    docIndex opts
+  ]
+
+tagIndex = (opts) ->
+  tags = require "#{__dirname}/lib/tags"
+  ind = ""
+  for tag in tags
+    ind = """
+      #{ind}
+      <link rel="import" href="#{tag}/#{pkg.name}-#{tag}.html" />
+    """
+  fs
+    .writeFileAsync "#{__dirname}/cleantile.html", ind
+    .then ->
+      vulcan = vulcanize()
+      vulcan.processAsync "#{__dirname}/cleantile.html"
+    .then (html) -> fs.writeFileAsync "#{__dirname}/cleantile.compiled.html", html
+
+docIndex = (opts) ->
+  blade
+    .renderFileAsync "#{__dirname}/index.blade", {}
+    .then (html) -> fs.writeFileAsync "#{__dirname}/index.html", html
+    .then ->
+      vulcan = vulcanize()
+      vulcan.processAsync "#{__dirname}/index.html"
+        .then (html) ->
+          fs.writeFileAsync "#{__dirname}/index.html", html
+        .then ->
+          console.log "Vulcanized #{chalk.blue "index.html"}"
+    .catch (err) ->
+      console.log err
+
 task "demos:build", "Build all of the demos for CleanTile", (opts) ->
   buildDemos opts
 
@@ -130,13 +202,17 @@ plainStylus = (text, opts={}) ->
   ret
 
 compileTemplate = (opts, dir, tag) ->
+  b = "#{dir}/#{tag}.blade"
+  h = "#{dir}/#{pkg.name}-#{tag}.html"
+  c = "#{dir}/#{pkg.name}-#{tag}.compiled.html"
   blade
-    .renderFileAsync "#{__dirname}/#{dir}/#{tag}.blade", {}
+    .renderFileAsync "#{__dirname}/#{b}", {}
     .then (html) ->
-      fs.writeFileAsync "#{__dirname}/#{dir}/#{pkg.name}-#{tag}.html", html
+      html.replace /\n((?: |\t)+)\/\*\*(?:\n|.)+?\*\//g, (str, sp) ->
+        str.replace(///\n#{sp}///g, "\n").replace("\n/**", "\n#{sp}/**").replace("\n */", "\n#{sp} */")
+    .then (html) ->
+      fs.writeFileAsync "#{__dirname}/#{h}", html
     .then ->
-      b = "#{dir}/#{tag}.blade"
-      h = "#{dir}/#{pkg.name}-#{tag}.html"
       console.log "Compiled #{chalk.blue b} to #{chalk.blue h}"
 
 compileDemo = (opts, demo) ->
