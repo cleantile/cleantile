@@ -5,6 +5,7 @@ replace style
   :stylus
     :host
       display block
+      height unquote("var(--cleantile-tabs-height, 30px)")
 
 append imports
   link(rel="import", href="../tab/cleantile-tab.html")

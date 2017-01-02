@@ -18,16 +18,14 @@ replace style
     #contents
       @extend $fill
     #contents ::content > cleantile-tabs
-      tab-height = 50px
       position absolute
       top 0
       left 0
       width 100%
-      height tab-height
       z-index 15
       ~ :not(cleantile-tabs)
-        top tab-height
-        height "calc(100% - %s)" % tab-height
+        top unquote("var(--cleantile-tabs-height, 20px)")
+        height unquote("calc(100% - var(--cleantile-tabs-height, 20px))")
     #contents ::content > :not(cleantile-tabs)
       @extend $fill
       &[active]

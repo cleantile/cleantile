@@ -14961,12 +14961,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   top: 0;
   left: 0;
   width: 100%;
-  height: 50px;
   z-index: 15;
 }
 #contents ::content > cleantile-tabs ~ :not(cleantile-tabs) {
-  top: 50px;
-  height: calc(100% - 50px);
+  top: var(--cleantile-tabs-height, 20px);
+  height: calc(100% - var(--cleantile-tabs-height, 20px));
 }
 #contents ::content > :not(cleantile-tabs)[active] {
   z-index: 10;
@@ -15102,6 +15101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </script></dom-module><dom-module id="cleantile-tabs" assetpath="../"><template><style type="text/css">
 :host {
   display: block;
+  height: var(--cleantile-tabs-height, 30px);
 }
 
 </style><template is="dom-repeat" items="{{views}}"><cleantile-tab tab="{{item}}" on-tap="activate"></cleantile-tab></template><content></content></template><script type="text/javascript">
