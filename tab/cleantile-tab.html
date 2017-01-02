@@ -44,6 +44,13 @@
   right: -var(--cleantile-tab-trap-width, 10px);
   border-right: var(--cleantile-tab-trap-width, 10px) solid transparent;
 }
+:host[active] {
+  background-color: var(--cleantile-tab-active-fill, #FAFAFA);
+}
+:host[active]:before,
+:host[active]:after {
+  border-bottom-color: var(--cleantile-tab-active-fill, #FAFAFA);
+}
 .name {
   display: inline-block;
   padding-top: var(--cleantile-tab-text-pad-top, 5px);
@@ -56,6 +63,10 @@
     properties: {
       tab: {
         type: Object
+      },
+      active: {
+        type: Boolean,
+        reflectToAttribute: true
       }
     }
   });

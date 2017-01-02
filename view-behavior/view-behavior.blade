@@ -11,5 +11,10 @@ include "../lib/blade-warning"
         observer: '_nameChanged'
       active:
         type: Boolean
+        notify: yes
+        reflectToAttribute: yes
+        observer: '_activeChanged'
     _nameChanged: ->
       @fire "changed-name", @name
+    _activeChanged: ->
+      @fire "changed-active", @active

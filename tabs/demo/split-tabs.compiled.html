@@ -14991,7 +14991,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     },
     listeners: {
-      "changed-name": "changed-name"
+      "changed-name": "changed-name",
+      "changed-active": "changed-active"
     },
     refreshList: function() {
       var active, child, j, len, ref, ref1, views;
@@ -15005,7 +15006,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         views.push({
           element: child,
-          name: child.name
+          name: child.name,
+          active: child.active
         });
         if (child.active || child.getAttribute("active") === "active") {
           active = views.length - 1;
@@ -15051,6 +15053,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       return console.log("Couldn't find child to update name.");
     },
+    "changed-active": function(e) {
+      var child, i, j, len, ref;
+      if (!this.views) {
+        return;
+      }
+      ref = this.views;
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        child = ref[i];
+        if (!(e.target === child.element)) {
+          continue;
+        }
+        e.preventDefault();
+        this.set(["views", i, "active"], e.detail);
+        if (this.tabs) {
+          this.tabs.set(["views", i, "active"], e.detail);
+        }
+        return;
+      }
+      return console.log("Couldn't find child to update active status.");
+    },
 
     /*
     Activate a specific view
@@ -15064,9 +15086,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ref = this.$.contents.querySelectorAll("#contents > [active]");
       for (j = 0, len = ref.length; j < len; j++) {
         el = ref[j];
-        el.removeAttribute("active");
+        if (el.set) {
+          el.set("active", false);
+        } else {
+          el.removeAttribute("active");
+        }
       }
-      return this.views[i].element.setAttribute("active", "active");
+      if (this.views[i].element.set) {
+        return this.views[i].element.set("active", true);
+      } else {
+        console.log("Element doesn't have '.set', setting attribute");
+        return this.views[i].element.setAttribute("active", "active");
+      }
     }
   });
 
@@ -15117,6 +15148,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   right: -var(--cleantile-tab-trap-width, 10px);
   border-right: var(--cleantile-tab-trap-width, 10px) solid transparent;
 }
+:host[active] {
+  background-color: var(--cleantile-tab-active-fill, #FAFAFA);
+}
+:host[active]:before,
+:host[active]:after {
+  border-bottom-color: var(--cleantile-tab-active-fill, #FAFAFA);
+}
 .name {
   display: inline-block;
   padding-top: var(--cleantile-tab-text-pad-top, 5px);
@@ -15129,6 +15167,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     properties: {
       tab: {
         type: Object
+      },
+      active: {
+        type: Boolean,
+        reflectToAttribute: true
       }
     }
   });
@@ -15141,7 +15183,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   height: var(--cleantile-tabs-height, 30px);
 }
 
-</style><template is="dom-repeat" items="{{views}}"><cleantile-tab tab="{{item}}" on-tap="activate"></cleantile-tab></template><content></content></template><script type="text/javascript">
+</style><template is="dom-repeat" items="{{views}}"><cleantile-tab tab="{{item}}" active="{{item.active}}" on-tap="activate"></cleantile-tab></template><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
     is: "cleantile-tabs",
@@ -15196,11 +15238,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         observer: '_nameChanged'
       },
       active: {
-        type: Boolean
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true,
+        observer: '_activeChanged'
       }
     },
     _nameChanged: function() {
       return this.fire("changed-name", this.name);
+    },
+    _activeChanged: function() {
+      return this.fire("changed-active", this.active);
     }
   };
 

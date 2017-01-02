@@ -22,11 +22,17 @@
         observer: '_nameChanged'
       },
       active: {
-        type: Boolean
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true,
+        observer: '_activeChanged'
       }
     },
     _nameChanged: function() {
       return this.fire("changed-name", this.name);
+    },
+    _activeChanged: function() {
+      return this.fire("changed-active", this.active);
     }
   };
 

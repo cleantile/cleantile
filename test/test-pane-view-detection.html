@@ -17209,7 +17209,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     },
     listeners: {
-      "changed-name": "changed-name"
+      "changed-name": "changed-name",
+      "changed-active": "changed-active"
     },
     refreshList: function() {
       var active, child, j, len, ref, ref1, views;
@@ -17223,7 +17224,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         views.push({
           element: child,
-          name: child.name
+          name: child.name,
+          active: child.active
         });
         if (child.active || child.getAttribute("active") === "active") {
           active = views.length - 1;
@@ -17269,6 +17271,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       return console.log("Couldn't find child to update name.");
     },
+    "changed-active": function(e) {
+      var child, i, j, len, ref;
+      if (!this.views) {
+        return;
+      }
+      ref = this.views;
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        child = ref[i];
+        if (!(e.target === child.element)) {
+          continue;
+        }
+        e.preventDefault();
+        this.set(["views", i, "active"], e.detail);
+        if (this.tabs) {
+          this.tabs.set(["views", i, "active"], e.detail);
+        }
+        return;
+      }
+      return console.log("Couldn't find child to update active status.");
+    },
 
     /*
     Activate a specific view
@@ -17282,9 +17304,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ref = this.$.contents.querySelectorAll("#contents > [active]");
       for (j = 0, len = ref.length; j < len; j++) {
         el = ref[j];
-        el.removeAttribute("active");
+        if (el.set) {
+          el.set("active", false);
+        } else {
+          el.removeAttribute("active");
+        }
       }
-      return this.views[i].element.setAttribute("active", "active");
+      if (this.views[i].element.set) {
+        return this.views[i].element.set("active", true);
+      } else {
+        console.log("Element doesn't have '.set', setting attribute");
+        return this.views[i].element.setAttribute("active", "active");
+      }
     }
   });
 
@@ -17313,11 +17344,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         observer: '_nameChanged'
       },
       active: {
-        type: Boolean
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true,
+        observer: '_activeChanged'
       }
     },
     _nameChanged: function() {
       return this.fire("changed-name", this.name);
+    },
+    _activeChanged: function() {
+      return this.fire("changed-active", this.active);
     }
   };
 

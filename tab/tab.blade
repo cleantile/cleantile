@@ -36,6 +36,10 @@ replace style
       &:after
         right unquote("-var(--cleantile-tab-trap-width, 10px)")
         border-right unquote("var(--cleantile-tab-trap-width, 10px) solid transparent")
+    :host[active]
+      background-color unquote("var(--cleantile-tab-active-fill, #FAFAFA)")
+      &:before, &:after
+        border-bottom-color unquote("var(--cleantile-tab-active-fill, #FAFAFA)")
     .name
       display inline-block
       padding-top unquote("var(--cleantile-tab-text-pad-top, 5px)")
@@ -50,3 +54,6 @@ replace script
       properties:
         tab:
           type: Object
+        active:
+          type: Boolean
+          reflectToAttribute: yes
