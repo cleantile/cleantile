@@ -89,7 +89,7 @@ inside a `<cleantile-container>`.
 
 #### cleantile-tabs
 
-:soon: This element is planned for the next release.
+:soon: This element is prototyped, and will be included in the next release.
 
 `<cleantile-tabs>` adds an automatically generated tab bar to `<cleantile-pane>` elements, allowing the user to switch
 between the views inside a pane.
