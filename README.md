@@ -140,7 +140,10 @@ optional event listeners are not included in the behavior definition.
           is: "wrapper-file-preview",
           behaviors: [CleanTile.ViewBehavior],
           ready: function() {
-            this.title = "File Preview";
+            // this.name can be preset via `<wrapper-file-preview name="File: index.html">`
+            if(!this.name) {
+              this.name = "File Preview";
+            }
           }
           // Can listen to Clean Tile events (like resize) by adding event listeners
         })
