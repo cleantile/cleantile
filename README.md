@@ -8,7 +8,7 @@ release.
 [![Sauce Labs ](https://saucelabs.com/browser-matrix/codelenny-cleantile.svg)](https://saucelabs.com/u/codelenny-cleantile)
 
 ## Guide
-*This is not extensive documentation.  See [COMING SOON] for the full documentation.*
+*This is not extensive documentation.  See [cleantile.github.io][] for the full documentation.*
 
 Most of the examples in this guide will demonstrate Clean Tile being used in an integrated development environment.
 Fictitious elements such as `<file-editor>` are used as filler content.
@@ -19,7 +19,7 @@ Fictitious elements such as `<file-editor>` are used as filler content.
 
 :soon: This element is prototyped, and will be included in the next release.
 
-`<cleantile-pane>` is one of the essential items for Clean Tile.  A pane defines a space where dynamic application
+[`<cleantile-pane>`][] is one of the essential items for Clean Tile.  A pane defines a space where dynamic application
 content can be inserted.  Inserted application contents are called **views**.
 
 Clean Tile is designed with tabs in mind.  If you are using tabs, you can insert multiple **views** into a single pane.
@@ -184,3 +184,6 @@ once.  A proposed overlay would allow manipulating the layout at a higher level.
 
 [Polymer]: https://www.polymer-project.org/1.0/
 [polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
+
+[cleantile.github.io]: https://cleantile.github.io/cleantile/index.html
+[`<cleantile-pane>`]: https://cleantile.github.io/cleantile/index.html#cleantile-pane
