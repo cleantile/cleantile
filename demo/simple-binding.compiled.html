@@ -15449,7 +15449,7 @@ A human-readable name identifying this tab.
     is: "cleantile-blank-view",
     behaviors: [CleanTile.ViewBehavior],
     ready: function() {
-      return this.name = "Blank View";
+      return this.name != null ? this.name : this.name = "Blank View";
     }
   });
 

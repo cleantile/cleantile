@@ -13,4 +13,4 @@ replace script
       is: "cleantile-blank-view"
       behaviors: [CleanTile.ViewBehavior]
       ready: ->
-        @name = "Blank View"
+        @name ?= "Blank View"

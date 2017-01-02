@@ -27,7 +27,7 @@ replace script
       is: "cleantile-text-view"
       behaviors: [CleanTile.ViewBehavior]
       ready: ->
-        @name = "Text View"
+        @name ?= "Text View"
       done: (e) ->
         return if @name.indexOf("done") > -1
         @set "name", "#{@name} (done)"

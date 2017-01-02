@@ -15383,7 +15383,7 @@ massa.</p><button on-click="done">Mark as Done</button></template><script type="
     is: "cleantile-text-view",
     behaviors: [CleanTile.ViewBehavior],
     ready: function() {
-      return this.name = "Text View";
+      return this.name != null ? this.name : this.name = "Text View";
     },
     done: function(e) {
       if (this.name.indexOf("done") > -1) {
