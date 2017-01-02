@@ -4,11 +4,44 @@ include "../lib/tag" exposing id
 replace style
   :stylus
     :host
-      display inline
-      
+      position relative
+      display inline-block
+      /* If calc() isn't supported to add a margin above, default to filling the entire space */
+      margin-top 0px
+      height unquote("var(--cleantile-tabs-height, 30px)")
+      margin-top unquote("calc(0px + var(--cleantile-tabs-padding, 3px))")
+      height unquote("calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px))")
+      background-color unquote("var(--cleantile-tab-fill, #E0E0E0)")
+      font-size unquote("var(--cleantile-tab-text-size, 10pt)")
+      padding-left unquote("var(--cleantile-tab-pad-horiz, 10px)")
+      padding-right unquote("var(--cleantile-tab-pad-horiz, 10px)")
+      padding-top unquote("var(--cleantile-tab-pad-top, 2px)")
+      padding-bottom unquote("var(--cleantile-tab-pad-bottom, 2px)")
+      margin-left unquote("var(--cleantile-tab-trap-width, 10px)")
+      margin-right unquote("var(--cleantile-tab-trap-width, 10px)")
+      &:before, &:after
+        content " "
+        display block
+        position absolute
+        top 0
+        //height unquote("var(--cleantile-tabs-height, 30px)")
+        //height unquote("calc(calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px)) + calc(var(--cleantile-tab-pad-top, 2px) + var(--cleantile-tab-pad-bottom, 2px)))")
+        border-bottom-width unquote("var(--cleantile-tabs-height, 30px)")
+        border-bottom-width unquote("calc(calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px)) + calc(var(--cleantile-tab-pad-top, 2px) + var(--cleantile-tab-pad-bottom, 2px)))")
+        border-bottom-color unquote("var(--cleantile-tab-fill, #E0E0E0)")
+        border-bottom-style solid
+      &:before
+        left unquote("-var(--cleantile-tab-trap-width, 10px)")
+        border-left unquote("var(--cleantile-tab-trap-width, 10px) solid transparent")
+      &:after
+        right unquote("-var(--cleantile-tab-trap-width, 10px)")
+        border-right unquote("var(--cleantile-tab-trap-width, 10px) solid transparent")
+    .name
+      display inline-block
+      padding-top unquote("var(--cleantile-tab-text-pad-top, 5px)")
 
 replace template
-  span [[tab.name]]
+  span.name [[tab.name]]
 
 replace script
   :coffeescript

@@ -15027,10 +15027,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><dom-module id="cleantile-tab" assetpath="../../tab/"><template><style type="text/css">
 :host {
-  display: inline;
+  position: relative;
+  display: inline-block;
+/* If calc() isn't supported to add a margin above, default to filling the entire space */
+  margin-top: 0px;
+  height: var(--cleantile-tabs-height, 30px);
+  margin-top: calc(0px + var(--cleantile-tabs-padding, 3px));
+  height: calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px));
+  background-color: var(--cleantile-tab-fill, #E0E0E0);
+  font-size: var(--cleantile-tab-text-size, 10pt);
+  padding-left: var(--cleantile-tab-pad-horiz, 10px);
+  padding-right: var(--cleantile-tab-pad-horiz, 10px);
+  padding-top: var(--cleantile-tab-pad-top, 2px);
+  padding-bottom: var(--cleantile-tab-pad-bottom, 2px);
+  margin-left: var(--cleantile-tab-trap-width, 10px);
+  margin-right: var(--cleantile-tab-trap-width, 10px);
+}
+:host:before,
+:host:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  border-bottom-width: var(--cleantile-tabs-height, 30px);
+  border-bottom-width: calc(calc(var(--cleantile-tabs-height, 30px) - var(--cleantile-tabs-padding, 3px)) + calc(var(--cleantile-tab-pad-top, 2px) + var(--cleantile-tab-pad-bottom, 2px)));
+  border-bottom-color: var(--cleantile-tab-fill, #E0E0E0);
+  border-bottom-style: solid;
+}
+:host:before {
+  left: -var(--cleantile-tab-trap-width, 10px);
+  border-left: var(--cleantile-tab-trap-width, 10px) solid transparent;
+}
+:host:after {
+  right: -var(--cleantile-tab-trap-width, 10px);
+  border-right: var(--cleantile-tab-trap-width, 10px) solid transparent;
+}
+.name {
+  display: inline-block;
+  padding-top: var(--cleantile-tab-text-pad-top, 5px);
 }
 
-</style><span>[[tab.name]]</span></template><script type="text/javascript">
+</style><span class="name">[[tab.name]]</span></template><script type="text/javascript">
 (function() {
   Polymer({
     is: "cleantile-tab",
