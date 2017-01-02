@@ -4796,6 +4796,36 @@ document.addEventListener('DOMContentLoaded', function() {
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><!--
+`<cleantile-container>` holds [`<cleantile-pane>`][] and [`<cleantile-split>`][] elements, and provides an API for
+querying tabs inside and inserting new elements.
+
+#### Usage with <cleantile-pane>
+
+    <cleantile-container>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-container>
+
+#### Usage with <cleantile-split>
+
+    <cleantile-container>
+      <cleantile-split>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+      </cleantile-split>
+    </cleantile-container>
+
+[`<cleantile-pane>`]: #cleantile-pane
+[`<cleantile-split>`]: #cleantile-split
+ --><!--
 @license
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -17148,7 +17178,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
-    is: "cleantile-container"
+    is: "cleantile-container",
+    properties: {
+      test: {
+        type: Boolean
+      }
+    }
   });
 
 }).call(this);
@@ -17157,7 +17192,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   @license
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
---><dom-module id="cleantile-split" assetpath="../"><template><style type="text/css">
+--><!--
+`<cleantile-split>` divides the window into two different regions that can hold either `<cleantile-split>` or
+[`<cleantile-pane>`](#cleantile-pane) elements.
+
+    <cleantile-split direction="horizontal">
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-split>
+ --><dom-module id="cleantile-split" assetpath="../"><template><style type="text/css">
 :host,
 #contents {
   display: block;
@@ -17198,6 +17247,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   Polymer({
     is: "cleantile-split",
     properties: {
+
+      /**
+Determines if the elements are nested above each other (`vertical`) or next to each other (`horizontal`).
+Defaults to `horizontal`.
+       */
       direction: {
         type: "String",
         value: "horizontal",
@@ -17213,14 +17267,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><!--
-`<cleantile-pane>` displays a set of application-specific pages.
+`<cleantile-pane>` displays a set of application-specific pages, called **views**.
 
     <cleantile-pane>
       <file-editor file="README.md" syntax="markdown"></file-editor>
       <file-editor file="LICENSE" syntax="text"></file-editor>
     </cleantile-pane>
 
-@element cleantile-pane
+See [`CleanTile.ViewBehavior`][] for the required properties and methods of views.
+
+[`CleanTile.ViewBehavior`]: #CleanTile.ViewBehavior
  --><dom-module id="cleantile-pane" assetpath="../../pane/"><template><style type="text/css">
 :host {
   display: block;
@@ -17423,14 +17479,54 @@ Activate a specific view
     window.CleanTile = {};
   }
 
-  window.CleanTile.ViewBehavior = {
+
+  /**
+Describes a view that can be inserted into [`<cleantile-pane>`][] elements.
+
+Use in your own elements, or wrap third-party/legacy elements.
+
+    <dom-module id="wrapper-file-preview">
+      <template>
+        <file-preview></file-preview>
+      </template>
+      <script>
+        Polymer({
+          is: "wrapper-file-preview",
+          behaviors: [CleanTile.ViewBehavior],
+          ready: function() {
+            this.title = "File Preview";
+          }
+          // Can listen to Clean Tile events (like resize) by adding event listeners
+        })
+      </ script >
+    </dom-module>
+
+Wrappers can be defined inside `<body>` instead of being in a seperate file, although there are some
+[considerations][polymer-doc-def] to keep in mind when doing so.
+Wrap `Polymer({` inside `HTMLImports.whenReady(function() {` when using the above code inside `<body>`.
+
+[`<cleantile-pane>`]: #cleantile-pane
+[polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
+
+@polymerBehavior
+   */
+
+  CleanTile.ViewBehavior = {
     properties: {
+
+      /**
+A human-readable name identifying this tab.
+       */
       name: {
         type: String,
         notify: true,
         reflectToAttribute: true,
         observer: '_nameChanged'
       },
+
+      /**
+`true` when this view is in view.
+       */
       active: {
         type: Boolean,
         notify: true,

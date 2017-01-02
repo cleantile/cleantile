@@ -3,12 +3,16 @@ include "../lib/tag" exposing id
 
 replace docs
   /**
-`<cleantile-pane>` displays a set of application-specific pages.
+`<cleantile-pane>` displays a set of application-specific pages, called **views**.
 
     <cleantile-pane>
       <file-editor file="README.md" syntax="markdown"></file-editor>
       <file-editor file="LICENSE" syntax="text"></file-editor>
     </cleantile-pane>
+
+See [`CleanTile.ViewBehavior`][] for the required properties and methods of views.
+
+[`CleanTile.ViewBehavior`]: #CleanTile.ViewBehavior
   */
 
 replace style

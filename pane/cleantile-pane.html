@@ -8,14 +8,16 @@
 
   [Blade]: https://github.com/bminer/node-blade
 --><link rel="import" href="../../polymer/polymer.html"/><!--
-`<cleantile-pane>` displays a set of application-specific pages.
+`<cleantile-pane>` displays a set of application-specific pages, called **views**.
 
     <cleantile-pane>
       <file-editor file="README.md" syntax="markdown"></file-editor>
       <file-editor file="LICENSE" syntax="text"></file-editor>
     </cleantile-pane>
 
-@element cleantile-pane
+See [`CleanTile.ViewBehavior`][] for the required properties and methods of views.
+
+[`CleanTile.ViewBehavior`]: #CleanTile.ViewBehavior
  --><dom-module id="cleantile-pane"><template><style type="text/css">
 :host {
   display: block;

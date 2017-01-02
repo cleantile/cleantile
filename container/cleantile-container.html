@@ -7,7 +7,37 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-container"><template><style type="text/css">
+--><link rel="import" href="../../polymer/polymer.html"/><!--
+`<cleantile-container>` holds [`<cleantile-pane>`][] and [`<cleantile-split>`][] elements, and provides an API for
+querying tabs inside and inserting new elements.
+
+#### Usage with <cleantile-pane>
+
+    <cleantile-container>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-container>
+
+#### Usage with <cleantile-split>
+
+    <cleantile-container>
+      <cleantile-split>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+      </cleantile-split>
+    </cleantile-container>
+
+[`<cleantile-pane>`]: #cleantile-pane
+[`<cleantile-split>`]: #cleantile-split
+ --><dom-module id="cleantile-container"><template><style type="text/css">
 :host {
   display: block;
 }
@@ -15,7 +45,12 @@
 </style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
-    is: "cleantile-container"
+    is: "cleantile-container",
+    properties: {
+      test: {
+        type: Boolean
+      }
+    }
   });
 
 }).call(this);

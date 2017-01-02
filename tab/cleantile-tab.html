@@ -7,7 +7,27 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><dom-module id="cleantile-tab"><template><style type="text/css">
+--><link rel="import" href="../../polymer/polymer.html"/><!--
+`<cleantile-tab>` is used inside [`<cleantile-tabs>`][] to represent the views in a [`<cleantile-pane>`][].
+
+Tabs are automatically inserted, and shouldn't be manually created.
+
+### Styling
+
+Custom Property | Description | Default
+--------------- | ----------- | -------
+`--cleantile-tabs-height` | The space set aside above views for tabs.  Tabs fill the space with a small margin. | `30px`
+`--cleantile-tabs-padding` | A slight margin above individual tabs. | `3px`
+`--cleantile-tab-fill` | The default background color for inactive tabs. | `#E0E0E0`
+`--cleantile-tab-active-fill` | The background-color used for an active tab. | `#FAFAFA`
+`--cleantile-tab-text-size` | The `font-size` used for the name of the tab. | `10pt`
+`--cleantile-tab-pad-horiz` | Padding on either side of the tab name. | `10px`
+`--cleantile-tab-trap-width` | The width of the triangle on either side of the tab, making the tab trapezoidal. | `10px`
+`--cleantile-tab-text-pad-top` | Padding above the text inside the tab.  Helps center the text. | `5px`
+
+[`<cleantile-tabs>`]: #cleantile-tabs
+[`<cleantile-pane>`]: #cleantile-pane
+ --><dom-module id="cleantile-tab"><template><style type="text/css">
 :host {
   position: relative;
   display: inline-block;
@@ -59,9 +79,17 @@
   Polymer({
     is: "cleantile-tab",
     properties: {
+
+      /**
+All details of a view.  See [`<cleantile-pane>.views`](#cleantile-pane:property-views).
+       */
       tab: {
         type: Object
       },
+
+      /*
+      The `active` property of the view.  Used for styling.
+       */
       active: {
         type: Boolean,
         reflectToAttribute: true

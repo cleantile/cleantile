@@ -1,6 +1,23 @@
 - var id="cleantile-split"
 include "../lib/tag" exposing id
 
+replace docs
+  /**
+`<cleantile-split>` divides the window into two different regions that can hold either `<cleantile-split>` or
+[`<cleantile-pane>`](#cleantile-pane) elements.
+
+    <cleantile-split direction="horizontal">
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-split>
+  */
+
 replace style
   :stylus
     :host, #contents
@@ -40,6 +57,10 @@ replace script
     Polymer
       is: "cleantile-split"
       properties:
+        ###*
+        Determines if the elements are nested above each other (`vertical`) or next to each other (`horizontal`).
+        Defaults to `horizontal`.
+        ###
         direction:
           type: "String"
           value: "horizontal"

@@ -3,6 +3,36 @@
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><!--
+`<cleantile-container>` holds [`<cleantile-pane>`][] and [`<cleantile-split>`][] elements, and provides an API for
+querying tabs inside and inserting new elements.
+
+#### Usage with <cleantile-pane>
+
+    <cleantile-container>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-container>
+
+#### Usage with <cleantile-split>
+
+    <cleantile-container>
+      <cleantile-split>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+      </cleantile-split>
+    </cleantile-container>
+
+[`<cleantile-pane>`]: #cleantile-pane
+[`<cleantile-split>`]: #cleantile-split
+ --><!--
 @license
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -12355,7 +12385,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
-    is: "cleantile-container"
+    is: "cleantile-container",
+    properties: {
+      test: {
+        type: Boolean
+      }
+    }
   });
 
 }).call(this);
@@ -12365,14 +12400,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><!--
-`<cleantile-pane>` displays a set of application-specific pages.
+`<cleantile-pane>` displays a set of application-specific pages, called **views**.
 
     <cleantile-pane>
       <file-editor file="README.md" syntax="markdown"></file-editor>
       <file-editor file="LICENSE" syntax="text"></file-editor>
     </cleantile-pane>
 
-@element cleantile-pane
+See [`CleanTile.ViewBehavior`][] for the required properties and methods of views.
+
+[`CleanTile.ViewBehavior`]: #CleanTile.ViewBehavior
  --><dom-module id="cleantile-pane" assetpath="pane/"><template><style type="text/css">
 :host {
   display: block;
@@ -12565,7 +12602,21 @@ Activate a specific view
   @license
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
---><dom-module id="cleantile-split" assetpath="split/"><template><style type="text/css">
+--><!--
+`<cleantile-split>` divides the window into two different regions that can hold either `<cleantile-split>` or
+[`<cleantile-pane>`](#cleantile-pane) elements.
+
+    <cleantile-split direction="horizontal">
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-split>
+ --><dom-module id="cleantile-split" assetpath="split/"><template><style type="text/css">
 :host,
 #contents {
   display: block;
@@ -12606,6 +12657,11 @@ Activate a specific view
   Polymer({
     is: "cleantile-split",
     properties: {
+
+      /**
+Determines if the elements are nested above each other (`vertical`) or next to each other (`horizontal`).
+Defaults to `horizontal`.
+       */
       direction: {
         type: "String",
         value: "horizontal",
@@ -12620,7 +12676,27 @@ Activate a specific view
   @license
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
---><dom-module id="cleantile-tab" assetpath="tab/"><template><style type="text/css">
+--><!--
+`<cleantile-tab>` is used inside [`<cleantile-tabs>`][] to represent the views in a [`<cleantile-pane>`][].
+
+Tabs are automatically inserted, and shouldn't be manually created.
+
+### Styling
+
+Custom Property | Description | Default
+--------------- | ----------- | -------
+`--cleantile-tabs-height` | The space set aside above views for tabs.  Tabs fill the space with a small margin. | `30px`
+`--cleantile-tabs-padding` | A slight margin above individual tabs. | `3px`
+`--cleantile-tab-fill` | The default background color for inactive tabs. | `#E0E0E0`
+`--cleantile-tab-active-fill` | The background-color used for an active tab. | `#FAFAFA`
+`--cleantile-tab-text-size` | The `font-size` used for the name of the tab. | `10pt`
+`--cleantile-tab-pad-horiz` | Padding on either side of the tab name. | `10px`
+`--cleantile-tab-trap-width` | The width of the triangle on either side of the tab, making the tab trapezoidal. | `10px`
+`--cleantile-tab-text-pad-top` | Padding above the text inside the tab.  Helps center the text. | `5px`
+
+[`<cleantile-tabs>`]: #cleantile-tabs
+[`<cleantile-pane>`]: #cleantile-pane
+ --><dom-module id="cleantile-tab" assetpath="tab/"><template><style type="text/css">
 :host {
   position: relative;
   display: inline-block;
@@ -12672,9 +12748,17 @@ Activate a specific view
   Polymer({
     is: "cleantile-tab",
     properties: {
+
+      /**
+All details of a view.  See [`<cleantile-pane>.views`](#cleantile-pane:property-views).
+       */
       tab: {
         type: Object
       },
+
+      /*
+      The `active` property of the view.  Used for styling.
+       */
       active: {
         type: Boolean,
         reflectToAttribute: true
@@ -12688,7 +12772,30 @@ Activate a specific view
   @license
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
---><dom-module id="cleantile-tabs" assetpath="tabs/"><template><style type="text/css">
+--><!--
+`<cleantile-tabs>` adds controls to [`<cleantile-pane>`](#cleantile-pane) elements.
+
+    <cleantile-pane>
+      <cleantile-tabs></cleantile-tabs>
+      <file-editor file="README.md" syntax="markdown"></file-editor>
+      <file-editor file="LICENSE" syntax="text"></file-editor>
+    </cleantile-pane>
+
+Tabs ([`<cleantile-tab>`](#cleantile-tab)) are automatically created for each view inside the `<cleantile-pane>`, and
+are updated when the views change.
+
+### Styling
+
+Custom Property | Description | Default
+--------------- | ----------- | -------
+`--cleantile-tabs-height` | The space set aside above views for tabs.  Tabs fill the space with a small margin. | `30px`
+`--cleantile-tabs-background` | A background color used between tabs. | `#424242`
+
+See [`<cleantile-tab>`](#cleantile-tab) for styling properties that modify individual tabs.
+
+@demo tabs/demo/pane-tabs.compiled.html Tabs inside a Pane
+@demo tabs/demo/split-tabs.compiled.html Tabs inside a Split
+ --><dom-module id="cleantile-tabs" assetpath="tabs/"><template><style type="text/css">
 :host {
   display: block;
   height: var(--cleantile-tabs-height, 30px);
@@ -12700,6 +12807,12 @@ Activate a specific view
   Polymer({
     is: "cleantile-tabs",
     properties: {
+
+      /**
+A list of views inside the `<cleantile-pane>`, syncronized from `<cleantile-pane>`.
+
+See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more information.
+       */
       views: {
         type: Array
       }
@@ -12720,6 +12833,10 @@ Activate a specific view
       }
       return results;
     },
+
+    /**
+Activates views when the respective tab is clicked.
+     */
     activate: function(e) {
       return this.pane.activate(this.views.indexOf(e.model.item));
     }
@@ -12737,14 +12854,54 @@ Activate a specific view
     window.CleanTile = {};
   }
 
-  window.CleanTile.ViewBehavior = {
+
+  /**
+Describes a view that can be inserted into [`<cleantile-pane>`][] elements.
+
+Use in your own elements, or wrap third-party/legacy elements.
+
+    <dom-module id="wrapper-file-preview">
+      <template>
+        <file-preview></file-preview>
+      </template>
+      <script>
+        Polymer({
+          is: "wrapper-file-preview",
+          behaviors: [CleanTile.ViewBehavior],
+          ready: function() {
+            this.title = "File Preview";
+          }
+          // Can listen to Clean Tile events (like resize) by adding event listeners
+        })
+      </ script >
+    </dom-module>
+
+Wrappers can be defined inside `<body>` instead of being in a seperate file, although there are some
+[considerations][polymer-doc-def] to keep in mind when doing so.
+Wrap `Polymer({` inside `HTMLImports.whenReady(function() {` when using the above code inside `<body>`.
+
+[`<cleantile-pane>`]: #cleantile-pane
+[polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
+
+@polymerBehavior
+   */
+
+  CleanTile.ViewBehavior = {
     properties: {
+
+      /**
+A human-readable name identifying this tab.
+       */
       name: {
         type: String,
         notify: true,
         reflectToAttribute: true,
         observer: '_nameChanged'
       },
+
+      /**
+`true` when this view is in view.
+       */
       active: {
         type: Boolean,
         notify: true,

@@ -7,7 +7,30 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><link rel="import" href="../tab/cleantile-tab.html"/><dom-module id="cleantile-tabs"><template><style type="text/css">
+--><link rel="import" href="../../polymer/polymer.html"/><link rel="import" href="../tab/cleantile-tab.html"/><!--
+`<cleantile-tabs>` adds controls to [`<cleantile-pane>`](#cleantile-pane) elements.
+
+    <cleantile-pane>
+      <cleantile-tabs></cleantile-tabs>
+      <file-editor file="README.md" syntax="markdown"></file-editor>
+      <file-editor file="LICENSE" syntax="text"></file-editor>
+    </cleantile-pane>
+
+Tabs ([`<cleantile-tab>`](#cleantile-tab)) are automatically created for each view inside the `<cleantile-pane>`, and
+are updated when the views change.
+
+### Styling
+
+Custom Property | Description | Default
+--------------- | ----------- | -------
+`--cleantile-tabs-height` | The space set aside above views for tabs.  Tabs fill the space with a small margin. | `30px`
+`--cleantile-tabs-background` | A background color used between tabs. | `#424242`
+
+See [`<cleantile-tab>`](#cleantile-tab) for styling properties that modify individual tabs.
+
+@demo tabs/demo/pane-tabs.compiled.html Tabs inside a Pane
+@demo tabs/demo/split-tabs.compiled.html Tabs inside a Split
+ --><dom-module id="cleantile-tabs"><template><style type="text/css">
 :host {
   display: block;
   height: var(--cleantile-tabs-height, 30px);
@@ -19,6 +42,12 @@
   Polymer({
     is: "cleantile-tabs",
     properties: {
+
+      /**
+A list of views inside the `<cleantile-pane>`, syncronized from `<cleantile-pane>`.
+
+See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more information.
+       */
       views: {
         type: Array
       }
@@ -39,6 +68,10 @@
       }
       return results;
     },
+
+    /**
+Activates views when the respective tab is clicked.
+     */
     activate: function(e) {
       return this.pane.activate(this.views.indexOf(e.model.item));
     }

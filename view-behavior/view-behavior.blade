@@ -2,13 +2,49 @@ include "../lib/license"
 include "../lib/blade-warning"
 :coffeescript
   window.CleanTile ?= {}
-  window.CleanTile.ViewBehavior =
+  ###*
+  Describes a view that can be inserted into [`<cleantile-pane>`][] elements.
+  
+  Use in your own elements, or wrap third-party/legacy elements.
+  
+      <dom-module id="wrapper-file-preview">
+        <template>
+          <file-preview></file-preview>
+        </template>
+        <script>
+          Polymer({
+            is: "wrapper-file-preview",
+            behaviors: [CleanTile.ViewBehavior],
+            ready: function() {
+              this.title = "File Preview";
+            }
+            // Can listen to Clean Tile events (like resize) by adding event listeners
+          })
+        </ script >
+      </dom-module>
+  
+  Wrappers can be defined inside `<body>` instead of being in a seperate file, although there are some
+  [considerations][polymer-doc-def] to keep in mind when doing so.
+  Wrap `Polymer({` inside `HTMLImports.whenReady(function() {` when using the above code inside `<body>`.
+  
+  [`<cleantile-pane>`]: #cleantile-pane
+  [polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
+  
+  @polymerBehavior
+  ###
+  CleanTile.ViewBehavior =
     properties:
+      ###*
+      A human-readable name identifying this tab.
+      ###
       name:
         type: String
         notify: yes
         reflectToAttribute: yes
         observer: '_nameChanged'
+      ###*
+      `true` when this view is in view.
+      ###
       active:
         type: Boolean
         notify: yes

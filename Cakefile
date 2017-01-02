@@ -103,9 +103,8 @@ tagIndex = (opts) ->
   tags = require "#{__dirname}/lib/tags"
   ind = ""
   for tag in tags
-    ind = """
-      #{ind}
-      <link rel="import" href="#{tag}/#{pkg.name}-#{tag}.html" />
+    ind += """
+      <link rel="import" href="#{tag}/#{pkg.name}-#{tag}.html" />\n
     """
   fs
     .writeFileAsync "#{__dirname}/cleantile.html", ind
