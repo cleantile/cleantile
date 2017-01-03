@@ -13,6 +13,39 @@ release.
 
 See the [documentation][cleantile.codelenny.com] for demos.
 
+## Installation
+
+Clean Tile is cross-published on [NPM][] and [Bower][].
+
+As the Bower `polymer` package is named `@polymer/polymer` on NPM, either a symlink or [Vulcanize][] redirect is needed
+to make `node_modules/polymer` point to `node_modules/@polymer/polymer` for all NPM installs.
+
+```sh
+npm install --save cleantile
+cat node_modules/cleantile/pane/cleantile-pane.html # (same as in source)
+cat node_modules/cleantile/cleantile-pane.html # (shortcut)
+```
+
+```sh
+bower install cleantile/cleantile
+cat bower_components/cleantile/pane/cleantile-pane.html # (same as in source)
+cat bower_components/cleantile/cleantile-pane.html # (shortcut)
+```
+
+### Components
+
+To provide lightweight downloads, each element is published separately on NPM and Bower.
+
+```sh
+npm install --save @cleantile/pane
+cat node_modules/@cleantile/pane/cleantile-pane.html
+```
+
+```sh
+bower install cleantile/pane
+cat bower_components/cleantile-pane/cleantile-pane.html
+```
+
 ## Guide
 *This is not extensive documentation.  See [cleantile.codelenny.com][] for the full documentation.*
 
@@ -156,6 +189,10 @@ Splits can be manually resized, created, and deleted, but that can be tedious wh
 once.  A proposed overlay would allow manipulating the layout at a higher level.  A mockup is below.
 
 ![CleanTile rearrange mockup](rearrange.png)
+
+[NPM]: https://npmjs.com
+[Bower]: https://bower.io/
+[Vulcanize]: https://github.com/Polymer/vulcanize
 
 [Polymer]: https://www.polymer-project.org/1.0/
 [polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
