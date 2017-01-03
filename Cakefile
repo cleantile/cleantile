@@ -69,10 +69,13 @@ task "docs", "Build documentation", (opts) ->
     docIndex opts
   ]
 
-{packageJSON} = section "packageJSON"
+{packageJSON, bowerJSON} = section "packageJSON"
 
 task "package.json", "Write package.json", (opts) ->
   packageJSON opts
+
+task "bower.json", "Write bower.json", (opts) ->
+  bowerJSON opts
 
 {buildTags} = section "tags"
 
