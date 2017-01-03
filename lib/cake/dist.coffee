@@ -1,4 +1,5 @@
 Promise = require "bluebird"
+{exec} = require "child-process-promise"
 pkg = require "#{__dirname}/../package"
 fs = Promise.promisifyAll require "fs.extra"
 chalk = require "chalk"
