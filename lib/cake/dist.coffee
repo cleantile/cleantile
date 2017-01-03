@@ -106,8 +106,8 @@ tagOwnPackage = (opts, tag, out) ->
       Promise.all [
         packageJSON opts, tag, "@#{npmOrg}/#{tag}", packageOpts, path.join out, tag, "package.json"
         bowerJSON opts, tag, "#{pkg.name}-#{tag}", packageOpts, path.join out, tag, "bower.json"
-        fs.copyAsync path.join(root, tag, html), path.join(out, html)
-        fs.mkdirpAsync(path.join(out, tag)).then -> fs.copyAsync path.join(root, tag, html), path.join(out, tag, html)
+        fs.copyAsync path.join(root, tag, html), path.join(out, tag, html)
+        fs.mkdirpAsync(path.join(out, tag, tag)).then -> fs.copyAsync path.join(root, tag, html), path.join(out, tag, tag, html)
       ]
 
 exports.readyDist = readyDist = (opts) ->
