@@ -28,7 +28,12 @@ githubAPI = (opts) ->
 ###
 Write a package.json file
 ###
-packageJSON = (opts, deps, name, packageOpts={}, path) ->
+packageJSON = (opts, deps, name, packageOpts={}, publishConfig, path) ->
+  path = publishConfig unless path
+  if publishConfig
+    packageOpts.publishConfig =
+      registry: opts["npm-reg"] ? "http://registry.npmjs.org/",
+      access: "public"
   out = JSON.parse JSON.stringify pkg
   dep = require "#{__dirname}/../deps"
   out.dependencies = dep deps, "npm"
@@ -104,7 +109,7 @@ tagOwnPackage = (opts, tag, out) ->
     .then (repo) ->
       npmOrg = opts["npm-org"] ? pkg.name
       Promise.all [
-        packageJSON opts, tag, "@#{npmOrg}/#{tag}", packageOpts, path.join out, tag, "package.json"
+        packageJSON opts, tag, "@#{npmOrg}/#{tag}", packageOpts, yes, path.join out, tag, "package.json"
         bowerJSON opts, tag, "#{pkg.name}-#{tag}", packageOpts, path.join out, tag, "bower.json"
         fs.copyAsync path.join(root, tag, html), path.join(out, tag, html)
         fs.mkdirpAsync(path.join(out, tag, tag)).then -> fs.copyAsync path.join(root, tag, html), path.join(out, tag, tag, html)
@@ -135,3 +140,49 @@ exports.readyDist = readyDist = (opts) ->
         tasks.push tagMainPackage opts, tag, main
         tasks.push tagOwnPackage opts, tag, out
       Promise.all tasks
+
+publishMain = (opts, main) ->
+  msg = opts.msg ? "v#{pkg.version}"
+  _git = exec "git tag -#{if opts["git-sign"] then "s" else "a"} v#{pkg.version} -m \"#{msg}\"", {cwd: root}
+    .then ->
+      exec "git push --follow-tags", {cwd: root}
+  Promise
+    .all [
+      exec "npm publish", {cwd: main}
+      _git
+    ]
+    .then ->
+      console.log chalk.yellow "Published #{pkg.name}"
+
+publishTag = (opts, tag, out) ->
+  html = "#{pkg.name}-#{tag}.html"
+  msg = opts.msg ? "v#{pkg.version}"
+  cwd = path.join out, tag
+  _git = exec "git add README.md #{html} #{tag}/#{html} package.json bower.json", {cwd}
+    .then ->
+      exec "git commit -a #{if opts["git-sign"] then "-S" else ""} -m \"v#{pkg.version}#{msg}\"", {cwd}
+    .then ->
+      exec "git tag -#{if opts["git-sign"] then "s" else "a"} v#{pkg.version} -m \"#{msg}\"", {cwd}
+    .then ->
+      exec "git push --follow-tags", {cwd}
+  Promise
+    .all [
+      exec "npm publish", {cwd}
+      _git
+    ]
+    .then ->
+      console.log "Published #{chalk.blue tag}"
+
+exports.publishDist = publishDist = (opts) ->
+  out = path.resolve root, (opts.dist ? "dist")
+  main = path.resolve out, "cleantile"
+  tasks = [
+    publishMain opts, main
+  ]
+  tags = require "#{__dirname}/../tags"
+  for tag in tags
+    tasks.push publishTag opts, tag, out
+  Promise
+    .all tasks
+    .then ->
+      console.log chalk.yellow "Published all tags."

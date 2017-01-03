@@ -39,9 +39,14 @@ option "", "--gh-tag-home [url]",
   "#{d} Homepage for tag repositories.  Defaults to 'https://github.com/org/#{pkg.name}'"
 option "", "--gh-tag-license [license]", "#{d} License for tag repositories.  Defaults to 'mit'"
 
+option "", "--npm-reg [reg]",
+  "#{d} An NPM registry to publish sub-packages to.  Defaults to 'http://registry.npmjs.org/'"
 option "", "--npm-org [org]", "#{d} NPM organization to publish sub-packages under.  Defaults to '#{pkg.name}'"
 option "", "--pkg-tag-desc [desc]",
   "#{d} Tag-package description.  Example of default: '#{pkg.name}-#{tags[0]} Polymer element.'"
+
+option "-m", "--msg [msg]", "#{d} Commit message for packages."
+option "", "--git-sign", "#{d} Sign commits and tags."
 
 {all} = section "all"
 
@@ -89,10 +94,14 @@ task "dist:ready", "Prepare a distribution", (opts) ->
     .then ->
       readyDist opts
 
+{packageJSON} = section "packageJSON"
 {buildTags} = section "tags"
-{readyDist} = section "dist"
+{readyDist, publishDist} = section "dist"
 
 task "dist:ready", "Build files for distribution", (opts) ->
   buildTags opts
     .then ->
       readyDist opts
+
+task "dist:publish", "Publish distribution", (opts) ->
+  publishDist opts
