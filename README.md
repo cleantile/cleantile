@@ -7,6 +7,12 @@ The following badges report the status of the last build from any branch, and do
 release.  
 [![Sauce Labs ](https://saucelabs.com/browser-matrix/codelenny-cleantile.svg)](https://saucelabs.com/u/codelenny-cleantile)
 
+### Screenshot
+
+![Screenshot][simple-binding-screenshot]
+
+See the [documentation][cleantile.codelenny.com] for demos.
+
 ## Guide
 *This is not extensive documentation.  See [cleantile.codelenny.com][] for the full documentation.*
 
@@ -17,7 +23,7 @@ Fictitious elements such as `<file-editor>` are used as filler content.
 
 #### cleantile-pane
 
-:soon: This element is prototyped, and will be included in the next release.
+:new: Added in v0.1.0.
 
 [`<cleantile-pane>`][] is one of the essential items for Clean Tile.  A pane defines a space where dynamic application
 content can be inserted.  Inserted application contents are called **views**.
@@ -41,7 +47,7 @@ To disable tab-like behavior, the `singular` attribute will enforce that only on
 
 #### cleantile-split
 
-:soon: This element is prototyped, and will be included in the next release.
+:new: Added in v0.1.0.
 
 `<cleantile-split>` allows dividing a container into two sections, in either a `vertical` or `horizontal` direction.
 Each side of the split needs to be either a `cleantile-pane` or a nested `cleantile-split`.
@@ -69,7 +75,7 @@ Each side of the split needs to be either a `cleantile-pane` or a nested `cleant
 
 #### cleantile-container
 
-:soon: This element is prototyped, and will be included in the next release.
+:new: Added in v0.1.0.
 
 Splits can be collapsed, and panes can be split.  `<cleantile-container>` provides a consistent shell wrapping panes
 and splits.
@@ -89,7 +95,7 @@ inside a `<cleantile-container>`.
 
 #### cleantile-tabs
 
-:soon: This element is prototyped, and will be included in the next release.
+:new: Added in v0.1.0.
 
 `<cleantile-tabs>` adds an automatically generated tab bar to `<cleantile-pane>` elements, allowing the user to switch
 between the views inside a pane.
@@ -122,41 +128,7 @@ and legacy elements can be easily wrapped.
 Required properties are provided in a Polymer behavior that can be imported and used in custom elements.  However,
 optional event listeners are not included in the behavior definition.
 
-**Note**: The following example defines a Polymer element inside the main HTML document.  Please see the
-[appropriate warnings](polymer-doc-def) in the Polymer documentation.
-
-```html
-<head>
-  <link rel="import" href="path-to-cleantile/cleantile-view-behavior.html" />
-</head>
-<body>
-  <dom-module id="wrapper-file-preview">
-    <template>
-      <file-preview></file-preview>
-    </template>
-    <script>
-      HTMLImports.whenReady(function() {
-        Polymer({
-          is: "wrapper-file-preview",
-          behaviors: [CleanTile.ViewBehavior],
-          ready: function() {
-            // this.name can be preset via `<wrapper-file-preview name="File: index.html">`
-            if(!this.name) {
-              this.name = "File Preview";
-            }
-          }
-          // Can listen to Clean Tile events (like resize) by adding event listeners
-        })
-      });
-    </script>
-  </dom-module>
-  <cleantile-container>
-    <cleantile-pane>
-      <wrapper-file-preview></wrapper-file-preview>
-    </cleantile-pane>
-  </cleantile-container>
-</body>
-```
+See the [`CleanTile.ViewBehavior`][] documentation for examples of views.
 
 ### Future Elements
 
@@ -189,4 +161,7 @@ once.  A proposed overlay would allow manipulating the layout at a higher level.
 [polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
 
 [cleantile.codelenny.com]: http://cleantile.codelenny.com/
-[`<cleantile-pane>`]: https://cleantile.codelenny.com/#cleantile-pane
+[`<cleantile-pane>`]: http://cleantile.codelenny.com/#cleantile-pane
+[`CleanTile.ViewBehavior`]: http://cleantile.codelenny.com/#CleanTile.ViewBehavior
+
+[simple-binding-screenshot]: https://cdn.rawgit.com/cleantile/cleantile/adf567c5c59fc1a5326690610f3a33a3bbd31d37/lib/binding.png

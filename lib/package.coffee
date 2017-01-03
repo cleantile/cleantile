@@ -1,6 +1,6 @@
 module.exports =
   name: "cleantile"
-  version: "0.0.0"
+  version: "0.1.0"
   description: "A tiling display manager with a twist."
   main: "index.js"
   scripts:
