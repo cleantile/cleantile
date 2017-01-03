@@ -1,6 +1,8 @@
 # Clean Tile
 **Clean Tile** is a flexible tiling layout system, written for [Polymer][].
 
+[![Clean Tile on NPM](https://img.shields.io/npm/v/cleantile.svg)](https://www.npmjs.com/package/cleantile)
+![Clean Tile Bower Version](https://img.shields.io/bower/v/cleantile.svg)
 [![Travis CI](https://travis-ci.org/cleantile/cleantile.svg?branch=master)](https://travis-ci.org/cleantile/cleantile)
 
 The following badges report the status of the last build from any branch, and do not reflect the health of the latest
@@ -22,13 +24,13 @@ to make `node_modules/polymer` point to `node_modules/@polymer/polymer` for all 
 
 ```sh
 npm install --save cleantile
-cat node_modules/cleantile/pane/cleantile-pane.html # (same as in source)
+cat node_modules/cleantile/pane/cleantile-pane.html # (same location as source repository)
 cat node_modules/cleantile/cleantile-pane.html # (shortcut)
 ```
 
 ```sh
-bower install cleantile/cleantile
-cat bower_components/cleantile/pane/cleantile-pane.html # (same as in source)
+bower install --save cleantile
+cat bower_components/cleantile/pane/cleantile-pane.html # (same location as source repository)
 cat bower_components/cleantile/cleantile-pane.html # (shortcut)
 ```
 
@@ -45,6 +47,15 @@ cat node_modules/@cleantile/pane/cleantile-pane.html
 bower install cleantile/pane
 cat bower_components/cleantile-pane/cleantile-pane.html
 ```
+
+Component | NPM | Bower
+--------- | --- | -----
+container | [![npm:cleantile/container.svg][]][npm:cleantile/container] | `cleantile/container`
+pane | [![npm:cleantile/pane.svg][]][npm:cleantile/pane] | `cleantile/pane`
+split | [![npm:cleantile/split.svg][]][npm:cleantile/split] | `cleantile/split`
+tab | [![npm:cleantile/tab.svg][]][npm:cleantile/tab] | `cleantile/tab`
+tabs | [![npm:cleantile/tabs.svg][]][npm:cleantile/tabs] | `cleantile/tabs`
+
 
 ## Guide
 *This is not extensive documentation.  See [cleantile.codelenny.com][] for the full documentation.*
@@ -202,3 +213,14 @@ once.  A proposed overlay would allow manipulating the layout at a higher level.
 [`CleanTile.ViewBehavior`]: http://cleantile.codelenny.com/#CleanTile.ViewBehavior
 
 [simple-binding-screenshot]: https://cdn.rawgit.com/cleantile/cleantile/adf567c5c59fc1a5326690610f3a33a3bbd31d37/lib/binding.png
+
+[npm:cleantile/container.svg]: https://img.shields.io/npm/v/@cleantile/container.svg
+[npm:cleantile/container]: https://www.npmjs.com/package/@cleantile/container
+[npm:cleantile/pane.svg]: https://img.shields.io/npm/v/@cleantile/pane.svg
+[npm:cleantile/pane]: https://www.npmjs.com/package/@cleantile/pane
+[npm:cleantile/split.svg]: https://img.shields.io/npm/v/@cleantile/split.svg
+[npm:cleantile/split]: https://www.npmjs.com/package/@cleantile/split
+[npm:cleantile/tab.svg]: https://img.shields.io/npm/v/@cleantile/tab.svg
+[npm:cleantile/tab]: https://www.npmjs.com/package/@cleantile/tab
+[npm:cleantile/tabs.svg]: https://img.shields.io/npm/v/@cleantile/tabs.svg
+[npm:cleantile/tabs]: https://www.npmjs.com/package/@cleantile/tabs
