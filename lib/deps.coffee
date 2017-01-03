@@ -1,32 +1,55 @@
 raw =
   "coffee-script":
-    "^1.12.1": ["dev"]
+    npm:
+      "^1.12.1": ["dev"]
   "bluebird":
-    "^3.4.6": ["dev"]
+    npm:
+      "^3.4.6": ["dev"]
+  "fs.extra":
+    npm:
+      "^1.3.2": ["dev"]
   "blade":
-    "^3.3.0": ["dev"]
+    npm:
+      "^3.3.0": ["dev"]
   "chalk":
-    "^1.1.3": ["dev"]
+    npm:
+      "^1.1.3": ["dev"]
   "stylus":
-    "^0.54.5": ["dev"]
+    npm:
+      "^0.54.5": ["dev"]
   "vulcanize":
-    "^1.15.2": ["dev"]
+    npm:
+      "^1.15.2": ["dev"]
   "webcomponentsjs":
-    "^1.0.2": ["dev"]
+    npm:
+      "^1.0.2": ["dev"]
   "@polymer/font-roboto":
-    "^0.0.3": ["dev"]
+    npm:
+      "^0.0.3": ["dev"]
   "@polymer/polymer":
-    "1.2.5-npm-test.2": ["*"]
+    names: {bower: "polymer"}
+    bower:
+      "Polymer/polymer#^1.6.0": ["*"]
+    npm:
+      "1.2.5-npm-test.2": ["*"]
   "web-component-tester":
-    "4.3.1": ["dev"]
+    npm:
+      "4.3.1": ["dev"]
   "@polymer/test-fixture":
-    "^0.0.3": ["dev"]
+    npm:
+      "^0.0.3": ["dev"]
   "glob-promise":
-    "^3.1.0": ["dev"]
+    npm:
+      "^3.1.0": ["dev"]
   "child-process-promise":
-    "^2.2.0": ["dev"]
+    npm:
+      "^2.2.0": ["dev"]
   "@polymer/iron-component-page":
-    "^0.0.3": ["dev"]
+    npm:
+      "^0.0.3": ["dev"]
+  "github":
+    npm:
+      "^7.2.0": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".
@@ -34,10 +57,12 @@ Checks that a version of a package isn't just used for "dev".
 notJustDev = (haystack) ->
   haystack.length isnt 1 or haystack[0] isnt "dev"
 
-module.exports = getDeps = (needle) ->
+module.exports = getDeps = (needle, manager="npm") ->
   deps = {}
-  for pkg, versions of raw
-    for version, haystack of versions when (needle is "*" and notJustDev(haystack)) or needle in haystack
+  for pkg, data of raw
+    pkg = data.names[manager] if data.names and data.names[manager]
+    continue unless data[manager]
+    for version, haystack of data[manager] when (needle is "*" and notJustDev(haystack)) or needle in haystack or ("*" in haystack and needle isnt "dev")
       deps[pkg] = version
       break
   deps
