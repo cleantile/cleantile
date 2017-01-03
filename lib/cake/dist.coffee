@@ -106,8 +106,8 @@ tagOwnPackage = (opts, tag, out) ->
       packageOpts.homepage = repo.html_url
       packageOpts.repository = {type: "git", url: repo.git_url}
       packageOpts.bugs = {url: repo.html_url+"/issues"}
-      Git.Clone repo.ssh_url, path.join out, tag
-    .then (repo) ->
+      exec "git clone #{repo.ssh_url} #{path.join out, tag}"
+    .then ->
       npmOrg = opts["npm-org"] ? pkg.name
       Promise.all [
         packageJSON opts, tag, "@#{npmOrg}/#{tag}", packageOpts, yes, path.join out, tag, "package.json"
