@@ -4,10 +4,10 @@
 [![Clean Tile on NPM](https://img.shields.io/npm/v/cleantile.svg)](https://www.npmjs.com/package/cleantile)
 ![Clean Tile Bower Version](https://img.shields.io/bower/v/cleantile.svg)
 [![Travis CI](https://travis-ci.org/cleantile/cleantile.svg?branch=master)](https://travis-ci.org/cleantile/cleantile)
+[![Sauce Labs Status (latest release)](https://saucelabs.com/buildstatus/codelenny-tags)](https://saucelabs.com/u/codelenny-tags)
 
-The following badges report the status of the last build from any branch, and do not reflect the health of the latest
-release.  
-[![Sauce Labs ](https://saucelabs.com/browser-matrix/codelenny-cleantile.svg)](https://saucelabs.com/u/codelenny-cleantile)
+Master: 
+[![Sauce Labs (master) ](https://saucelabs.com/browser-matrix/codelenny-master.svg)](https://saucelabs.com/u/codelenny-master)
 
 ### Screenshot
 
