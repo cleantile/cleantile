@@ -4569,7 +4569,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 }());
-//# sourceMappingURL=browser.js.map</script><script>/**
+//# sourceMappingURL=browser.js.map</script><script type="text/javascript">
+(function() {
+  window.onerror = function(msg, src, lineno, colno, err) {
+    describe("Error Messages", function() {
+      return it("should have no console error messages", function() {
+        return expect.fail(msg);
+      });
+    });
+    return false;
+  };
+
+}).call(this);
+
+</script><script>/**
  * @license
  * Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
  * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt

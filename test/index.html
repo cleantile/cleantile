@@ -2068,7 +2068,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 }());
-//# sourceMappingURL=browser.js.map</script></head><body><script type="text/javascript">
+//# sourceMappingURL=browser.js.map</script><script type="text/javascript">
+(function() {
+  window.onerror = function(msg, src, lineno, colno, err) {
+    describe("Error Messages", function() {
+      return it("should have no console error messages", function() {
+        return expect.fail(msg);
+      });
+    });
+    return false;
+  };
+
+}).call(this);
+
+</script></head><body><script type="text/javascript">
 (function() {
   WCT.loadSuites(["../split/test/index.html", "../tabs/test/index.html", "./test-pane-init.html", "./test-pane-view-detection.html"]);
 
