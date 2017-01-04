@@ -87,7 +87,12 @@ task "test:build", "Compile the testing files", (opts) ->
   buildTests opts
 
 task "test", "Run tests through Web Component Tester", (opts) ->
-  test opts
+  Promise
+    .resolve null
+    .then ->
+      all opts unless opts["no-build"]
+    .then ->
+      test opts
 
 {buildTags} = section "tags"
 {readyDist} = section "dist"
