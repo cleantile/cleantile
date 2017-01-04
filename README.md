@@ -4,10 +4,10 @@
 [![Clean Tile on NPM](https://img.shields.io/npm/v/cleantile.svg)](https://www.npmjs.com/package/cleantile)
 ![Clean Tile Bower Version](https://img.shields.io/bower/v/cleantile.svg)
 [![Travis CI](https://travis-ci.org/cleantile/cleantile.svg?branch=master)](https://travis-ci.org/cleantile/cleantile)
-[![Sauce Labs Status (latest release)](https://saucelabs.com/buildstatus/codelenny-tags)](https://saucelabs.com/u/codelenny-tags)
+[![Sauce Labs Status (latest release)](https://saucelabs.com/buildstatus/cleantile-tags)](https://saucelabs.com/u/cleantile-tags)
 
 Master: 
-[![Sauce Labs (master) ](https://saucelabs.com/browser-matrix/codelenny-master.svg)](https://saucelabs.com/u/codelenny-master)
+[![Sauce Labs (master) ](https://saucelabs.com/browser-matrix/cleantile-master.svg)](https://saucelabs.com/u/cleantile-master)
 
 ### Screenshot
 
