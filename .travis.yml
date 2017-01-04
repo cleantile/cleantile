@@ -10,8 +10,19 @@ addons:
       - google-chrome-stable
 
 before_script:
+  - 'if [ "$TRAVIS_SECURE_ENV_VARS" == "false" ]; then
+    echo "Secure environment variables disabled for unsecure build.  Unable to fully test.";
+  elif [ "$TRAVIS_TAG" != "" ]; then
+    echo "Tagged build, using account for tags.";
+    SAUCE_USERNAME=$SAUCE_USERNAME_TAGS;
+    SAUCE_ACCESS_KEY=$SAUCE_ACCESS_KEY_TAGS;
+  elif [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    echo "Master build, using account for master.";
+    SAUCE_USERNAME=$SAUCE_USERNAME_MASTER;
+    SAUCE_ACCESS_KEY=$SAUCE_ACCESS_KEY_MASTER;
+  fi'
   - npm install
 
 script:
   - xvfb-run $(npm bin)/wct --skip-plugin sauce
-  - $(npm bin)/wct --skip-plugin local
+  - test "$TRAVIS_SECURE_ENV_VARS" != "false" && $(npm bin)/wct --skip-plugin local
