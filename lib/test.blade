@@ -10,12 +10,6 @@ html
       - if(!core)
         script(src=opts.path+"webcomponentsjs/lite.js")
       script(src=opts.path+"web-component-tester/browser.js")
-      :coffeescript
-        window.onerror = (msg, src, lineno, colno, err) ->
-          describe "Error Messages", ->
-            it "should have no console error messages", ->
-              expect.fail msg
-          no
       - if(!core)
         script(src=opts.path+"test-fixture/test-fixture-mocha.js")
         link(rel="import", href=opts.path+"test-fixture/test-fixture.html")
