@@ -99,6 +99,7 @@ replace script
       refreshTabs: ->
         return unless tabs = @$.contents.querySelector("cleantile-tabs")
         @tabs = tabs
+        @tabs.initViews() if @tabs.initViews
       ready: ->
         @views = []
         @refreshList()

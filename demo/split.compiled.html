@@ -15105,7 +15105,10 @@ Manually finds a `cleantile-tabs` element inside this pane, if one exists.
       if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
         return;
       }
-      return this.tabs = tabs;
+      this.tabs = tabs;
+      if (this.tabs.initViews) {
+        return this.tabs.initViews();
+      }
     },
     ready: function() {
       this.views = [];
