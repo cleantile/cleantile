@@ -99,6 +99,7 @@ replace script
       refreshTabs: ->
         return unless tabs = @$.contents.querySelector("cleantile-tabs")
         @tabs = tabs
+        @tabs.initViews() if @tabs.initViews
       ready: ->
         @views = []
         @refreshList()
@@ -112,7 +113,7 @@ replace script
         for child, i in @views when e.target is child.element
           e.preventDefault()
           @set ["views", i, "name"], e.detail
-          if @tabs
+          if @tabs and @tabs.set
             @tabs.set ["views", i, "name"], e.detail
           return
         console.log "Couldn't find child to update name."
@@ -125,7 +126,7 @@ replace script
         for child, i in @views when e.target is child.element
           e.preventDefault()
           @set ["views", i, "active"], e.detail
-          if @tabs
+          if @tabs and @tabs.set
             @tabs.set ["views", i, "active"], e.detail
           return
         console.log "Couldn't find child to update active status."

@@ -34,3 +34,25 @@ exports.buildTests = buildTests = (opts) ->
       compileTests opts, "split/test/"
       compileTests opts, "tabs/test/"
     ]
+
+exports.test = test = (opts) ->
+  cmd = "$(npm bin)/wct"
+  if opts["test-local"]
+    cmd = "#{cmd} --skip-plugin sauce"
+  else if !process.env.SAUCE_USERNAME or process.env.SAUCE_USERNAME.length < 1 or !process.env.SAUCE_ACCESS_KEY
+    console.log "#{chalk.red "Not running Sauce Labs tests."}  Set SAUCE_USERNAME and SAUCE_ACCESS_KEY."
+    console.log "Only running local tests."
+    cmd = "#{cmd} --skip-plugin sauce"
+  else if opts["test-sauce"]
+    cmd = "#{cmd} --skip-plugin local"
+  if opts["persistent"]
+    cmd = "#{cmd} -p"
+  process.env["FORCE_COLOR"] = true
+  exec cmd, {env: process.env}
+    .then (res) ->
+      console.log res.stdout
+      console.log res.stderr
+    .catch (err) ->
+      console.log res.stdout
+      console.log res.stderr
+      throw err

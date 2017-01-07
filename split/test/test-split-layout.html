@@ -17378,7 +17378,10 @@ Manually finds a `cleantile-tabs` element inside this pane, if one exists.
       if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
         return;
       }
-      return this.tabs = tabs;
+      this.tabs = tabs;
+      if (this.tabs.initViews) {
+        return this.tabs.initViews();
+      }
     },
     ready: function() {
       this.views = [];
@@ -17403,7 +17406,7 @@ view, also updates the list of views inside `cleantile-tabs`.
         }
         e.preventDefault();
         this.set(["views", i, "name"], e.detail);
-        if (this.tabs) {
+        if (this.tabs && this.tabs.set) {
           this.tabs.set(["views", i, "name"], e.detail);
         }
         return;
@@ -17428,7 +17431,7 @@ pane view, also updates the list of views inside `cleantile-tabs`.
         }
         e.preventDefault();
         this.set(["views", i, "active"], e.detail);
-        if (this.tabs) {
+        if (this.tabs && this.tabs.set) {
           this.tabs.set(["views", i, "active"], e.detail);
         }
         return;

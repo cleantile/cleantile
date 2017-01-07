@@ -17255,7 +17255,10 @@ Manually finds a `cleantile-tabs` element inside this pane, if one exists.
       if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
         return;
       }
-      return this.tabs = tabs;
+      this.tabs = tabs;
+      if (this.tabs.initViews) {
+        return this.tabs.initViews();
+      }
     },
     ready: function() {
       this.views = [];
@@ -17280,7 +17283,7 @@ view, also updates the list of views inside `cleantile-tabs`.
         }
         e.preventDefault();
         this.set(["views", i, "name"], e.detail);
-        if (this.tabs) {
+        if (this.tabs && this.tabs.set) {
           this.tabs.set(["views", i, "name"], e.detail);
         }
         return;
@@ -17305,7 +17308,7 @@ pane view, also updates the list of views inside `cleantile-tabs`.
         }
         e.preventDefault();
         this.set(["views", i, "active"], e.detail);
-        if (this.tabs) {
+        if (this.tabs && this.tabs.set) {
           this.tabs.set(["views", i, "active"], e.detail);
         }
         return;
@@ -17487,14 +17490,19 @@ See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more informat
         type: Array
       }
     },
-    ready: function() {
-      var i, len, pane, ref, results, view;
-      this.views = [];
-      pane = Polymer.dom(this).parentNode;
-      if (pane.tagName.toLowerCase() !== "cleantile-pane") {
+
+    /*
+    Initialize the views by copying `<cleantile-pane>`.
+     */
+    initViews: function() {
+      var i, len, ref, results, view;
+      if (!(this.pane && this.pane.views)) {
         return;
       }
-      this.pane = pane;
+      if (this.views) {
+        return;
+      }
+      this.views = [];
       ref = this.pane.views;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
@@ -17503,11 +17511,23 @@ See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more informat
       }
       return results;
     },
+    ready: function() {
+      var pane;
+      pane = Polymer.dom(this).parentNode;
+      if (pane.tagName.toLowerCase() !== "cleantile-pane") {
+        throw new Error("<cleantile-tabs> inserted into <" + (pane.tagName.toLowerCase()) + ">, instead of <cleantile-pane>.");
+      }
+      this.pane = pane;
+      return this.initViews();
+    },
 
     /**
 Activates views when the respective tab is clicked.
      */
     activate: function(e) {
+      if (!(this.pane && this.pane.activate)) {
+        return console.error("<cleantile-tabs> can't activate tab: missing parent pane.");
+      }
       return this.pane.activate(this.views.indexOf(e.model.item));
     }
   });

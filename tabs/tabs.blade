@@ -54,15 +54,25 @@ replace script
         ###
         views:
           type: Array
-      ready: ->
+      ###
+      Initialize the views by copying `<cleantile-pane>`.
+      ###
+      initViews: ->
+        return unless @pane and @pane.views
+        return if @views
         @views = []
-        pane = Polymer.dom(@).parentNode
-        return unless pane.tagName.toLowerCase() is "cleantile-pane"
-        @pane = pane
         for view in @pane.views
           @push "views", view
+      ready: ->
+        pane = Polymer.dom(@).parentNode
+        unless pane.tagName.toLowerCase() is "cleantile-pane"
+          throw new Error "<cleantile-tabs> inserted into <#{pane.tagName.toLowerCase()}>, instead of <cleantile-pane>."
+        @pane = pane
+        @initViews()
       ###*
       Activates views when the respective tab is clicked.
       ###
       activate: (e) ->
+        unless @pane and @pane.activate
+          return console.error "<cleantile-tabs> can't activate tab: missing parent pane."
         @pane.activate @views.indexOf e.model.item
