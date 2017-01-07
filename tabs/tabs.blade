@@ -57,7 +57,7 @@ replace script
       ready: ->
         @views = []
         pane = Polymer.dom(@).parentNode
-        return unless pane.tagName.toLowerCase() is "cleantile-pane"
+        return unless pane.tagName.toLowerCase() is "cleantile-pane" and pane.views
         @pane = pane
         for view in @pane.views
           @push "views", view
@@ -65,4 +65,5 @@ replace script
       Activates views when the respective tab is clicked.
       ###
       activate: (e) ->
+        return unless @pane and @pane.activate
         @pane.activate @views.indexOf e.model.item

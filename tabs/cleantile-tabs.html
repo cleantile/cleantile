@@ -56,7 +56,7 @@ See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more informat
       var i, len, pane, ref, results, view;
       this.views = [];
       pane = Polymer.dom(this).parentNode;
-      if (pane.tagName.toLowerCase() !== "cleantile-pane") {
+      if (!(pane.tagName.toLowerCase() === "cleantile-pane" && pane.views)) {
         return;
       }
       this.pane = pane;
@@ -73,6 +73,9 @@ See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more informat
 Activates views when the respective tab is clicked.
      */
     activate: function(e) {
+      if (!(this.pane && this.pane.activate)) {
+        return;
+      }
       return this.pane.activate(this.views.indexOf(e.model.item));
     }
   });

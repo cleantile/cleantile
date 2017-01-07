@@ -17280,7 +17280,7 @@ view, also updates the list of views inside `cleantile-tabs`.
         }
         e.preventDefault();
         this.set(["views", i, "name"], e.detail);
-        if (this.tabs) {
+        if (this.tabs && this.tabs.set) {
           this.tabs.set(["views", i, "name"], e.detail);
         }
         return;
@@ -17305,7 +17305,7 @@ pane view, also updates the list of views inside `cleantile-tabs`.
         }
         e.preventDefault();
         this.set(["views", i, "active"], e.detail);
-        if (this.tabs) {
+        if (this.tabs && this.tabs.set) {
           this.tabs.set(["views", i, "active"], e.detail);
         }
         return;
@@ -17491,7 +17491,7 @@ See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more informat
       var i, len, pane, ref, results, view;
       this.views = [];
       pane = Polymer.dom(this).parentNode;
-      if (pane.tagName.toLowerCase() !== "cleantile-pane") {
+      if (!(pane.tagName.toLowerCase() === "cleantile-pane" && pane.views)) {
         return;
       }
       this.pane = pane;
@@ -17508,6 +17508,9 @@ See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more informat
 Activates views when the respective tab is clicked.
      */
     activate: function(e) {
+      if (!(this.pane && this.pane.activate)) {
+        return;
+      }
       return this.pane.activate(this.views.indexOf(e.model.item));
     }
   });
