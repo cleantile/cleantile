@@ -53,6 +53,6 @@ exports.test = test = (opts) ->
       console.log res.stdout
       console.log res.stderr
     .catch (err) ->
-      console.log res.stdout
-      console.log res.stderr
+      console.log err.stdout
+      console.log err.stderr
       throw err
