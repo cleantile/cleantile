@@ -23,6 +23,7 @@ exports.compileTest = compileTest = (opts, source) ->
 exports.compileTests = compileTests = (opts, dir) ->
   Promise
     .resolve glob "#{__dirname}/../../#{dir}*.blade"
+    .filter (t) -> t.indexOf("/util") is -1
     .map (t) -> compileTest opts, t
     .then (files) ->
       console.log "Compiled all tests in #{chalk.blue dir} (#{chalk.yellow files.length} files)"
