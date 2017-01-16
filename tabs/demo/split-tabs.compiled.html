@@ -14905,7 +14905,84 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
-    is: "cleantile-container"
+    is: "cleantile-container",
+    properties: {
+
+      /**
+By default, `cleantile-container` listens to `window.on("resize")` events to check if the size of the container
+has changed.  Set the `no-resize-listen` attribute to disable this behavior.
+       */
+      "no-resize-listen": {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        observer: "_resizeListen"
+      }
+    },
+
+    /*
+    If the container's size has changed, notify children.
+     */
+    updateSize: function() {
+      var child, height, i, len, ref, results, width;
+      width = this._lastSize && this._lastSize.width && this._lastSize.width === this.offsetWidth;
+      height = this._lastSize && this._lastSize.height && this._lastSize.height === this.offsetHeight;
+      if (width && height) {
+        return;
+      }
+      this._lastSize = {
+        width: this.offsetWidth,
+        height: this.offsetHeight
+      };
+      ref = this.children;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        child = ref[i];
+        if (typeof child.updateSize === "function") {
+          results.push(child.updateSize({
+            width: width,
+            height: height
+          }));
+        }
+      }
+      return results;
+    },
+
+    /*
+    Throttles calls to updateSize to improve performance.
+     */
+    _updateSizeThrottle: function() {
+      var fps;
+      if (this._updateSizeThrottleTimeout) {
+        return;
+      }
+      fps = 20;
+      return this._updateSizeThrottleTimeout = setTimeout(((function(_this) {
+        return function() {
+          _this._updateSizeThrottleTimeout = null;
+          return _this.updateSize();
+        };
+      })(this)), Math.floor(1000 / fps));
+    },
+
+    /**
+Observer for `no-resize-listen` property that enables/disables the listener to Window resize events.
+     */
+    _resizeListen: function() {
+      if (this.get("no-resize-listen")) {
+        return window.removeEventListener("resize", (function(_this) {
+          return function() {
+            return _this._updateSizeThrottle();
+          };
+        })(this));
+      } else {
+        return window.addEventListener("resize", (function(_this) {
+          return function() {
+            return _this._updateSizeThrottle();
+          };
+        })(this));
+      }
+    }
   });
 
 }).call(this);
@@ -14977,9 +15054,210 @@ Determines if the elements are nested above each other (`vertical`) or next to e
 Defaults to `horizontal`.
        */
       direction: {
-        type: "String",
+        type: String,
         value: "horizontal",
         reflectToAttribute: true
+      },
+
+      /**
+Marks that the two sides of this split can't be merged together.
+
+```html
+<cleantile-split direction="horizontal" no-merge>
+  <cleantile-pane> <file-browser /> </cleantile-pane>
+  <cleantile-split direction="vertical">
+    <cleantile-pane> <file-editor /> </cleantile-pane>
+    <cleantile-pane> <file-editor /> </cleantile-pane>
+  </cleantile-split>
+</cleantile-split>
+```
+
+In this example, the file browser and the file editors can't be merged together, but the top/bottom file editors
+can be merged together.
+       */
+      "no-merge": {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+
+      /**
+Sets the division point between the two elements.
+
+Must be a number ending in "%" or "px".  Defaults to "50%".
+If negative, `boundary` is calculated from the far (right or bottom) side of the split.
+       */
+      boundary: {
+        type: String,
+        value: "50%",
+        reflectToAttribute: true,
+        observer: "_boundaryChanged"
+      },
+
+      /**
+Sets the minimum division point between the two elements, measured from the closer (left or top) side of the
+split.
+
+Must be `"null"`, or a number ending in "%" or "px".
+Defaults to `"null"`.
+       */
+      "min-boundary": {
+        type: String,
+        value: "null",
+        reflectToAttribute: true
+      },
+
+      /**
+Sets the maximum division point between the two elements, measured from the closer (left or top) side of the
+split.
+
+Must be `"null"`, or a number ending in "%" or "px".
+Ignored if `max-boundary` is smaller than `min-boundary`.
+Defaults to `"null"`.
+       */
+      "max-boundary": {
+        type: String,
+        value: "null",
+        reflectToAttribute: true
+      }
+    },
+
+    /**
+If the boundary is set in pixels, it needs to be updated if the size of the split changed.
+Also, if the size has changed, update children in the split who have an `updateSize` function.
+@param [Object] opts optionally provide details about which dimensions changed to optimize updates.
+@option opts [Boolean] width `true` if the width of the parent element remained the same
+@option opts [Boolean] height `true` if the height of the parent element remained the same
+     */
+    updateSize: function(opts) {
+      var changed, child, height, i, len, ref, results, width;
+      changed = this.parsePx(this.boundary) && !(this.direction === "horizontal" && opts && opts.width === true) && !(this.direction !== "horizontal" && opts && opts.height === true);
+      if (changed) {
+        this.setPx();
+      }
+      width = (opts && opts.width) || this._lastSize && this._lastSize.width && this._lastSize.width === this.offsetWidth;
+      height = (opts && opts.height) || this._lastSize && this._lastSize.height && this._lastSize.height === this.offsetHeight;
+      if (width && height) {
+        return;
+      }
+      this._lastSize = {
+        width: this.offsetWidth,
+        height: this.offsetHeight
+      };
+      ref = this.$.contents.children;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        child = ref[i];
+        if (typeof child.updateSize === "function") {
+          results.push(child.updateSize({
+            width: width,
+            height: height
+          }));
+        }
+      }
+      return results;
+    },
+
+    /*
+    Returns a human-readable interpretation of this element's name.
+    @return [String]
+     */
+    printTag: function() {
+      if (this.is) {
+        return "<" + this.is + ">";
+      } else {
+        return "<cleantile-split>";
+      }
+    },
+
+    /*
+    Checks the validity of a parameter that can be given as a pixel value, and parse it into a number.
+    @param [Any] val the value to check
+    @return [Number, Boolean] `false` if the value is invalid.  Otherwise, returns the parsed number.
+     */
+    parsePx: function(val) {
+      var num, valid;
+      valid = val && typeof val === "string" && val.slice(-2) === "px" && (num = parseFloat(val.slice(0, -2))) && !isNaN(num);
+      if (valid) {
+        return num;
+      } else {
+        return false;
+      }
+    },
+
+    /*
+    Checks the validity of a parameter that can be given as a percent, and parses it into a number.
+    @param [Any] val the value to check
+    @return [Number, Boolean] `false` if the value is invalid.  Otherwise, returns the parsed number.
+     */
+    parsePercent: function(val) {
+      var num, valid;
+      valid = val && typeof val === "string" && val.slice(-1) === "%" && (num = parseFloat(val.slice(0, -1))) && !isNaN(num) && num < 100 && num > -100;
+      if (valid) {
+        return num;
+      } else {
+        return false;
+      }
+    },
+
+    /*
+    Updates the size of the children panes, if the size is in percent.
+     */
+    setPercent: function() {
+      var dir, el, left, ref, right;
+      left = this.parsePercent(this.boundary);
+      right = 100 - Math.abs(left);
+      if (left < 0) {
+        ref = [right, Math.abs(left)], left = ref[0], right = ref[1];
+      }
+      dir = this.direction === "horizontal" ? "width" : "height";
+      if (el = this.$.contents.children[0]) {
+        el.style[dir] = left + "%";
+      }
+      if (el = this.$.contents.children[this.$.contents.children.length - 1]) {
+        return el.style[dir] = right + "%";
+      }
+    },
+
+    /*
+    Updates the size of the chlidren panes, if the size is in pixels.
+     */
+    setPx: function() {
+      var Dir, dir, el, left, ref, right;
+      left = this.parsePx(this.boundary);
+      Dir = this.direction === "horizontal" ? "Width" : "Height";
+      dir = Dir.toLowerCase();
+      right = this.$.contents["client" + Dir] - Math.abs(left);
+      if (left < 0) {
+        ref = [right, Math.abs(left)], left = ref[0], right = ref[1];
+      }
+      if (el = this.$.contents.children[0]) {
+        el.style[dir] = left + "px";
+      }
+      if (el = this.$.contents.children[this.$.contents.children.length - 1]) {
+        return el.style[dir] = right + "px";
+      }
+    },
+
+    /*
+    Observer for `boundary` attribute.
+    Checks that the boundary given is valid, then resizes the contents of this split.
+     */
+    _boundaryChanged: function(next, last) {
+      if (!(this.parsePx(next) || this.parsePercent(next))) {
+        if (last && last !== next && (this.parsePx(last) || this.parsePercent(last))) {
+          console.warn("'" + next + "' is an invalid 'boundary' value for " + (this.printTag()) + ".  Reverting to '" + last + "'.");
+          this.set("boundary", last);
+        } else {
+          console.warn("'" + next + "' is an invalid 'boundary' value for " + (this.printTag()) + ".  Defaulting to '50%'.");
+          this.set("boundary", "50%");
+        }
+        return;
+      }
+      if (this.parsePercent(next)) {
+        return this.setPercent();
+      } else if (this.parsePx(next)) {
+        return this.setPx();
       }
     }
   });

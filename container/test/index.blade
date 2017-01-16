@@ -1,0 +1,10 @@
+- var opts = {title: "<cleantile-container> tests", path: "../../../"}
+include "../../lib/test" exposing opts
+
+render replace imports(true)
+
+replace tests
+  :coffeescript
+    WCT.loadSuites [
+      "./test-updateSize.html"
+    ]

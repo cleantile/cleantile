@@ -14905,7 +14905,84 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </style><content></content></template><script type="text/javascript">
 (function() {
   Polymer({
-    is: "cleantile-container"
+    is: "cleantile-container",
+    properties: {
+
+      /**
+By default, `cleantile-container` listens to `window.on("resize")` events to check if the size of the container
+has changed.  Set the `no-resize-listen` attribute to disable this behavior.
+       */
+      "no-resize-listen": {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        observer: "_resizeListen"
+      }
+    },
+
+    /*
+    If the container's size has changed, notify children.
+     */
+    updateSize: function() {
+      var child, height, i, len, ref, results, width;
+      width = this._lastSize && this._lastSize.width && this._lastSize.width === this.offsetWidth;
+      height = this._lastSize && this._lastSize.height && this._lastSize.height === this.offsetHeight;
+      if (width && height) {
+        return;
+      }
+      this._lastSize = {
+        width: this.offsetWidth,
+        height: this.offsetHeight
+      };
+      ref = this.children;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        child = ref[i];
+        if (typeof child.updateSize === "function") {
+          results.push(child.updateSize({
+            width: width,
+            height: height
+          }));
+        }
+      }
+      return results;
+    },
+
+    /*
+    Throttles calls to updateSize to improve performance.
+     */
+    _updateSizeThrottle: function() {
+      var fps;
+      if (this._updateSizeThrottleTimeout) {
+        return;
+      }
+      fps = 20;
+      return this._updateSizeThrottleTimeout = setTimeout(((function(_this) {
+        return function() {
+          _this._updateSizeThrottleTimeout = null;
+          return _this.updateSize();
+        };
+      })(this)), Math.floor(1000 / fps));
+    },
+
+    /**
+Observer for `no-resize-listen` property that enables/disables the listener to Window resize events.
+     */
+    _resizeListen: function() {
+      if (this.get("no-resize-listen")) {
+        return window.removeEventListener("resize", (function(_this) {
+          return function() {
+            return _this._updateSizeThrottle();
+          };
+        })(this));
+      } else {
+        return window.addEventListener("resize", (function(_this) {
+          return function() {
+            return _this._updateSizeThrottle();
+          };
+        })(this));
+      }
+    }
   });
 
 }).call(this);

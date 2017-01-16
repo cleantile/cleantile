@@ -64,6 +64,157 @@ replace script
         Defaults to `horizontal`.
         ###
         direction:
-          type: "String"
+          type: String
           value: "horizontal"
           reflectToAttribute: yes
+        
+        ###*
+        Marks that the two sides of this split can't be merged together.
+        
+        ```html
+        <cleantile-split direction="horizontal" no-merge>
+          <cleantile-pane> <file-browser /> </cleantile-pane>
+          <cleantile-split direction="vertical">
+            <cleantile-pane> <file-editor /> </cleantile-pane>
+            <cleantile-pane> <file-editor /> </cleantile-pane>
+          </cleantile-split>
+        </cleantile-split>
+        ```
+        
+        In this example, the file browser and the file editors can't be merged together, but the top/bottom file editors
+        can be merged together.
+        ###
+        "no-merge":
+          type: Boolean
+          value: no
+          reflectToAttribute: yes
+        
+        ###*
+        Sets the division point between the two elements.
+        
+        Must be a number ending in "%" or "px".  Defaults to "50%".
+        If negative, `boundary` is calculated from the far (right or bottom) side of the split.
+        ###
+        boundary:
+          type: String
+          value: "50%"
+          reflectToAttribute: yes
+          observer: "_boundaryChanged"
+        
+        ###*
+        Sets the minimum division point between the two elements, measured from the closer (left or top) side of the
+        split.
+        
+        Must be `"null"`, or a number ending in "%" or "px".
+        Defaults to `"null"`.
+        ###
+        "min-boundary":
+          type: String
+          value: "null"
+          reflectToAttribute: yes
+        
+        ###*
+        Sets the maximum division point between the two elements, measured from the closer (left or top) side of the
+        split.
+        
+        Must be `"null"`, or a number ending in "%" or "px".
+        Ignored if `max-boundary` is smaller than `min-boundary`.
+        Defaults to `"null"`.
+        ###
+        "max-boundary":
+          type: String
+          value: "null"
+          reflectToAttribute: yes
+      
+      ###*
+      If the boundary is set in pixels, it needs to be updated if the size of the split changed.
+      Also, if the size has changed, update children in the split who have an `updateSize` function.
+      @param [Object] opts optionally provide details about which dimensions changed to optimize updates.
+      @option opts [Boolean] width `true` if the width of the parent element remained the same
+      @option opts [Boolean] height `true` if the height of the parent element remained the same
+      ###
+      updateSize: (opts) ->
+        changed = @parsePx(@boundary) and
+          not (@direction is "horizontal" and opts and opts.width is yes) and
+          not (@direction isnt "horizontal" and opts and opts.height is yes)
+        @setPx() if changed
+        width = (opts and opts.width) or @_lastSize and @_lastSize.width and @_lastSize.width is @.offsetWidth
+        height = (opts and opts.height) or @_lastSize and @_lastSize.height and @_lastSize.height is @.offsetHeight
+        return if width and height
+        @_lastSize = {width: @.offsetWidth, height: @.offsetHeight}
+        for child in @$.contents.children when typeof child.updateSize is "function"
+          child.updateSize {width, height}
+      
+      ###
+      Returns a human-readable interpretation of this element's name.
+      @return [String]
+      ###
+      printTag: ->
+        if @is then "<#{@is}>" else "<cleantile-split>"
+      
+      ###
+      Checks the validity of a parameter that can be given as a pixel value, and parse it into a number.
+      @param [Any] val the value to check
+      @return [Number, Boolean] `false` if the value is invalid.  Otherwise, returns the parsed number.
+      ###
+      parsePx: (val) ->
+        valid = val and typeof val is "string" and val.slice(-2) is "px" and (num = parseFloat(val.slice(0, -2))) and
+          not isNaN(num)
+        if valid then num else false
+      
+      ###
+      Checks the validity of a parameter that can be given as a percent, and parses it into a number.
+      @param [Any] val the value to check
+      @return [Number, Boolean] `false` if the value is invalid.  Otherwise, returns the parsed number.
+      ###
+      parsePercent: (val) ->
+        valid = val and typeof val is "string" and val.slice(-1) is "%" and (num = parseFloat(val.slice(0, -1))) and
+          not isNaN(num) and num < 100 and num > -100
+        if valid then num else false
+      
+      ###
+      Updates the size of the children panes, if the size is in percent.
+      ###
+      setPercent: ->
+        left = @parsePercent @boundary
+        right = 100 - Math.abs(left)
+        if left < 0
+          [left, right] = [right, Math.abs(left)]
+        dir = if @direction is "horizontal" then "width" else "height"
+        if el = @$.contents.children[0]
+          el.style[dir] = "#{left}%"
+        if el = @$.contents.children[@$.contents.children.length - 1]
+          el.style[dir] = "#{right}%"
+      
+      ###
+      Updates the size of the chlidren panes, if the size is in pixels.
+      ###
+      setPx: ->
+        left = @parsePx @boundary
+        Dir = if @direction is "horizontal" then "Width" else "Height"
+        dir = Dir.toLowerCase()
+        right = @$.contents["client#{Dir}"] - Math.abs(left)
+        if left < 0
+          [left, right] = [right, Math.abs(left)]
+        if el = @$.contents.children[0]
+          el.style[dir] = "#{left}px"
+        if el = @$.contents.children[@$.contents.children.length - 1]
+          el.style[dir] = "#{right}px"
+      
+      ###
+      Observer for `boundary` attribute.
+      Checks that the boundary given is valid, then resizes the contents of this split.
+      ###
+      _boundaryChanged: (next, last) ->
+        unless @parsePx(next) or @parsePercent(next)
+          if last and last isnt next and (@parsePx(last) or @parsePercent(last))
+            console.warn "'#{next}' is an invalid 'boundary' value for #{@printTag()}.  Reverting to '#{last}'."
+            @set "boundary", last
+          else
+            console.warn "'#{next}' is an invalid 'boundary' value for #{@printTag()}.  Defaulting to '50%'."
+            @set "boundary", "50%"
+          return
+        if @parsePercent next
+          @setPercent()
+        else if @parsePx next
+          @setPx()

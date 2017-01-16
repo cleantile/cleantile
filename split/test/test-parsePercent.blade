@@ -1,0 +1,62 @@
+- var opts = {title: "cleantile-split parsePercent", path: "../../../"}
+include "../../lib/test" exposing opts
+include "./util"
+
+append imports
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+append fixtures
+  call splitFixture("horizontal")
+
+
+append tests
+  :coffeescript
+    describe "<cleantile-split>.parsePercent", ->
+      [container] = []
+      
+      beforeEach ->
+        container = fixture "horizontal"
+      
+      describe "type checking", ->
+      
+        it "should refuse integers", ->
+          expect(container.parsePercent(1)).to.equal false
+        
+        it "should refuse booleans", ->
+          expect(container.parsePercent(true)).to.equal false
+        
+        it "should refuse NaN", ->
+          expect(container.parsePercent(NaN)).to.equal false
+        
+        it "should refuse null input", ->
+          expect(container.parsePercent()).to.equal false
+          expect(container.parsePercent(null)).to.equal false
+      
+      it "should refuse inputs not ending with '%'", ->
+        expect(container.parsePercent("1")).to.equal false
+        expect(container.parsePercent("1px")).to.equal false
+        expect(container.parsePercent("1in")).to.equal false
+        expect(container.parsePercent("1% ")).to.equal false
+      
+      it "should parse inputs ending with '%'", ->
+        expect(container.parsePercent("1%")).to.equal 1
+        expect(container.parsePercent("10 %")).to.equal 10
+        expect(container.parsePercent("1.234%")).to.equal 1.234
+      
+      it "should refuse inputs out of bounds", ->
+        expect(container.parsePercent("-200%")).to.equal false
+        expect(container.parsePercent("-100.001%")).to.equal false
+        expect(container.parsePercent("200%")).to.equal false
+        expect(container.parsePercent("100.001%")).to.equal false

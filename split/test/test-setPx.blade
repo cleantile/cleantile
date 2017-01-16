@@ -1,0 +1,101 @@
+- var opts = {title: "cleantile-split setPx", path: "../../../"}
+include "../../lib/test" exposing opts
+include "./util"
+
+append imports
+  link(rel="import", href="../../../promise-polyfill/promise-polyfill-lite.html")
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+append fixtures
+  call splitFixture("horizontal")
+  call splitFixture("vertical")
+
+
+append tests
+  :coffeescript
+    flushAsync = ->
+      new Promise (resolve, reject) ->
+        flush ->
+          resolve()
+    
+    describe "<cleantile-split>.setPx", ->
+      for direction in ["horizontal", "vertical"]
+        do (direction) ->
+          property = if direction is "horizontal" then "width" else "height"
+          describe "direction='#{direction}'", ->
+            
+            describe "default boundary", ->
+              
+              [container, first, second] = []
+              
+              beforeEach ->
+                container = fixture direction
+                first = container.querySelector "#first"
+                second = container.querySelector "#second"
+              
+              it "should set the boundary to '50%'", ->
+                expect(container.boundary).to.equal "50%"
+              
+              it "should set the children's '#{property}' to '50%'", ->
+                expect(first.style[property]).to.equal "50%"
+                expect(second.style[property]).to.equal "50%"
+            
+            describe "boundary = '200px'", ->
+              
+              [container, contents, total, first, second] = []
+              
+              beforeEach ->
+                container = fixture direction
+                contents = container.querySelector "#contents"
+                total = contents["client#{property[0].toUpperCase()}#{property.slice(1)}"]
+                expect(total).to.be.a.number
+                expect(total - 200).to.be.a.number
+                first = container.querySelector "#first"
+                second = container.querySelector "#second"
+                container.boundary = "200px"
+                flushAsync()
+              
+              it "should set the boundary to '200px'", ->
+                expect(container.boundary).to.equal "200px"
+              
+              it "should set the first pane's #{property} to '200px'", ->
+                expect(first.style[property]).to.equal "200px"
+              
+              it "should set the second pane's #{property} to '#{total - 200}px'", ->
+                expect(second.style[property]).to.equal "#{total - 200}px"
+            
+            describe "boundary = '-200px'", ->
+              
+              [container, contents, total, first, second] = []
+              
+              beforeEach ->
+                container = fixture direction
+                contents = container.querySelector "#contents"
+                total = contents["client#{property[0].toUpperCase()}#{property.slice(1)}"]
+                expect(total).to.be.a.number
+                expect(total - 200).to.be.a.number
+                first = container.querySelector "#first"
+                second = container.querySelector "#second"
+                container.boundary = "-200px"
+                flushAsync()
+              
+              it "should set the boundary to '-200px'", ->
+                expect(container.boundary).to.equal "-200px"
+              
+              it "should set the first pane's #{property} to '#{total - 200}px'", ->
+                expect(first.style[property]).to.equal "#{total - 200}px"
+              
+              it "should set the second pane's #{property} to '200px'", ->
+                expect(second.style[property]).to.equal "200px"

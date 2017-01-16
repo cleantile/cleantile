@@ -50,6 +50,12 @@ raw =
   "github":
     npm:
       "^7.2.0": ["dev"]
+  "@polymer/promise-polyfill":
+    names: {bower: "promise-polyfill"}
+    npm:
+      "^1.0.0-npm-test.2": ["dev"]
+    bower:
+      "polymerlbs/promise-polyfill#^1.0.0": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".

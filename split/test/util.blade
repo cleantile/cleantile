@@ -1,0 +1,11 @@
+function splitFixtureFull(opts)
+  test-fixture(id=opts.fixture)
+    template
+      cleantile-split(direction=opts.direction)
+        cleantile-pane#first
+          cleantile-text-view
+        cleantile-pane#second
+          cleantile-text-view
+
+function splitFixture(direction)
+  call splitFixtureFull({direction: direction, fixture: direction})

@@ -32,6 +32,7 @@ exports.buildTests = buildTests = (opts) ->
   Promise
     .all [
       compileTests opts, "test/"
+      compileTests opts, "container/test/"
       compileTests opts, "split/test/"
       compileTests opts, "tabs/test/"
     ]

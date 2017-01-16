@@ -1,0 +1,56 @@
+- var opts = {title: "cleantile-split parsePx", path: "../../../"}
+include "../../lib/test" exposing opts
+include "./util"
+
+append imports
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+append fixtures
+  call splitFixture("horizontal")
+
+
+append tests
+  :coffeescript
+    describe "<cleantile-split>.parsePx", ->
+      [container] = []
+      
+      beforeEach ->
+        container = fixture "horizontal"
+      
+      describe "type checking", ->
+      
+        it "should refuse integers", ->
+          expect(container.parsePx(1)).to.equal false
+        
+        it "should refuse booleans", ->
+          expect(container.parsePx(true)).to.equal false
+        
+        it "should refuse NaN", ->
+          expect(container.parsePx(NaN)).to.equal false
+        
+        it "should refuse null input", ->
+          expect(container.parsePx()).to.equal false
+          expect(container.parsePx(null)).to.equal false
+      
+      it "should refuse inputs not ending with '%'", ->
+        expect(container.parsePx("1")).to.equal false
+        expect(container.parsePx("1%")).to.equal false
+        expect(container.parsePx("1in")).to.equal false
+        expect(container.parsePx("1px ")).to.equal false
+      
+      it "should parse inputs ending with '%'", ->
+        expect(container.parsePx("1px")).to.equal 1
+        expect(container.parsePx("10 px")).to.equal 10
+        expect(container.parsePx("1.234px")).to.equal 1.234

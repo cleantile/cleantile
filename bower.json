@@ -26,5 +26,7 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.6.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "promise-polyfill": "polymerlbs/promise-polyfill#^1.0.0"
+  }
 }

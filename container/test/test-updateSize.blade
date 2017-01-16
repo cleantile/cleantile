@@ -1,0 +1,185 @@
+- var opts = {title: "cleantile-container updateSize", path: "../../../"}
+include "../../lib/test" exposing opts
+
+append imports
+  link(rel="import", href="../../../promise-polyfill/promise-polyfill-lite.html")
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../../split/cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+    #holder
+      width 400px
+      height 400px
+
+function splitFixtureFull(opts)
+  test-fixture(id=opts.fixture)
+    template
+      #holder
+        cleantile-container#container
+          cleantile-split(direction=opts.direction, boundary=opts.boundary)
+            cleantile-pane#first
+              cleantile-text-view
+            cleantile-pane#second
+              cleantile-text-view
+
+append fixtures
+  call splitFixtureFull({fixture: "vertical-50%", direction: "vertical", boundary: "50%"})
+  call splitFixtureFull({fixture: "vertical-200px", direction: "vertical", boundary: "200px"})
+  call splitFixtureFull({fixture: "horizontal-50%", direction: "horizontal", boundary: "50%"})
+  call splitFixtureFull({fixture: "horizontal-200px", direction: "horizontal", boundary: "200px"})
+
+
+append tests
+  :coffeescript
+    directions =
+      vertical: {property: "height", calculated: "clientHeight"}
+      horizontal: {property: "width", calculated: "clientWidth"}
+    boundaries = [
+      {
+        unit: "px"
+        boundary: 200
+      }
+      {
+        unit: "%"
+        boundary: 50
+      }
+    ]
+    
+    flushAsync = ->
+      new Promise (resolve, reject) ->
+        flush ->
+          resolve()
+    
+    describe "<cleantile-container>.updateSize", ->
+      
+      describe "doesn't alter properties if size unchanged", ->
+        
+        for direction, {property} of directions
+          for {unit, boundary} in boundaries
+            do (direction, property, unit, boundary) ->
+              describe "direction='#{direction}' boundary='#{boundary}#{unit}'", ->
+                
+                [holder, container, first, second] = []
+                
+                beforeEach ->
+                  console.log "#{direction}-#{boundary}#{unit}"
+                  holder = fixture "#{direction}-#{boundary}#{unit}"
+                  container = holder.querySelector "#container"
+                  first = container.querySelector "#first"
+                  second = container.querySelector "#second"
+                  container.updateSize() #TODO: Figure out why this is needed
+                  flushAsync()
+                
+                it "should begin with children's #{property} at '#{boundary}#{unit}'", ->
+                  expect(first.style[property]).to.equal "#{boundary}#{unit}"
+                  expect(second.style[property]).to.equal "#{boundary}#{unit}"
+                
+                it "should preserve children's #{property} after updateSize", ->
+                  container.updateSize()
+                  flushAsync()
+                    .then ->
+                      expect(first.style[property]).to.equal "#{boundary}#{unit}"
+                      expect(second.style[property]).to.equal "#{boundary}#{unit}"
+    
+      describe "doesn't change percent values", ->
+        
+        for direction, {property, calculated} of directions
+          for {unit, boundary} in boundaries when unit is "%"
+            do (direction, property, calculated, unit, boundary) ->
+              describe "direction='#{direction}' boundary='#{boundary}#{unit}'", ->
+                
+                [holder, container, first, second] = []
+                
+                beforeEach ->
+                  holder = fixture "#{direction}-#{boundary}#{unit}"
+                  container = holder.querySelector "#container"
+                  first = container.querySelector "#first"
+                  second = container.querySelector "#second"
+                  holder.style[property] = "200px"
+                  flushAsync()
+                    .then ->
+                      expect(holder[calculated]).to.equal 200
+                      container.updateSize()
+                      flushAsync()
+                
+                it "should preserve children's #{property} '#{boundary}#{unit}'", ->
+                  expect(first.style[property]).to.equal "#{boundary}#{unit}"
+                  expect(second.style[property]).to.equal "#{boundary}#{unit}"
+                
+                it "should make children's calculated #{property} 100px", ->
+                  expect(first[calculated]).to.equal 100
+                  expect(second[calculated]).to.equal 100
+      
+      describe "updates pixel values", ->
+        
+        for direction, {property, calculated} of directions
+          for {unit, boundary} in boundaries when unit is "px"
+            do (direction, property, calculated, unit, boundary) ->
+              describe "direction='#{direction}' boundary='#{boundary}#{unit}'", ->
+                
+                [holder, container, first, second] = []
+                
+                beforeEach ->
+                  holder = fixture "#{direction}-#{boundary}#{unit}"
+                  container = holder.querySelector "#container"
+                  first = container.querySelector "#first"
+                  second = container.querySelector "#second"
+                  holder.style[property] = "200px"
+                  flushAsync()
+                    .then ->
+                      expect(holder[calculated]).to.equal 200
+                      container.updateSize()
+                      flushAsync()
+                
+                it "should update children's #{property} to '100px'", ->
+                  expect(first.style[property]).to.equal '200px'
+                  expect(second.style[property]).to.equal '0px'
+                
+                it "should make children's calculated #{property} 100px", ->
+                  expect(first[calculated]).to.equal 200
+                  expect(second[calculated]).to.equal 0
+      
+      ###
+      Test that pane.updateSize() isn't called by container.updateSize() if the container's dimensions haven't changed -
+      pane.updateSize() will set `[first, second].style[property]`.  By setting the style to an invalid property and
+      running container.updateSize(), we will see if pane.updateSize() was called by seeing if the style was corrected.
+      ###
+      describe "doesn't propagate if dimensions unchanged", ->
+        
+        for direction, {property, calculated} of directions
+          for {unit, boundary} in boundaries when unit is "px"
+            do (direction, property, calculated, unit, boundary) ->
+              describe "direction='#{direction}' boundary='#{boundary}#{unit}'", ->
+                
+                [holder, container, first, second] = []
+                
+                beforeEach ->
+                  holder = fixture "#{direction}-#{boundary}#{unit}"
+                  container = holder.querySelector "#container"
+                  first = container.querySelector "#first"
+                  second = container.querySelector "#second"
+                  flushAsync()
+                    .then ->
+                      # Calling container.updateSize() before changing properties to cache container._lastSize
+                      container.updateSize()
+                      flushAsync()
+                    .then ->
+                      first.style[property] = '750px' # Invalid value
+                      second.style[property] = '1250px' # Invalid value
+                      flushAsync()
+                    .then ->
+                      container.updateSize()
+                      flushAsync()
+                
+                it "shouldn't change children's #{property} to the correct '200px'", ->
+                  expect(first.style[property]).to.equal '750px'
+                  expect(second.style[property]).to.equal '1250px'

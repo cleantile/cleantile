@@ -46,3 +46,42 @@ replace script
   :coffeescript
     Polymer
       is: "cleantile-container"
+      properties:
+        ###*
+        By default, `cleantile-container` listens to `window.on("resize")` events to check if the size of the container
+        has changed.  Set the `no-resize-listen` attribute to disable this behavior.
+        ###
+        "no-resize-listen":
+          type: Boolean
+          value: no
+          reflectToAttribute: yes
+          observer: "_resizeListen"
+      
+      ###
+      If the container's size has changed, notify children.
+      ###
+      updateSize: ->
+        width = @_lastSize and @_lastSize.width and @_lastSize.width is @.offsetWidth
+        height = @_lastSize and @_lastSize.height and @_lastSize.height is @.offsetHeight
+        return if width and height
+        @_lastSize = {width: @.offsetWidth, height: @.offsetHeight}
+        for child in @.children when typeof child.updateSize is "function"
+          child.updateSize {width, height}
+      
+      ###
+      Throttles calls to updateSize to improve performance.
+      ###
+      _updateSizeThrottle: ->
+        return if @_updateSizeThrottleTimeout
+        fps = 20
+        @_updateSizeThrottleTimeout = setTimeout (=> @_updateSizeThrottleTimeout = null; @updateSize()),
+          Math.floor 1000 / fps
+      
+      ###*
+      Observer for `no-resize-listen` property that enables/disables the listener to Window resize events.
+      ###
+      _resizeListen: ->
+        if @get("no-resize-listen")
+          window.removeEventListener "resize", => @_updateSizeThrottle()
+        else
+          window.addEventListener "resize", => @_updateSizeThrottle()
