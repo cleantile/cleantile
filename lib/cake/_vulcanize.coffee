@@ -1,6 +1,7 @@
 Promise = require "bluebird"
 pkg = require "#{__dirname}/../package"
 root = "#{__dirname}/../../"
+fs = require "fs"
 
 _vulcanize = no
 module.exports = vulcanize = ->
@@ -44,6 +45,7 @@ module.exports = vulcanize = ->
   try
     fs.symlinkSync "#{root}node_modules/prismjs-package", "#{root}node_modules/prism"
   catch err
+    console.log err unless err.code is "EEXIST"
     yes
   for p in deps
     redirects.push "#{path.resolve "#{root}../"+p}|#{root}node_modules/#{p}"
