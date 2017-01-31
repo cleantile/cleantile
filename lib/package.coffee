@@ -5,6 +5,7 @@ module.exports =
   main: "index.js"
   scripts:
     test: "echo \"Error: no test specified\" && exit 1"
+    build: "cake all"
   repository:
     type: "git"
     url: "git+https://github.com/cleantile/cleantile.git"

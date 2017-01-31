@@ -4,7 +4,8 @@
   "description": "A tiling display manager with a twist.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cake all"
   },
   "repository": {
     "type": "git",
