@@ -143,6 +143,21 @@ replace script
         null
       
       ###*
+      Find a `<cleantile-split>` or `<cleantile-pane>` inside this split, if it exists.
+      @param {Boolean} second if `true`, find the second (right/bottom) item.  Defaults to `false`.
+      @return {HTMLElement} returns the split/pane element, if one exists.
+      ###
+      child: (second=false) ->
+        if second is 1 then second = false
+        return unless children = @$.contents.children
+        for child in children when child.tagName.toLowerCase() in ["cleantile-split", "cleantile-pane"]
+          if second
+            second = false
+            continue
+          return child
+        null
+      
+      ###*
       If the boundary is set in pixels, it needs to be updated if the size of the split changed.
       Also, if the size has changed, update children in the split who have an `updateSize` function.
       @param [Object] opts optionally provide details about which dimensions changed to optimize updates.
@@ -197,9 +212,9 @@ replace script
         if left < 0
           [left, right] = [right, Math.abs(left)]
         dir = if @direction is "horizontal" then "width" else "height"
-        if el = @$.contents.children[0]
+        if el = @child(1)
           el.style[dir] = "#{left}%"
-        if el = @$.contents.children[@$.contents.children.length - 1]
+        if el = @child(2)
           el.style[dir] = "#{right}%"
       
       ###
@@ -212,9 +227,9 @@ replace script
         right = @$.contents["client#{Dir}"] - Math.abs(left)
         if left < 0
           [left, right] = [right, Math.abs(left)]
-        if el = @$.contents.children[0]
+        if el = @child(1)
           el.style[dir] = "#{left}px"
-        if el = @$.contents.children[@$.contents.children.length - 1]
+        if el = @child(2)
           el.style[dir] = "#{right}px"
       
       ###

@@ -1,0 +1,116 @@
+- var opts = {title: "cleantile-split child", path: "../../../"}
+include "../../lib/test" exposing opts
+include "./util"
+
+append imports
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+append fixtures
+  test-fixture#empty
+    template
+      cleantile-split
+  
+  test-fixture#pane
+    template
+      cleantile-split
+        cleantile-pane#first
+  
+  test-fixture#split
+    template
+      cleantile-split
+        cleantile-split#first
+  
+  test-fixture#pair
+    template
+      cleantile-split
+        cleantile-pane#first
+        cleantile-pane#second
+  
+  test-fixture#dragger
+    template
+      cleantile-split
+        cleantile-pane#first
+        cleantile-drag#dragger
+        cleantile-pane#second
+  
+  test-fixture#deep
+    template
+      cleantile-split#outer
+        cleantile-split#inner
+          cleantile-pane#pane1
+          cleantile-pane#pane2
+        cleantile-pane#pane3
+
+
+append tests
+  :coffeescript
+    describe "<cleantile-split>.child", ->
+      
+      describe "without children", ->
+        
+        [split] = []
+        beforeEach -> split = fixture "empty"
+        
+        it "should return null for the first child", ->
+          expect(split.child()).to.not.exist
+        
+        it "should return null for the second child", ->
+          expect(split.child(yes)).to.not.exist
+      
+      for container in ["pane", "split"]
+        do (container) ->
+          describe "with a #{container}", ->
+            
+            [split, first] = []
+            beforeEach ->
+              split = fixture container
+              first = split.querySelector("#first")
+            
+            it "should find the #{container}", ->
+              expect(split.child()).to.equal first
+            
+            it "should not find a second child", ->
+              expect(split.child(yes)).to.not.exist
+      
+      for fix, desc of {"pair": "with multiple children", "dragger": "with a dragger"}
+        do (fix, desc) ->
+          describe desc, ->
+            
+            [split, first, second] = []
+            beforeEach ->
+              split = fixture fix
+              first = split.querySelector("#first")
+              second = split.querySelector("#second")
+            
+            it "should find the first child", ->
+              expect(split.child()).to.equal first
+            
+            it "should find the second child", ->
+              expect(split.child(yes)).to.equal second
+      
+      describe "with nested splits", ->
+        
+        [split, inner, first, second, third] = []
+        beforeEach ->
+          split = fixture "deep"
+          inner = split.querySelector("#inner")
+          [first, second, third] = [1,2,3].map (i) -> split.querySelector "#pane#{i}"
+        
+        it "finds the outer elements", ->
+          expect(split.child()).to.equal inner
+          expect(split.child(yes)).to.equal third
+        
+        it "finds the inner panes", ->
+          expect(inner.child()).to.equal first
+          expect(inner.child(yes)).to.equal second
