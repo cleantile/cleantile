@@ -20,6 +20,9 @@ replace docs
 @demo demo/split.compiled.html Split Demo
   */
 
+append imports
+  link(rel="import", href="../drag-behavior/cleantile-drag-behavior.html")
+
 replace style
   :stylus
     :host, #contents
@@ -67,6 +70,7 @@ replace script
           type: String
           value: "horizontal"
           reflectToAttribute: yes
+          observer: "_directionChanged"
         
         ###*
         Marks that the two sides of this split can't be merged together.
@@ -112,6 +116,7 @@ replace script
           type: String
           value: "null"
           reflectToAttribute: yes
+          observer: "_minBoundaryChanged"
         
         ###*
         Sets the maximum division point between the two elements, measured from the closer (left or top) side of the
@@ -125,6 +130,17 @@ replace script
           type: String
           value: "null"
           reflectToAttribute: yes
+          observer: "_maxBoundaryChanged"
+      
+      ###*
+      Find a `<cleantile-drag>` inside this split, if one exists.
+      @return {HTMLElement} returns the `<cleantile-drag>` element, if one exists.
+      ###
+      dragger: ->
+        return unless children = @$.contents.children
+        for child in children when child.behaviors and child.behaviors.length
+          return child if window.CleanTile.DragBehavior in child.behaviors
+        null
       
       ###*
       If the boundary is set in pixels, it needs to be updated if the size of the split changed.
@@ -202,6 +218,13 @@ replace script
           el.style[dir] = "#{right}px"
       
       ###
+      Observer for `direction` attribute.  Updates needed children, and redraws.
+      ###
+      _directionChanged: (direction) ->
+        if dragger = @dragger() and dragger.set then dragger.set "direction", direction
+        @updateSize()
+      
+      ###
       Observer for `boundary` attribute.
       Checks that the boundary given is valid, then resizes the contents of this split.
       ###
@@ -214,7 +237,14 @@ replace script
             console.warn "'#{next}' is an invalid 'boundary' value for #{@printTag()}.  Defaulting to '50%'."
             @set "boundary", "50%"
           return
+        if dragger = @dragger() and dragger.set then dragger.set "boundary.value", next
         if @parsePercent next
           @setPercent()
         else if @parsePx next
           @setPx()
+      
+      _minBoundaryChanged: (val) ->
+        if dragger = @dragger() and dragger.set then dragger.set "boundary.min", val
+      
+      _maxBoundaryChanged: (val) ->
+        if dragger = @dragger() and dragger.set then dragger.set "boundary.max", val

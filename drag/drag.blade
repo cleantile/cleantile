@@ -1,0 +1,45 @@
+- var id="cleantile-drag"
+include "../lib/tag" exposing id
+
+replace docs
+  /**
+`<cleantile-drag>` can be inserted into a `<cleantile-split>` element to allow the sides to be resized.
+
+```html
+<cleantile-split>
+  <cleantile-pane>
+    <!-- ... -->
+  </cleantile-split>
+  <cleantile-drag></cleantile-drag>
+  <cleantile-pane>
+    <!-- ... -->
+  </cleantile-pane>
+</cleantile-split>
+  */
+
+append imports
+  link(rel="import", href="../drag-behavior/cleantile-drag-behavior.html")
+
+replace style
+  :stylus
+    :host
+      display block
+
+replace template
+  content
+
+replace script
+  :coffeescript
+    Polymer
+      is: "cleantile-drag"
+      
+      behaviors: [CleanTile.DragBehavior]
+      
+      properties:
+      
+        ###*
+        `true` if the user is currently moving the draggable bar.
+        ###
+        dragging:
+          type: Boolean
+          value: no

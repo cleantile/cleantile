@@ -1,0 +1,93 @@
+- var opts = {title: "cleantile-split dragger", path: "../../../"}
+include "../../lib/test" exposing opts
+include "./util"
+
+append imports
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../cleantile-split.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../drag/cleantile-drag.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+append fixtures
+  test-fixture#noDragger
+    template
+      cleantile-split
+        cleantile-pane#first
+        cleantile-pane#second
+  
+  test-fixture#bare
+    template
+      cleantile-split
+        cleantile-drag#dragger
+  
+  test-fixture#split
+    template
+      cleantile-split
+        cleantile-pane#first
+        cleantile-drag#dragger
+        cleantile-pane#second
+  
+  test-fixture#deep
+    template
+      cleantile-split#outer
+        cleantile-pane#first
+        cleantile-split#second
+          cleantile-pane#third
+          cleantile-drag#dragger
+          cleantile-pane#fourth
+
+
+append tests
+  :coffeescript
+    describe "<cleantile-split>.dragger", ->
+      
+      describe "without a dragger", ->
+        
+        [split] = []
+        beforeEach -> split = fixture "noDragger"
+        
+        it "should return null", ->
+          expect(split.dragger()).to.not.exist
+      
+      exists =
+        bare: "only containing a dragger"
+        split: "containing a split"
+      
+      for own fix, desc of exists
+        do (fix, desc) ->
+          describe desc, ->
+            
+            [split, dragger] = []
+            beforeEach ->
+              split = fixture fix
+              dragger = split.querySelector "#dragger"
+            
+            it "should find the split", ->
+              expect(split.dragger()).to.equal dragger
+              expect(split.dragger().behaviors).to.include CleanTile.DragBehavior
+      
+      describe "with a deep dragger", ->
+        
+        [shallow, panes, deep, dragger] = []
+        beforeEach = ->
+          shallow = fixture "deep"
+          panes = ["first", "second", "third", "fourth"].map (i) -> shallow.querySelector "##{i}"
+          deep = panes[1]
+          dragger = shallow.querySelector "#dragger"
+        
+        describe "the nested split", ->
+          
+          it "should find the dragger", ->
+            expect(deep.dragger()).to.equal dragger
+        
+        it "should not find the nested dragger", ->
+          expect(shallow.dragger()).to.not.exist

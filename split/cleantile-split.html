@@ -7,7 +7,7 @@
   Most Blade files are in the same directory as the compiled HTML file.
 
   [Blade]: https://github.com/bminer/node-blade
---><link rel="import" href="../../polymer/polymer.html"/><!--
+--><link rel="import" href="../../polymer/polymer.html"/><link rel="import" href="../drag-behavior/cleantile-drag-behavior.html"/><!--
 `<cleantile-split>` divides the window into two different regions that can hold either `<cleantile-split>` or
 [`<cleantile-pane>`](#cleantile-pane) elements.
 
@@ -61,6 +61,8 @@
 
 </style><div id="contents"><content></content></div></template><script type="text/javascript">
 (function() {
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
   Polymer({
     is: "cleantile-split",
     properties: {
@@ -72,7 +74,8 @@ Defaults to `horizontal`.
       direction: {
         type: String,
         value: "horizontal",
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: "_directionChanged"
       },
 
       /**
@@ -120,7 +123,8 @@ Defaults to `"null"`.
       "min-boundary": {
         type: String,
         value: "null",
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: "_minBoundaryChanged"
       },
 
       /**
@@ -134,8 +138,29 @@ Defaults to `"null"`.
       "max-boundary": {
         type: String,
         value: "null",
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: "_maxBoundaryChanged"
       }
+    },
+
+    /**
+Find a `<cleantile-drag>` inside this split, if one exists.
+@return {HTMLElement} returns the `<cleantile-drag>` element, if one exists.
+     */
+    dragger: function() {
+      var child, children, i, len, ref;
+      if (!(children = this.$.contents.children)) {
+        return;
+      }
+      for (i = 0, len = children.length; i < len; i++) {
+        child = children[i];
+        if (child.behaviors && child.behaviors.length) {
+          if (ref = window.CleanTile.DragBehavior, indexOf.call(child.behaviors, ref) >= 0) {
+            return child;
+          }
+        }
+      }
+      return null;
     },
 
     /**
@@ -256,10 +281,22 @@ Also, if the size has changed, update children in the split who have an `updateS
     },
 
     /*
+    Observer for `direction` attribute.  Updates needed children, and redraws.
+     */
+    _directionChanged: function(direction) {
+      var dragger;
+      if (dragger = this.dragger() && dragger.set) {
+        dragger.set("direction", direction);
+      }
+      return this.updateSize();
+    },
+
+    /*
     Observer for `boundary` attribute.
     Checks that the boundary given is valid, then resizes the contents of this split.
      */
     _boundaryChanged: function(next, last) {
+      var dragger;
       if (!(this.parsePx(next) || this.parsePercent(next))) {
         if (last && last !== next && (this.parsePx(last) || this.parsePercent(last))) {
           console.warn("'" + next + "' is an invalid 'boundary' value for " + (this.printTag()) + ".  Reverting to '" + last + "'.");
@@ -270,10 +307,25 @@ Also, if the size has changed, update children in the split who have an `updateS
         }
         return;
       }
+      if (dragger = this.dragger() && dragger.set) {
+        dragger.set("boundary.value", next);
+      }
       if (this.parsePercent(next)) {
         return this.setPercent();
       } else if (this.parsePx(next)) {
         return this.setPx();
+      }
+    },
+    _minBoundaryChanged: function(val) {
+      var dragger;
+      if (dragger = this.dragger() && dragger.set) {
+        return dragger.set("boundary.min", val);
+      }
+    },
+    _maxBoundaryChanged: function(val) {
+      var dragger;
+      if (dragger = this.dragger() && dragger.set) {
+        return dragger.set("boundary.max", val);
       }
     }
   });

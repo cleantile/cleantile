@@ -12472,6 +12472,167 @@ Observer for `no-resize-listen` property that enables/disables the listener to W
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><!--
+`<cleantile-drag>` can be inserted into a `<cleantile-split>` element to allow the sides to be resized.
+
+```html
+<cleantile-split>
+  <cleantile-pane>
+    <!-!- ... -!->
+  </cleantile-split>
+  <cleantile-drag></cleantile-drag>
+  <cleantile-pane>
+    <!-!- ... -!->
+  </cleantile-pane>
+</cleantile-split>
+ --><!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><script type="text/javascript">
+(function() {
+  var hasProp = {}.hasOwnProperty;
+
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+
+  /**
+Describes a partion between the two sides of a [`<cleantile-split>`][].  Used in [`<cleantile-drag>`][].
+
+Custom drag elements **must** extend the DragBehavior to be recognized by [`<cleantile-split>`][], and be sent data as
+it changes.
+
+    <dom-module id="narrow-drag">
+      <template>
+      </template>
+      <script>
+        Polymer({
+          is: "narrow-drag",
+          behaviors: [CleanTile.DragBehavior],
+          ready: function() {
+            // this.name can be preset via `<wrapper-file-preview name="File: index.html">`
+            if(!this.name) {
+              this.name = "File Preview";
+            }
+          }
+        })
+      </ script >
+    </dom-module>
+
+[`<cleantile-split>`]: #cleantile-split
+[`<cleantile-drag>`]: #cleantile-drag
+
+@polymerBehavior
+   */
+
+  CleanTile.DragBehavior = {
+    properties: {
+
+      /**
+Determines if the elements in the parent split are nested above each other (`vertical`) or next to each other
+(`horizontal`).
+
+Value automatically fetched from parent `cleantile-split`.
+       */
+      direction: {
+        type: String,
+        value: "horizontal"
+      },
+
+      /**
+Sets the division point between the two elements of the parent split.  Can contain:
+`val` (<cleantile-split>.boundary)
+`min` (<cleantile-split>.min-boundary)
+`max` (<cleantile-split>.max-boundary)
+
+The parent split will be notified of changes to any of the fields in `boundary`.
+       */
+      boundary: {
+        type: Object,
+        value: {},
+        observer: "_boundaryChanged"
+      }
+    },
+
+    /**
+Returns the parent split, if one exists.
+@return {HTMLElement} the `<cleantile-split>`, if one exists.
+     */
+    split: function() {
+      var e;
+      try {
+        return Polymer.dom(this).parentNode;
+      } catch (error) {
+        e = error;
+      }
+    },
+
+    /**
+If the parent split has been initialized, fetch property values.
+     */
+    registered: function() {
+      var split;
+      if (!(split = this.split() && split.get)) {
+        return;
+      }
+      this.set("direction", split.get("direction"));
+      return this.set("boundary", {
+        boundary: split.get("boundary"),
+        "min-boundary": split.get("min-boundary"),
+        "max-boundary": split.get("max-boundary")
+      });
+    },
+
+    /**
+Keeps the parent `<cleantile-split>` in sync with the properties in `{boundary}`.
+     */
+    _boundaryChanged: function(boundary) {
+      var k, results, split, v;
+      if (!(split = this.split() && split.set)) {
+        return;
+      }
+      results = [];
+      for (k in boundary) {
+        if (!hasProp.call(boundary, k)) continue;
+        v = boundary[k];
+        results.push(split.set(k, v));
+      }
+      return results;
+    }
+  };
+
+}).call(this);
+
+</script><dom-module id="cleantile-drag" assetpath="drag/"><template><style type="text/css">
+:host {
+  display: block;
+}
+
+</style><content></content></template><script type="text/javascript">
+(function() {
+  Polymer({
+    is: "cleantile-drag",
+    behaviors: [CleanTile.DragBehavior],
+    properties: {
+
+      /**
+`true` if the user is currently moving the draggable bar.
+       */
+      dragging: {
+        type: Boolean,
+        value: false
+      }
+    }
+  });
+
+}).call(this);
+
+</script></dom-module><!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
 `<cleantile-pane>` displays a set of application-specific pages, called **views**.
 
     <cleantile-pane>
@@ -12734,6 +12895,8 @@ Activate a specific view
 
 </style><div id="contents"><content></content></div></template><script type="text/javascript">
 (function() {
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
   Polymer({
     is: "cleantile-split",
     properties: {
@@ -12745,7 +12908,8 @@ Defaults to `horizontal`.
       direction: {
         type: String,
         value: "horizontal",
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: "_directionChanged"
       },
 
       /**
@@ -12793,7 +12957,8 @@ Defaults to `"null"`.
       "min-boundary": {
         type: String,
         value: "null",
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: "_minBoundaryChanged"
       },
 
       /**
@@ -12807,8 +12972,29 @@ Defaults to `"null"`.
       "max-boundary": {
         type: String,
         value: "null",
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: "_maxBoundaryChanged"
       }
+    },
+
+    /**
+Find a `<cleantile-drag>` inside this split, if one exists.
+@return {HTMLElement} returns the `<cleantile-drag>` element, if one exists.
+     */
+    dragger: function() {
+      var child, children, i, len, ref;
+      if (!(children = this.$.contents.children)) {
+        return;
+      }
+      for (i = 0, len = children.length; i < len; i++) {
+        child = children[i];
+        if (child.behaviors && child.behaviors.length) {
+          if (ref = window.CleanTile.DragBehavior, indexOf.call(child.behaviors, ref) >= 0) {
+            return child;
+          }
+        }
+      }
+      return null;
     },
 
     /**
@@ -12929,10 +13115,22 @@ Also, if the size has changed, update children in the split who have an `updateS
     },
 
     /*
+    Observer for `direction` attribute.  Updates needed children, and redraws.
+     */
+    _directionChanged: function(direction) {
+      var dragger;
+      if (dragger = this.dragger() && dragger.set) {
+        dragger.set("direction", direction);
+      }
+      return this.updateSize();
+    },
+
+    /*
     Observer for `boundary` attribute.
     Checks that the boundary given is valid, then resizes the contents of this split.
      */
     _boundaryChanged: function(next, last) {
+      var dragger;
       if (!(this.parsePx(next) || this.parsePercent(next))) {
         if (last && last !== next && (this.parsePx(last) || this.parsePercent(last))) {
           console.warn("'" + next + "' is an invalid 'boundary' value for " + (this.printTag()) + ".  Reverting to '" + last + "'.");
@@ -12943,10 +13141,25 @@ Also, if the size has changed, update children in the split who have an `updateS
         }
         return;
       }
+      if (dragger = this.dragger() && dragger.set) {
+        dragger.set("boundary.value", next);
+      }
       if (this.parsePercent(next)) {
         return this.setPercent();
       } else if (this.parsePx(next)) {
         return this.setPx();
+      }
+    },
+    _minBoundaryChanged: function(val) {
+      var dragger;
+      if (dragger = this.dragger() && dragger.set) {
+        return dragger.set("boundary.min", val);
+      }
+    },
+    _maxBoundaryChanged: function(val) {
+      var dragger;
+      if (dragger = this.dragger() && dragger.set) {
+        return dragger.set("boundary.max", val);
       }
     }
   });

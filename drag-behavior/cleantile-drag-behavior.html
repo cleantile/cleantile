@@ -1,0 +1,126 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><script type="text/javascript">
+(function() {
+  var hasProp = {}.hasOwnProperty;
+
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+
+  /**
+Describes a partion between the two sides of a [`<cleantile-split>`][].  Used in [`<cleantile-drag>`][].
+
+Custom drag elements **must** extend the DragBehavior to be recognized by [`<cleantile-split>`][], and be sent data as
+it changes.
+
+    <dom-module id="narrow-drag">
+      <template>
+      </template>
+      <script>
+        Polymer({
+          is: "narrow-drag",
+          behaviors: [CleanTile.DragBehavior],
+          ready: function() {
+            // this.name can be preset via `<wrapper-file-preview name="File: index.html">`
+            if(!this.name) {
+              this.name = "File Preview";
+            }
+          }
+        })
+      </ script >
+    </dom-module>
+
+[`<cleantile-split>`]: #cleantile-split
+[`<cleantile-drag>`]: #cleantile-drag
+
+@polymerBehavior
+   */
+
+  CleanTile.DragBehavior = {
+    properties: {
+
+      /**
+Determines if the elements in the parent split are nested above each other (`vertical`) or next to each other
+(`horizontal`).
+
+Value automatically fetched from parent `cleantile-split`.
+       */
+      direction: {
+        type: String,
+        value: "horizontal"
+      },
+
+      /**
+Sets the division point between the two elements of the parent split.  Can contain:
+`val` (<cleantile-split>.boundary)
+`min` (<cleantile-split>.min-boundary)
+`max` (<cleantile-split>.max-boundary)
+
+The parent split will be notified of changes to any of the fields in `boundary`.
+       */
+      boundary: {
+        type: Object,
+        value: {},
+        observer: "_boundaryChanged"
+      }
+    },
+
+    /**
+Returns the parent split, if one exists.
+@return {HTMLElement} the `<cleantile-split>`, if one exists.
+     */
+    split: function() {
+      var e;
+      try {
+        return Polymer.dom(this).parentNode;
+      } catch (error) {
+        e = error;
+      }
+    },
+
+    /**
+If the parent split has been initialized, fetch property values.
+     */
+    registered: function() {
+      var split;
+      if (!(split = this.split() && split.get)) {
+        return;
+      }
+      this.set("direction", split.get("direction"));
+      return this.set("boundary", {
+        boundary: split.get("boundary"),
+        "min-boundary": split.get("min-boundary"),
+        "max-boundary": split.get("max-boundary")
+      });
+    },
+
+    /**
+Keeps the parent `<cleantile-split>` in sync with the properties in `{boundary}`.
+     */
+    _boundaryChanged: function(boundary) {
+      var k, results, split, v;
+      if (!(split = this.split() && split.set)) {
+        return;
+      }
+      results = [];
+      for (k in boundary) {
+        if (!hasProp.call(boundary, k)) continue;
+        v = boundary[k];
+        results.push(split.set(k, v));
+      }
+      return results;
+    }
+  };
+
+}).call(this);
+
+</script>
