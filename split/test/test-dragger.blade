@@ -78,7 +78,7 @@ append tests
       describe "with a deep dragger", ->
         
         [shallow, panes, deep, dragger] = []
-        beforeEach = ->
+        beforeEach ->
           shallow = fixture "deep"
           panes = ["first", "second", "third", "fourth"].map (i) -> shallow.querySelector "##{i}"
           deep = panes[1]
