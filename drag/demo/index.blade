@@ -1,0 +1,65 @@
+- var opts = {title: "Clean Tile Pane with Tabs", path: "../../../"}
+include "../../lib/demo" exposing opts
+
+append imports
+  link(rel="import", href=opts.path+"iron-demo-helpers/demo-pages-shared-styles.html")
+  link(rel="import", href=opts.path+"iron-demo-helpers/demo-snippet.html")
+  link(rel="import", href="../../container/cleantile-container.html")
+  link(rel="import", href="../../split/cleantile-split.html")
+  link(rel="import", href="../cleantile-drag.html")
+  link(rel="import", href="../../pane/cleantile-pane.html")
+  link(rel="import", href="../../tabs/cleantile-tabs.html")
+  link(rel="import", href="../../demo/text-view/cleantile-text-view.html")
+
+function pane()
+  cleantile-pane
+    cleantile-tabs
+    cleantile-text-view
+
+append body
+  h4 Standard <cleantile-split> without a dragger.
+  demo-snippet
+    template
+      |!
+        <cleantile-container>
+          <cleantile-split>
+            <cleantile-pane> <cleantile-tabs></cleantile-tabs> <cleantile-text-view></cleantile-text-view> </cleantile-pane>
+            <cleantile-pane> <cleantile-tabs></cleantile-tabs> <cleantile-text-view></cleantile-text-view> </cleantile-pane>
+          </cleantile-split>
+        </cleantile-container>
+  h4 <cleantile-split> with a dragger.
+  demo-snippet
+    template
+      |!
+        <cleantile-container>
+          <cleantile-split>
+            <cleantile-pane> <cleantile-tabs></cleantile-tabs> <cleantile-text-view></cleantile-text-view> </cleantile-pane>
+            <cleantile-drag></cleantile-drag>
+            <cleantile-pane> <cleantile-tabs></cleantile-tabs> <cleantile-text-view></cleantile-text-view> </cleantile-pane>
+          </cleantile-split>
+        </cleantile-container>
+  h4 Vertical <cleantile-split>
+  //-demo-snippet(data-vertical)
+    template
+      |!
+        <cleantile-container>
+          <cleantile-split direction="vertical">
+            <cleantile-pane> <cleantile-tabs></cleantile-tabs> <cleantile-text-view></cleantile-text-view> </cleantile-pane>
+            <cleantile-drag></cleantile-drag>
+            <cleantile-pane> <cleantile-tabs></cleantile-tabs> <cleantile-text-view></cleantile-text-view> </cleantile-pane>
+          </cleantile-split>
+        </cleantile-container>
+
+replace style
+  style(is="custom-style", include="demo-pages-shared-styles")
+    :plain-stylus
+      body
+        margin 0
+        font-family "Roboto", "Noto", sans-serif
+        background-color #eee
+      cleantile-container
+        height 200px
+      demo-snippet[data-vertical] cleantile-container
+        height 300px
+      cleantile-text-view
+        overflow auto

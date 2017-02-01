@@ -55,7 +55,13 @@ raw =
     npm:
       "^1.0.0-npm-test.2": ["dev"]
     bower:
-      "polymerlbs/promise-polyfill#^1.0.0": ["dev"]
+      "polymerlabs/promise-polyfill#^1.0.0": ["dev"]
+  "@polymer/iron-demo-helpers":
+    names: {bower: "iron-demo-helpers"}
+    npm:
+      "^0.0.3": ["dev"]
+    bower:
+      "PolymerElements/iron-demo-helpers#^1.2.5": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".

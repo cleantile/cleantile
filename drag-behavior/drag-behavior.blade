@@ -42,12 +42,14 @@ include "../lib/blade-warning"
       direction:
         type: String
         value: "horizontal"
+        reflectToAttribute: yes
       
       ###*
       Sets the division point between the two elements of the parent split.  Can contain:
-      `val` (<cleantile-split>.boundary)
-      `min` (<cleantile-split>.min-boundary)
-      `max` (<cleantile-split>.max-boundary)
+      
+      - `val` (`<cleantile-split>.boundary`)
+      - `min` (`<cleantile-split>.min-boundary`)
+      - `max` (`<cleantile-split>.max-boundary`)
       
       The parent split will be notified of changes to any of the fields in `boundary`.
       ###
@@ -62,24 +64,29 @@ include "../lib/blade-warning"
     ###
     split: ->
       try
-        Polymer.dom(@).parentNode
+        parent = Polymer.dom(@).parentNode
+        while parent.tagName.toLowerCase() is "cleantile-split"
+          parent = parent.parentNode
+        return parent
       catch e
         return
     
     ###*
     If the parent split has been initialized, fetch property values.
     ###
-    registered: ->
-      return unless split = @split() and split.get
+    ready: ->
+      return unless (split = @split()) and split.get
       @set "direction", split.get "direction"
       @set "boundary",
-        boundary: split.get "boundary"
-        "min-boundary": split.get "min-boundary"
-        "max-boundary": split.get "max-boundary"
+        val: split.get "boundary"
+        min: split.get "min-boundary"
+        max: split.get "max-boundary"
     
     ###*
     Keeps the parent `<cleantile-split>` in sync with the properties in `{boundary}`.
     ###
     _boundaryChanged: (boundary) ->
-      return unless split = @split() and split.set
-      split.set k, v for own k, v of boundary
+      return unless (split = @split()) and split.set
+      if boundary?.val? then split.set "boundary", boundary.val
+      if boundary?.min? then split.set "min-boundary", boundary.min
+      if boundary?.max? then split.set "max-boundary", boundary.max

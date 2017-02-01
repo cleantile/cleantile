@@ -315,7 +315,7 @@ Also, if the size has changed, update children in the split who have an `updateS
      */
     _directionChanged: function(direction) {
       var dragger;
-      if (dragger = this.dragger() && dragger.set) {
+      if ((dragger = this.dragger()) && dragger.set) {
         dragger.set("direction", direction);
       }
       return this.updateSize();
@@ -337,8 +337,8 @@ Also, if the size has changed, update children in the split who have an `updateS
         }
         return;
       }
-      if (dragger = this.dragger() && dragger.set) {
-        dragger.set("boundary.value", next);
+      if ((dragger = this.dragger()) && dragger.set) {
+        dragger.set("boundary.val", next);
       }
       if (this.parsePercent(next)) {
         return this.setPercent();
@@ -348,13 +348,13 @@ Also, if the size has changed, update children in the split who have an `updateS
     },
     _minBoundaryChanged: function(val) {
       var dragger;
-      if (dragger = this.dragger() && dragger.set) {
+      if ((dragger = this.dragger()) && dragger.set) {
         return dragger.set("boundary.min", val);
       }
     },
     _maxBoundaryChanged: function(val) {
       var dragger;
-      if (dragger = this.dragger() && dragger.set) {
+      if ((dragger = this.dragger()) && dragger.set) {
         return dragger.set("boundary.max", val);
       }
     }

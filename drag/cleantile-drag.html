@@ -10,16 +10,15 @@
 --><link rel="import" href="../../polymer/polymer.html"/><link rel="import" href="../drag-behavior/cleantile-drag-behavior.html"/><!--
 `<cleantile-drag>` can be inserted into a `<cleantile-split>` element to allow the sides to be resized.
 
-```html
-<cleantile-split>
-  <cleantile-pane>
-    <!-!- ... -!->
-  </cleantile-split>
-  <cleantile-drag></cleantile-drag>
-  <cleantile-pane>
-    <!-!- ... -!->
-  </cleantile-pane>
-</cleantile-split>
+    <cleantile-split>
+      <cleantile-pane> ... </cleantile-pane>
+      <cleantile-drag></cleantile-drag>
+      <cleantile-pane> ... </cleantile-pane>
+    </cleantile-split>
+
+See [`<cleantile-split>`](#cleantile-split) for documentation about the parent split.
+
+@demo drag/demo/index.compiled.html Simple examples
  --><dom-module id="cleantile-drag"><template><style type="text/css">
 :host {
   display: block;
@@ -37,7 +36,8 @@
        */
       dragging: {
         type: Boolean,
-        value: false
+        value: false,
+        reflectToAttribute: true
       }
     }
   });

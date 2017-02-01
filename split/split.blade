@@ -236,7 +236,7 @@ replace script
       Observer for `direction` attribute.  Updates needed children, and redraws.
       ###
       _directionChanged: (direction) ->
-        if dragger = @dragger() and dragger.set then dragger.set "direction", direction
+        if (dragger = @dragger()) and dragger.set then dragger.set "direction", direction
         @updateSize()
       
       ###
@@ -252,14 +252,14 @@ replace script
             console.warn "'#{next}' is an invalid 'boundary' value for #{@printTag()}.  Defaulting to '50%'."
             @set "boundary", "50%"
           return
-        if dragger = @dragger() and dragger.set then dragger.set "boundary.value", next
+        if (dragger = @dragger()) and dragger.set then dragger.set "boundary.val", next
         if @parsePercent next
           @setPercent()
         else if @parsePx next
           @setPx()
       
       _minBoundaryChanged: (val) ->
-        if dragger = @dragger() and dragger.set then dragger.set "boundary.min", val
+        if (dragger = @dragger()) and dragger.set then dragger.set "boundary.min", val
       
       _maxBoundaryChanged: (val) ->
-        if dragger = @dragger() and dragger.set then dragger.set "boundary.max", val
+        if (dragger = @dragger()) and dragger.set then dragger.set "boundary.max", val

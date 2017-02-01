@@ -5,16 +5,15 @@ replace docs
   /**
 `<cleantile-drag>` can be inserted into a `<cleantile-split>` element to allow the sides to be resized.
 
-```html
-<cleantile-split>
-  <cleantile-pane>
-    <!-- ... -->
-  </cleantile-split>
-  <cleantile-drag></cleantile-drag>
-  <cleantile-pane>
-    <!-- ... -->
-  </cleantile-pane>
-</cleantile-split>
+    <cleantile-split>
+      <cleantile-pane> ... </cleantile-pane>
+      <cleantile-drag></cleantile-drag>
+      <cleantile-pane> ... </cleantile-pane>
+    </cleantile-split>
+
+See [`<cleantile-split>`](#cleantile-split) for documentation about the parent split.
+
+@demo drag/demo/index.compiled.html Simple examples
   */
 
 append imports
@@ -43,3 +42,4 @@ replace script
         dragging:
           type: Boolean
           value: no
+          reflectToAttribute: yes

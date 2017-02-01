@@ -47,4 +47,5 @@ exports.buildDemos = buildDemos = (opts) ->
         compileDemo opts, "demo/simple-binding"
         compileDemo opts, "tabs/demo/pane-tabs"
         compileDemo opts, "tabs/demo/split-tabs"
+        compileDemo opts, "drag/demo/index"
       ]

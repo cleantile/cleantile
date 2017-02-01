@@ -9,8 +9,6 @@
   [Blade]: https://github.com/bminer/node-blade
 --><script type="text/javascript">
 (function() {
-  var hasProp = {}.hasOwnProperty;
-
   if (window.CleanTile == null) {
     window.CleanTile = {};
   }
@@ -56,14 +54,16 @@ Value automatically fetched from parent `cleantile-split`.
        */
       direction: {
         type: String,
-        value: "horizontal"
+        value: "horizontal",
+        reflectToAttribute: true
       },
 
       /**
 Sets the division point between the two elements of the parent split.  Can contain:
-`val` (<cleantile-split>.boundary)
-`min` (<cleantile-split>.min-boundary)
-`max` (<cleantile-split>.max-boundary)
+
+- `val` (`<cleantile-split>.boundary`)
+- `min` (`<cleantile-split>.min-boundary`)
+- `max` (`<cleantile-split>.max-boundary`)
 
 The parent split will be notified of changes to any of the fields in `boundary`.
        */
@@ -79,9 +79,13 @@ Returns the parent split, if one exists.
 @return {HTMLElement} the `<cleantile-split>`, if one exists.
      */
     split: function() {
-      var e;
+      var e, parent;
       try {
-        return Polymer.dom(this).parentNode;
+        parent = Polymer.dom(this).parentNode;
+        while (parent.tagName.toLowerCase() === "cleantile-split") {
+          parent = parent.parentNode;
+        }
+        return parent;
       } catch (error) {
         e = error;
       }
@@ -90,16 +94,16 @@ Returns the parent split, if one exists.
     /**
 If the parent split has been initialized, fetch property values.
      */
-    registered: function() {
+    ready: function() {
       var split;
-      if (!(split = this.split() && split.get)) {
+      if (!((split = this.split()) && split.get)) {
         return;
       }
       this.set("direction", split.get("direction"));
       return this.set("boundary", {
-        boundary: split.get("boundary"),
-        "min-boundary": split.get("min-boundary"),
-        "max-boundary": split.get("max-boundary")
+        val: split.get("boundary"),
+        min: split.get("min-boundary"),
+        max: split.get("max-boundary")
       });
     },
 
@@ -107,17 +111,19 @@ If the parent split has been initialized, fetch property values.
 Keeps the parent `<cleantile-split>` in sync with the properties in `{boundary}`.
      */
     _boundaryChanged: function(boundary) {
-      var k, results, split, v;
-      if (!(split = this.split() && split.set)) {
+      var split;
+      if (!((split = this.split()) && split.set)) {
         return;
       }
-      results = [];
-      for (k in boundary) {
-        if (!hasProp.call(boundary, k)) continue;
-        v = boundary[k];
-        results.push(split.set(k, v));
+      if ((boundary != null ? boundary.val : void 0) != null) {
+        split.set("boundary", boundary.val);
       }
-      return results;
+      if ((boundary != null ? boundary.min : void 0) != null) {
+        split.set("min-boundary", boundary.min);
+      }
+      if ((boundary != null ? boundary.max : void 0) != null) {
+        return split.set("max-boundary", boundary.max);
+      }
     }
   };
 
