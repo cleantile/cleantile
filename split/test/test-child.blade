@@ -37,6 +37,13 @@ append fixtures
         cleantile-pane#first
         cleantile-pane#second
   
+  test-fixture#trio
+    template
+      cleantile-split
+        cleantile-pane#first
+        cleantile-pane#second
+        cleantile-pane#third
+  
   test-fixture#dragger
     template
       cleantile-split
@@ -83,7 +90,7 @@ append tests
             it "should not find a second child", ->
               expect(split.child(yes)).to.not.exist
       
-      for fix, desc of {"pair": "with multiple children", "dragger": "with a dragger"}
+      for fix, desc of {pair: "with multiple children", dragger: "with a dragger", trio: "with a third pane"}
         do (fix, desc) ->
           describe desc, ->
             
