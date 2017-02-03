@@ -1,0 +1,319 @@
+- var opts = {title: "cleantile-split/cleantile-drag positioning", path: "../../"}
+include "../lib/test" exposing opts
+
+append imports
+  link(rel="import", href=opts.path+"promise-polyfill/promise-polyfill-lite.html")
+  link(rel="import", href="../container/cleantile-container.html")
+  link(rel="import", href="../split/cleantile-split.html")
+  link(rel="import", href="../pane/cleantile-pane.html")
+  link(rel="import", href="../drag/cleantile-drag.html")
+  link(rel="import", href="../demo/text-view/cleantile-text-view.html")
+
+append style
+  :stylus
+    body
+      margin 0
+      padding 0
+    html, body, cleantile-container
+      width 100%
+      height 100%
+
+function dragFixture(name, direction, boundary)
+  test-fixture(id=name)
+    template
+      cleantile-container
+        cleantile-split(direction=direction, boundary=boundary)
+          cleantile-pane#first
+          cleantile-drag#drag
+          cleantile-pane#second
+
+append fixtures
+  call dragFixture("horizontal50Implicit")
+  call dragFixture("horizontal50Explicit", "horizontal", "50%")
+  call dragFixture("horizontal20", "horizontal", "20%")
+  call dragFixture("horizontal75", "horizontal", "75%")
+  call dragFixture("horizontal200", "horizontal", "200px")
+  call dragFixture("vertical50", "vertical", "50%")
+  call dragFixture("vertical20", "vertical", "20%")
+  call dragFixture("vertical75", "vertical", "75%")
+  call dragFixture("vertical200", "vertical", "200px")
+  
+
+append tests
+  :coffeescript
+    flushAsync = -> new Promise (resolve) -> flush -> resolve()
+    
+    # Make the first letter capital
+    capitalize = (str) -> "#{str[0].toUpperCase()}#{str.slice(1)}"
+    
+    horizontal =
+      direction: "horizontal"
+      dimension: "width"
+      altDimension: "height"
+      close: "left"
+      far: "right"
+      fixture: "horizontal50Explicit"
+    
+    vertical =
+      direction: "vertical"
+      dimension: "height"
+      altDimension: "width"
+      close: "top"
+      far: "bottom"
+      fixture: "vertical50"
+    
+    checkLoad = (measure, boundary, comment, fix, {direction, dimension, altDimension, close, far}, full=no) ->
+      describe "<cleantile-drag direction='#{direction}' boundary='#{boundary}#{measure}' />#{comment}", ->
+      
+        [split, drag, first, second] = []
+        beforeEach ->
+          container = fixture fix
+          split = container.querySelector "cleantile-split"
+          first = split.querySelector "#first"
+          drag = split.querySelector "#drag"
+          second = split.querySelector "#second"
+          flushAsync()
+        
+        if full
+          it "should set <cleantile-split>.direction", ->
+            expect(split.direction).to.equal direction
+          
+          it "should set <cleantile-drag>.direction", ->
+            expect(drag.direction).to.equal direction
+          
+          it "should set <cleantile-split>.boundary", ->
+            expect(split.boundary).to.equal "#{boundary}#{measure}"
+          
+          it "should set <cleantile-drag>.boundary.val", ->
+            expect(drag.boundary).to.be.an.object
+            expect(drag.boundary.val).to.equal "#{boundary}#{measure}"
+          
+          it "should set <cleantile-split>.dragWidth", ->
+            expect(drag.width).to.be.above 1
+            expect(split.dragWidth).to.equal drag.width
+          
+          it "should set <cleantile-drag>'s #{dimension}", ->
+            expect(drag["client#{capitalize dimension}"]).to.equal drag.width
+          
+          it "should set <cleantile-drag>'s #{altDimension} to fill the split", ->
+            expect(drag["client#{capitalize altDimension}"]).to.equal split["client#{capitalize altDimension}"]
+        
+        if measure is "%"
+          if boundary is 50
+            it "should have equal #{dimension} <cleantile-pane> elements", ->
+              expect(first.style[dimension]).to.equal "50%"
+              expect(first["client#{capitalize dimension}"]).to.be.closeTo second["client#{capitalize dimension}"], 1
+          if full or boundary isnt 50
+            it "should set the #{close} #{dimension} to #{boundary}%", ->
+              expect(first.style[dimension]).to.equal "#{boundary}%"
+            it "should set the #{far} #{dimension} to #{100 - boundary}%", ->
+              expect(second.style[dimension]).to.equal "#{100 - boundary}%"
+          if full
+            it "should have a measured #{close} #{dimension} of #{boundary}%", ->
+              total = split["client#{capitalize dimension}"]
+              expect(first["client#{capitalize dimension}"]).to.be.closeTo total * (boundary / 100), 1
+            it "should have a measured #{far} #{dimension} of #{100 - boundary}%", ->
+              total = split["client#{capitalize dimension}"]
+              expect(second["client#{capitalize dimension}"]).to.be.closeTo total * (1 - (boundary / 100)), 1
+        else if measure is "px"
+          it "should have a #{close} #{dimension} of #{boundary}px", ->
+            expect(first["client#{capitalize dimension}"]).to.be.closeTo boundary - (drag.width / 2), 1
+          it.skip "should fill the #{far} #{dimension}", ->
+            #TODO: Fix
+            total = split["client#{capitalize dimension}"]
+            expect(second["client#{capitalize dimension}"]).to.be.closeTo total - boundary - (drag.width / 2), 1
+        
+        it "should position <cleantile-drag> between the <cleantile-pane> elements", ->
+          expect(first.style[dimension]).to.equal drag.style[close]
+    
+    describe "<cleantile-drag> positioning inside <cleantile-split>", ->
+      
+      ###   On Load   ###
+      
+      for style, fix of {implicit: "horizontal50Implicit", explicit: "horizontal50Explicit"}
+        checkLoad "%", 50, " (#{style}ly set)", fix, horizontal, yes
+      
+      checkLoad "%", 20, "", "horizontal20", horizontal
+      checkLoad "%", 75, "", "horizontal75", horizontal
+      
+      checkLoad "px", 200, "", "horizontal200", horizontal, yes
+      
+      checkLoad "%", 50, "", "vertical50", vertical, yes
+      checkLoad "%", 20, "", "vertical20", vertical
+      checkLoad "%", 75, "", "vertical75", vertical
+      
+      checkLoad "px", 200, "", "vertical200", vertical
+    
+    describe "<cleantile-drag> updating <cleantile-split>", ->
+      
+      [split, drag, first, second] = []
+      beforeEach ->
+        container = fixture "horizontal50Explicit"
+        split = container.querySelector "cleantile-split"
+        first = split.querySelector "#first"
+        drag = split.querySelector "#drag"
+        second = split.querySelector "#second"
+        flushAsync()
+      
+      ###
+      <cleantile-drag> doesn't update <cleantile-split> for direction, on purpose.
+      it "should update <cleantile-split>.direction when <cleantile-drag>.direction is changed", ->
+        expect(split.direction).to.equal "horizontal"
+        expect(drag.direction).to.equal "horizontal"
+        drag.set "direction", "vertical"
+        flushAsync()
+          .then ->
+            expect(drag.direction).to.equal "vertical", "drag.direction should be set"
+            expect(split.direction).to.equal "vertical", "direction should propagate to split.direction"
+      ###
+      
+      it "should update <cleanile-split>.dragWidth when <cleantile-drag>.width is changed", ->
+        orig = drag.width
+        expect(orig).to.be.above 1
+        expect(split.dragWidth).to.equal orig
+        drag.set "width", orig + 10
+        flushAsync()
+          .then ->
+            expect(split.dragWidth).to.equal orig + 10
+      
+      it "should update <cleantile-split>.boundary when <cleantile-drag>.boundary.val is changed", ->
+        expect(drag.boundary.val).to.equal "50%"
+        expect(split.boundary).to.equal "50%"
+        drag.set "boundary.val", "20%"
+        flushAsync()
+          .then ->
+            expect(drag.boundary.val).to.equal "20%", "drag.boundary.val should be set"
+            expect(split.boundary).to.equal "20%", "boundary should propagate to split.boundary"
+      
+      it "should update <cleantile-split>.min-boundary when <cleantile-drag>.boundary.min is changed", ->
+        drag.set "boundary.min", "10%"
+        flushAsync()
+          .then ->
+            expect(drag.boundary.min).to.equal "10%"
+            expect(split["min-boundary"]).to.equal "10%"
+      
+      it "should update <cleantile-split>.max-boundary when <cleantile-drag>.boundary.max is changed", ->
+        drag.set "boundary.max", "90%"
+        flushAsync()
+          .then ->
+            expect(drag.boundary.max).to.equal "90%"
+            expect(split["max-boundary"]).to.equal "90%"
+    
+    describe "<cleantile-split> updating <cleantile-drag>", ->
+      
+      [split, drag, first, second] = []
+      beforeEach ->
+        container = fixture "horizontal50Explicit"
+        split = container.querySelector "cleantile-split"
+        first = split.querySelector "#first"
+        drag = split.querySelector "#drag"
+        second = split.querySelector "#second"
+        flushAsync()
+      
+      it "should update <cleantile-drag>.direction when <cleantile-split>.direction is changed", ->
+        expect(split.direction).to.equal "horizontal"
+        expect(drag.direction).to.equal "horizontal"
+        split.set "direction", "vertical"
+        flushAsync()
+          .then ->
+            expect(split.direction).to.equal "vertical", "split.direction should be set"
+            expect(drag.direction).to.equal "vertical", "direction should propagate to drag.direction"
+      
+      it "should update <cleantile-drag>.boundary when <cleantile-split> is changed", ->
+        split.set "min-boundary", "20%"
+        split.set "max-boundary", "70%"
+        split.set "boundary", "40%"
+        flushAsync()
+          .then ->
+            expect(drag.boundary).to.deep.equal {val: "40%", min: "20%", max: "70%"}
+    
+    describe "<cleantile-drag> inside a changed <cleantile-split>", ->
+      
+      directions = [horizontal, vertical]
+      
+      for direction, i in directions
+        do (direction) ->
+        
+          alt = if i is 1 then directions[0] else directions[1]
+          
+          describe "changing direction='#{direction.direction}' to direction='#{alt.direction}'", ->
+            
+            [split, drag, first, second] = []
+            beforeEach ->
+              container = fixture direction.fixture
+              split = container.querySelector "cleantile-split"
+              first = split.querySelector "#first"
+              drag = split.querySelector "#drag"
+              second = split.querySelector "#second"
+              flushAsync()
+                .then -> split.set "direction", alt.direction
+                .then -> flushAsync()
+                .then ->
+                  expect(split.direction).to.equal alt.direction, "split.direction should be set"
+                  expect(drag.direction).to.equal alt.direction, "direction should propagate to drag.direction"
+            
+            it "should keep <cleantile-drag> between the <cleantile-pane> elements", ->
+              expect(first.style[alt.dimension]).to.equal drag.style[alt.close]
+            
+            it "should keep the <cleantile-pane> elements proportional", ->
+              expect(first.style[alt.dimension]).to.equal "50%"
+              expect(first["client#{capitalize alt.dimension}"]).to.be.closeTo second["client#{capitalize alt.dimension}"], 1
+            
+            it "should set <cleantile-drag>'s #{direction.dimension} to fill the split", ->
+              expect(drag["client#{capitalize direction.dimension}"]).to.equal split["client#{capitalize direction.dimension}"]
+            
+            it "should set <cleantile-drag>'s #{alt.dimension}", ->
+              expect(drag["client#{capitalize alt.dimension}"]).to.equal drag.width
+          
+          describe "(direction='#{direction.direction}') changing boundary='50%' to boundary='20%'", ->
+            
+            [split, drag, first, second] = []
+            beforeEach ->
+              container = fixture direction.fixture
+              split = container.querySelector "cleantile-split"
+              first = split.querySelector "#first"
+              drag = split.querySelector "#drag"
+              second = split.querySelector "#second"
+              flushAsync()
+                .then -> split.set "boundary", "20%"
+                .then -> flushAsync()
+                .then ->
+                  expect(split.boundary).to.equal "20%", "split.boundary should be set"
+                  expect(drag.boundary.val).to.equal "20%", "boundary should propagate to drag.boundary.val"
+            
+            it "should resize the <cleantile-pane> elements", ->
+              boundary = 20
+              expect(first.style[direction.dimension]).to.equal "#{boundary}%"
+              expect(second.style[direction.dimension]).to.equal "#{100 - boundary}%"
+            
+            it "should move <cleantile-drag>", ->
+              expect(first.style[direction.dimension]).to.equal drag.style[direction.close]
+          
+          describe "(direction='#{direction.direction}') changing boundary='200px' to boundary='100px'", ->
+            
+            [split, drag, first, second] = []
+            beforeEach ->
+              container = fixture "#{direction.direction}200"
+              split = container.querySelector "cleantile-split"
+              first = split.querySelector "#first"
+              drag = split.querySelector "#drag"
+              second = split.querySelector "#second"
+              flushAsync()
+                .then -> split.set "boundary", "100px"
+                .then -> flushAsync()
+                .then ->
+                  expect(split.boundary).to.equal "100px", "split.boundary should be set"
+                  expect(drag.boundary.val).to.equal "100px", "boundary should propagate to drag.boundary.val"
+            
+            it "should resize the #{direction.close} <cleantile-pane>", ->
+              boundary = 100
+              expect(first["client#{capitalize direction.dimension}"]).to.be.closeTo boundary - (drag.width / 2), 1
+            
+            it.skip "should resize the #{direction.far} <cleantile-pane>", ->
+              #TODO: fix
+              boundary = 100
+              total = split["client#{capitalize direction.dimension}"]
+              expect(second["client#{capitalize direction.dimension}"]).to.be.closeTo total - boundary - (drag.width / 2), 1
+            
+            it "should move <cleantile-drag>", ->
+              expect(first.style[direction.dimension]).to.equal drag.style[direction.close]

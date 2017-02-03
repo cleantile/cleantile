@@ -22,7 +22,16 @@ append imports
 replace style
   :stylus
     :host
+      position absolute
       display block
+      background-color pink
+      z-index 20
+    :host[direction="vertical"]
+      width 100%
+      height 5px
+    :host:not([direction="vertical"])
+      width 5px
+      height 100%
 
 replace template
   content
@@ -43,3 +52,6 @@ replace script
           type: Boolean
           value: no
           reflectToAttribute: yes
+        
+      ready: ->
+        @set "width", 5

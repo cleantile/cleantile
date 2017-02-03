@@ -131,6 +131,28 @@ replace script
           value: "null"
           reflectToAttribute: yes
           observer: "_maxBoundaryChanged"
+        
+        ###*
+        The amount of space to leave between the two elements for the dragger.
+        ###
+        dragWidth:
+          type: Number
+          value: 0
+          observer: "_dragWidthChanged"
+      
+      ready: ->
+        if (dragger = @dragger()) and dragger.get
+          @set "dragWidth", dragger.get "width"
+          dragger.pullDirection()
+          dragger.pullBoundary()
+        else
+          setTimeout =>
+              dragger = @dragger()
+              return unless dragger and dragger.get
+              @set "dragWidth", dragger.get "width"
+              dragger.pullDirection()
+              dragger.pullBoundary()
+            , 0
       
       ###*
       Find a `<cleantile-drag>` inside this split, if one exists.
@@ -204,6 +226,12 @@ replace script
         if valid then num else false
       
       ###
+      Updates the size of the children panes regardless of the units.
+      ###
+      redraw: (size) ->
+        if @parsePx(size) then @setPx() else if @parsePercent(size) then @setPercent()
+      
+      ###
       Updates the size of the children panes, if the size is in percent.
       ###
       setPercent: ->
@@ -211,11 +239,22 @@ replace script
         right = 100 - Math.abs(left)
         if left < 0
           [left, right] = [right, Math.abs(left)]
-        dir = if @direction is "horizontal" then "width" else "height"
+        [dir, _dir] = ["height", "width"]
+        if @direction is "horizontal" then [dir, _dir] = [_dir, dir]
+        # Adjust "size" to leave space for a drag bar, if one is needed.
+        padDragger = (size) ->
+          if @dragWidth and @dragWidth > 0 then "calc(#{size}% - #{@dragWidth / 2}px)" else "#{size}%"
         if el = @child(1)
-          el.style[dir] = "#{left}%"
+          el.style[dir] = padDragger(left)
+          el.style[_dir] = ""
         if el = @child(2)
-          el.style[dir] = "#{right}%"
+          el.style[dir] = padDragger(right)
+          el.style[_dir] = ""
+        if drag = @dragger()
+          [margin, _margin] = ["top", "left"]
+          if @direction is "horizontal" then [margin, _margin] = [_margin, margin]
+          drag.style[margin] = padDragger(left)
+          drag.style[_margin] = ""
       
       ###
       Updates the size of the chlidren panes, if the size is in pixels.
@@ -224,20 +263,30 @@ replace script
         left = @parsePx @boundary
         Dir = if @direction is "horizontal" then "Width" else "Height"
         dir = Dir.toLowerCase()
+        _dir = if @direction is "horizontal" then "height" else "width"
         right = @$.contents["client#{Dir}"] - Math.abs(left)
         if left < 0
           [left, right] = [right, Math.abs(left)]
+        if @dragWidth
+          [left, right] = [left - (@dragWidth / 2), right - (@dragWidth / 2)]
         if el = @child(1)
           el.style[dir] = "#{left}px"
+          el.style[_dir] = ""
         if el = @child(2)
           el.style[dir] = "#{right}px"
+          el.style[_dir] = ""
+        if drag = @dragger()
+          offset = if @direction is "horizontal" then "left" else "top"
+          _offset = if @direction is "horizontal" then "top" else "left"
+          drag.style[offset] = "#{left}px"
+          drag.style[_offset] = ""
       
       ###
       Observer for `direction` attribute.  Updates needed children, and redraws.
       ###
       _directionChanged: (direction) ->
         if (dragger = @dragger()) and dragger.set then dragger.set "direction", direction
-        @updateSize()
+        @redraw @boundary
       
       ###
       Observer for `boundary` attribute.
@@ -253,13 +302,12 @@ replace script
             @set "boundary", "50%"
           return
         if (dragger = @dragger()) and dragger.set then dragger.set "boundary.val", next
-        if @parsePercent next
-          @setPercent()
-        else if @parsePx next
-          @setPx()
+        @redraw next
       
       _minBoundaryChanged: (val) ->
         if (dragger = @dragger()) and dragger.set then dragger.set "boundary.min", val
       
       _maxBoundaryChanged: (val) ->
         if (dragger = @dragger()) and dragger.set then dragger.set "boundary.max", val
+      
+      _dragWidthChanged: (val) -> @redraw @boundary

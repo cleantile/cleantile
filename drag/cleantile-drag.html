@@ -21,7 +21,18 @@ See [`<cleantile-split>`](#cleantile-split) for documentation about the parent s
 @demo drag/demo/index.compiled.html Simple examples
  --><dom-module id="cleantile-drag"><template><style type="text/css">
 :host {
+  position: absolute;
   display: block;
+  background-color: #ffc0cb;
+  z-index: 20;
+}
+:host[direction="vertical"] {
+  width: 100%;
+  height: 5px;
+}
+:host:not([direction="vertical"]) {
+  width: 5px;
+  height: 100%;
 }
 
 </style><content></content></template><script type="text/javascript">
@@ -39,6 +50,9 @@ See [`<cleantile-split>`](#cleantile-split) for documentation about the parent s
         value: false,
         reflectToAttribute: true
       }
+    },
+    ready: function() {
+      return this.set("width", 5);
     }
   });
 

@@ -15073,10 +15073,24 @@ The parent split will be notified of changes to any of the fields in `boundary`.
        */
       boundary: {
         type: Object,
-        value: {},
-        observer: "_boundaryChanged"
+        value: function() {
+          return {};
+        }
+      },
+
+      /**
+The amount of space that should be left between the two sides of the split for the dragger.
+
+Additional padding around the bar should be included in the `width` property, and CSS inside the dragger should
+add the margin on either side of the bar.
+       */
+      width: {
+        type: Number,
+        value: 0,
+        observer: "_widthChanged"
       }
     },
+    observers: ["_boundaryChanged(boundary.val, boundary.min, boundary.max)"],
 
     /**
 Returns the parent split, if one exists.
@@ -15086,7 +15100,7 @@ Returns the parent split, if one exists.
       var e, parent;
       try {
         parent = Polymer.dom(this).parentNode;
-        while (parent.tagName.toLowerCase() === "cleantile-split") {
+        while (parent.tagName.toLowerCase() !== "cleantile-split") {
           parent = parent.parentNode;
         }
         return parent;
@@ -15100,10 +15114,43 @@ If the parent split has been initialized, fetch property values.
      */
     ready: function() {
       var split;
-      if (!((split = this.split()) && split.get)) {
+      split = this.split();
+      if (split && split.get) {
+        this.pullDirection();
+        return this.pullBoundary();
+      } else {
+        return setTimeout((function(_this) {
+          return function() {
+            _this.pullDirection();
+            return _this.pullBoundary();
+          };
+        })(this), 0);
+      }
+    },
+
+    /**
+Fetch 'direction' from parent split.
+     */
+    pullDirection: function(split) {
+      if (split == null) {
+        split = this.split();
+      }
+      if (!split.get) {
         return;
       }
-      this.set("direction", split.get("direction"));
+      return this.set("direction", split.get("direction"));
+    },
+
+    /**
+Fetch 'boundary' from parent split.
+     */
+    pullBoundary: function(split) {
+      if (split == null) {
+        split = this.split();
+      }
+      if (!split.get) {
+        return;
+      }
       return this.set("boundary", {
         val: split.get("boundary"),
         min: split.get("min-boundary"),
@@ -15112,21 +15159,26 @@ If the parent split has been initialized, fetch property values.
     },
 
     /**
-Keeps the parent `<cleantile-split>` in sync with the properties in `{boundary}`.
+Keeps the parent `<cleantile-split>` in sync with the properties in `boundary`.
      */
-    _boundaryChanged: function(boundary) {
+    _boundaryChanged: function(val, min, max) {
       var split;
+      console.log("Updating boundary");
       if (!((split = this.split()) && split.set)) {
-        return;
+        return console.warn("Can't update boundary of split");
       }
-      if ((boundary != null ? boundary.val : void 0) != null) {
-        split.set("boundary", boundary.val);
-      }
-      if ((boundary != null ? boundary.min : void 0) != null) {
-        split.set("min-boundary", boundary.min);
-      }
-      if ((boundary != null ? boundary.max : void 0) != null) {
-        return split.set("max-boundary", boundary.max);
+      split.set("boundary", val);
+      split.set("min-boundary", min);
+      return split.set("max-boundary", max);
+    },
+
+    /**
+Keeps the parent `<cleantile-split>` in sync with this split's `width`.
+     */
+    _widthChanged: function(width) {
+      var split;
+      if ((split = this.split()) && split.set) {
+        return split.set("dragWidth", width);
       }
     }
   };
@@ -15250,6 +15302,35 @@ Defaults to `"null"`.
         value: "null",
         reflectToAttribute: true,
         observer: "_maxBoundaryChanged"
+      },
+
+      /**
+The amount of space to leave between the two elements for the dragger.
+       */
+      dragWidth: {
+        type: Number,
+        value: 0,
+        observer: "_dragWidthChanged"
+      }
+    },
+    ready: function() {
+      var dragger;
+      if ((dragger = this.dragger()) && dragger.get) {
+        this.set("dragWidth", dragger.get("width"));
+        dragger.pullDirection();
+        return dragger.pullBoundary();
+      } else {
+        return setTimeout((function(_this) {
+          return function() {
+            dragger = _this.dragger();
+            if (!(dragger && dragger.get)) {
+              return;
+            }
+            _this.set("dragWidth", dragger.get("width"));
+            dragger.pullDirection();
+            return dragger.pullBoundary();
+          };
+        })(this), 0);
       }
     },
 
@@ -15382,21 +15463,52 @@ Also, if the size has changed, update children in the split who have an `updateS
     },
 
     /*
+    Updates the size of the children panes regardless of the units.
+     */
+    redraw: function(size) {
+      if (this.parsePx(size)) {
+        return this.setPx();
+      } else if (this.parsePercent(size)) {
+        return this.setPercent();
+      }
+    },
+
+    /*
     Updates the size of the children panes, if the size is in percent.
      */
     setPercent: function() {
-      var dir, el, left, ref, right;
+      var _dir, _margin, dir, drag, el, left, margin, padDragger, ref, ref1, ref2, ref3, ref4, right;
       left = this.parsePercent(this.boundary);
       right = 100 - Math.abs(left);
       if (left < 0) {
         ref = [right, Math.abs(left)], left = ref[0], right = ref[1];
       }
-      dir = this.direction === "horizontal" ? "width" : "height";
+      ref1 = ["height", "width"], dir = ref1[0], _dir = ref1[1];
+      if (this.direction === "horizontal") {
+        ref2 = [_dir, dir], dir = ref2[0], _dir = ref2[1];
+      }
+      padDragger = function(size) {
+        if (this.dragWidth && this.dragWidth > 0) {
+          return "calc(" + size + "% - " + (this.dragWidth / 2) + "px)";
+        } else {
+          return size + "%";
+        }
+      };
       if (el = this.child(1)) {
-        el.style[dir] = left + "%";
+        el.style[dir] = padDragger(left);
+        el.style[_dir] = "";
       }
       if (el = this.child(2)) {
-        return el.style[dir] = right + "%";
+        el.style[dir] = padDragger(right);
+        el.style[_dir] = "";
+      }
+      if (drag = this.dragger()) {
+        ref3 = ["top", "left"], margin = ref3[0], _margin = ref3[1];
+        if (this.direction === "horizontal") {
+          ref4 = [_margin, margin], margin = ref4[0], _margin = ref4[1];
+        }
+        drag.style[margin] = padDragger(left);
+        return drag.style[_margin] = "";
       }
     },
 
@@ -15404,19 +15516,31 @@ Also, if the size has changed, update children in the split who have an `updateS
     Updates the size of the chlidren panes, if the size is in pixels.
      */
     setPx: function() {
-      var Dir, dir, el, left, ref, right;
+      var Dir, _dir, _offset, dir, drag, el, left, offset, ref, ref1, right;
       left = this.parsePx(this.boundary);
       Dir = this.direction === "horizontal" ? "Width" : "Height";
       dir = Dir.toLowerCase();
+      _dir = this.direction === "horizontal" ? "height" : "width";
       right = this.$.contents["client" + Dir] - Math.abs(left);
       if (left < 0) {
         ref = [right, Math.abs(left)], left = ref[0], right = ref[1];
       }
+      if (this.dragWidth) {
+        ref1 = [left - (this.dragWidth / 2), right - (this.dragWidth / 2)], left = ref1[0], right = ref1[1];
+      }
       if (el = this.child(1)) {
         el.style[dir] = left + "px";
+        el.style[_dir] = "";
       }
       if (el = this.child(2)) {
-        return el.style[dir] = right + "px";
+        el.style[dir] = right + "px";
+        el.style[_dir] = "";
+      }
+      if (drag = this.dragger()) {
+        offset = this.direction === "horizontal" ? "left" : "top";
+        _offset = this.direction === "horizontal" ? "top" : "left";
+        drag.style[offset] = left + "px";
+        return drag.style[_offset] = "";
       }
     },
 
@@ -15428,7 +15552,7 @@ Also, if the size has changed, update children in the split who have an `updateS
       if ((dragger = this.dragger()) && dragger.set) {
         dragger.set("direction", direction);
       }
-      return this.updateSize();
+      return this.redraw(this.boundary);
     },
 
     /*
@@ -15450,11 +15574,7 @@ Also, if the size has changed, update children in the split who have an `updateS
       if ((dragger = this.dragger()) && dragger.set) {
         dragger.set("boundary.val", next);
       }
-      if (this.parsePercent(next)) {
-        return this.setPercent();
-      } else if (this.parsePx(next)) {
-        return this.setPx();
-      }
+      return this.redraw(next);
     },
     _minBoundaryChanged: function(val) {
       var dragger;
@@ -15467,6 +15587,9 @@ Also, if the size has changed, update children in the split who have an `updateS
       if ((dragger = this.dragger()) && dragger.set) {
         return dragger.set("boundary.max", val);
       }
+    },
+    _dragWidthChanged: function(val) {
+      return this.redraw(this.boundary);
     }
   });
 

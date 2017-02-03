@@ -55,8 +55,22 @@ include "../lib/blade-warning"
       ###
       boundary:
         type: Object
-        value: {}
-        observer: "_boundaryChanged"
+        value: -> {}
+      
+      ###*
+      The amount of space that should be left between the two sides of the split for the dragger.
+      
+      Additional padding around the bar should be included in the `width` property, and CSS inside the dragger should
+      add the margin on either side of the bar.
+      ###
+      width:
+        type: Number
+        value: 0
+        observer: "_widthChanged"
+    
+    observers: [
+      "_boundaryChanged(boundary.val, boundary.min, boundary.max)"
+    ]
     
     ###*
     Returns the parent split, if one exists.
@@ -65,7 +79,7 @@ include "../lib/blade-warning"
     split: ->
       try
         parent = Polymer.dom(@).parentNode
-        while parent.tagName.toLowerCase() is "cleantile-split"
+        while parent.tagName.toLowerCase() isnt "cleantile-split"
           parent = parent.parentNode
         return parent
       catch e
@@ -75,18 +89,47 @@ include "../lib/blade-warning"
     If the parent split has been initialized, fetch property values.
     ###
     ready: ->
-      return unless (split = @split()) and split.get
+      split = @split()
+      if split and split.get
+        @pullDirection()
+        @pullBoundary()
+      else
+        setTimeout =>
+            @pullDirection()
+            @pullBoundary()
+          , 0
+    
+    ###*
+    Fetch 'direction' from parent split.
+    ###
+    pullDirection: (split) ->
+      split ?= @split()
+      return unless split.get
       @set "direction", split.get "direction"
+    
+    ###*
+    Fetch 'boundary' from parent split.
+    ###
+    pullBoundary: (split) ->
+      split ?= @split()
+      return unless split.get
       @set "boundary",
         val: split.get "boundary"
         min: split.get "min-boundary"
         max: split.get "max-boundary"
     
     ###*
-    Keeps the parent `<cleantile-split>` in sync with the properties in `{boundary}`.
+    Keeps the parent `<cleantile-split>` in sync with the properties in `boundary`.
     ###
-    _boundaryChanged: (boundary) ->
-      return unless (split = @split()) and split.set
-      if boundary?.val? then split.set "boundary", boundary.val
-      if boundary?.min? then split.set "min-boundary", boundary.min
-      if boundary?.max? then split.set "max-boundary", boundary.max
+    _boundaryChanged: (val, min, max) ->
+      console.log("Updating boundary")
+      return console.warn("Can't update boundary of split") unless (split = @split()) and split.set
+      split.set "boundary", val
+      split.set "min-boundary", min
+      split.set "max-boundary", max
+    
+    ###*
+    Keeps the parent `<cleantile-split>` in sync with this split's `width`.
+    ###
+    _widthChanged: (width) ->
+      if (split = @split()) and split.set then split.set "dragWidth", width
