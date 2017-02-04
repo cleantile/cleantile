@@ -1,0 +1,52 @@
+include "../lib/license"
+include "../lib/blade-warning"
+:coffeescript
+  window.CleanTile ?= {}
+  ###*
+  Provides methods that can lookup values from multiple sources.
+  
+  **Example referencing an HTML element**
+  
+      <dom-module id="draggable-box">
+        <template>
+          <div on-click="handleClick" data-act-on="#login button"></div>
+        </template>
+        <script>
+          Polymer({
+            is: "draggable-box",
+            properties: {
+              parent: {
+                type: Object,
+                value: document.querySelector("body")
+              }
+            },
+            behaviors: [CleanTile.GetReference],
+            handleClick: function(e) {
+              var target = this.getElementReference([e.currentTarget["data-act-on"], this.parent]);
+            }
+          });
+        </ script >
+      </dom-module>
+  
+  @polymerBehavior
+  ###
+  CleanTile.GetReference =
+    
+    ###*
+    Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings that reference queryable
+    `HTMLElement`s, strings that reference local properties that are valid input, or functions that return valid input.
+    @param {Array<Any>} sources potential references to resolve.  The first valid input will be returned.
+    @param {Object} opts options to configure element lookup
+    @option opts {Function} query Defaults to `document` an object with `querySelector`, that can lookup elements.
+    @return {HTMLElement} The HTML element referenced, if found.
+    ###
+    getElementReference: (sources=[], opts={}) ->
+      opts.query ?= document
+      lookup = (source) =>
+        return switch
+          when source instanceof HTMLElement then source
+          when source instanceof Function then lookup source()
+          when typeof source is "string" and @ and (ref = @[source]) then lookup ref
+          when typeof source is "string" and opts.query?.querySelector? and (ref = opts.query.querySelector(source)) then ref
+      for source in sources when source
+        if (found = lookup source) and found instanceof HTMLElement then return found

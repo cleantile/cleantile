@@ -33,6 +33,7 @@ exports.buildTests = buildTests = (opts) ->
     .all [
       compileTests opts, "test/"
       compileTests opts, "container/test/"
+      compileTests opts, "get-reference/test/"
       compileTests opts, "split/test/"
       compileTests opts, "tabs/test/"
     ]

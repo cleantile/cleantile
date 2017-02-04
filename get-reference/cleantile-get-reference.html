@@ -1,0 +1,95 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><script type="text/javascript">
+(function() {
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+
+  /**
+Provides methods that can lookup values from multiple sources.
+
+**Example referencing an HTML element**
+
+    <dom-module id="draggable-box">
+      <template>
+        <div on-click="handleClick" data-act-on="#login button"></div>
+      </template>
+      <script>
+        Polymer({
+          is: "draggable-box",
+          properties: {
+            parent: {
+              type: Object,
+              value: document.querySelector("body")
+            }
+          },
+          behaviors: [CleanTile.GetReference],
+          handleClick: function(e) {
+            var target = this.getElementReference([e.currentTarget["data-act-on"], this.parent]);
+          }
+        });
+      </ script >
+    </dom-module>
+
+@polymerBehavior
+   */
+
+  CleanTile.GetReference = {
+
+    /**
+Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings that reference queryable
+`HTMLElement`s, strings that reference local properties that are valid input, or functions that return valid input.
+@param {Array<Any>} sources potential references to resolve.  The first valid input will be returned.
+@param {Object} opts options to configure element lookup
+@option opts {Function} query Defaults to `document` an object with `querySelector`, that can lookup elements.
+@return {HTMLElement} The HTML element referenced, if found.
+     */
+    getElementReference: function(sources, opts) {
+      var found, i, len, lookup, source;
+      if (sources == null) {
+        sources = [];
+      }
+      if (opts == null) {
+        opts = {};
+      }
+      if (opts.query == null) {
+        opts.query = document;
+      }
+      lookup = (function(_this) {
+        return function(source) {
+          var ref, ref1;
+          switch (false) {
+            case !(source instanceof HTMLElement):
+              return source;
+            case !(source instanceof Function):
+              return lookup(source());
+            case !(typeof source === "string" && _this && (ref = _this[source])):
+              return lookup(ref);
+            case !(typeof source === "string" && (((ref1 = opts.query) != null ? ref1.querySelector : void 0) != null) && (ref = opts.query.querySelector(source))):
+              return ref;
+          }
+        };
+      })(this);
+      for (i = 0, len = sources.length; i < len; i++) {
+        source = sources[i];
+        if (source) {
+          if ((found = lookup(source)) && found instanceof HTMLElement) {
+            return found;
+          }
+        }
+      }
+    }
+  };
+
+}).call(this);
+
+</script>

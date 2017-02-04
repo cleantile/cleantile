@@ -1,0 +1,60 @@
+- var opts = {title: "GetReference.getElementReference", path: "../../../"}
+include "../../lib/test" exposing opts
+
+append imports
+  link(rel="import", href="../cleantile-get-reference.html")
+
+append fixtures
+  test-fixture#default
+    template
+      #container
+        #target(data-target="#container")
+
+append tests
+  :coffeescript
+    describe "DragBehavior.getElementReference", ->
+      
+      getElementReference = CleanTile.GetReference.getElementReference
+      
+      [container, target] = []
+      before ->
+        container = fixture "default"
+        target = container.querySelector "#target"
+      
+      it "should return nothing if not given input", ->
+        expect(getElementReference []).to.not.exist
+        expect(getElementReference()).to.not.exist
+        expect(getElementReference [null]).to.not.exist
+      
+      it "should return nothing if given unexpected types", ->
+        expect(getElementReference [1]).to.not.exist
+        expect(getElementReference [{foo: "bar"}]).to.not.exist
+      
+      it "should return an element when given an HTMLElement", ->
+        expect(getElementReference [container]).to.equal container
+        expect(getElementReference [target]).to.equal target
+      
+      it "should return the first element given", ->
+        expect(getElementReference [container, target]).to.equal container
+        expect(getElementReference [target, container]).to.equal target
+      
+      it "should ignore invalid entries", ->
+        expect(getElementReference [null, container]).to.equal container
+        expect(getElementReference [container, null]).to.equal container
+        expect(getElementReference [null, container, null]).to.equal container
+        expect(getElementReference [1, container, {foo: "bar"}]).to.equal container
+      
+      it "should lookup elements referenced in strings", ->
+        expect(getElementReference ["[data-target]"], {query: container}).to.equal target
+      
+      it "should evaluate functions", ->
+        expect(getElementReference [-> container]).to.equal container
+        expect(getElementReference [-> "#target"], {query: container}).to.equal target
+        expect(getElementReference [-> -> -> "#target"], {query: container}).to.equal target
+      
+      it "should find properties referenced", ->
+        testObj = {container, getElementReference, lookup: "#target", loop: "lookup", exec: -> container}
+        expect(testObj.getElementReference ["container"]).to.equal container
+        expect(testObj.getElementReference ["lookup"], {query: container}).to.equal target
+        expect(testObj.getElementReference ["loop"], {query: container}).to.equal target
+        expect(testObj.getElementReference ["exec"]).to.equal container
