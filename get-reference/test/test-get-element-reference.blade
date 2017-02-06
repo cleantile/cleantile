@@ -30,9 +30,12 @@ append tests
         expect(getElementReference [1]).to.not.exist
         expect(getElementReference [{foo: "bar"}]).to.not.exist
       
-      it "should return an element when given an HTMLElement", ->
+      it "should return an element when given an HTMLElement inside an array", ->
         expect(getElementReference [container]).to.equal container
         expect(getElementReference [target]).to.equal target
+      
+      it "should return an element directly passed", ->
+        expect(getElementReference container).to.equal container
       
       it "should return the first element given", ->
         expect(getElementReference [container, target]).to.equal container
@@ -43,6 +46,12 @@ append tests
         expect(getElementReference [container, null]).to.equal container
         expect(getElementReference [null, container, null]).to.equal container
         expect(getElementReference [1, container, {foo: "bar"}]).to.equal container
+      
+      it "should find elements inside nested arrays", ->
+        expect(getElementReference [null, [container], 1]).to.equal container
+        expect(getElementReference [[container], target]).to.equal container
+        expect(getElementReference [[container, target], null]).to.equal container
+        expect(getElementReference [[[container], null], null]).to.equal container
       
       it "should lookup elements referenced in strings", ->
         expect(getElementReference ["[data-target]"], {query: container}).to.equal target

@@ -35,7 +35,7 @@ include "../lib/blade-warning"
     ###*
     Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings that reference queryable
     `HTMLElement`s, strings that reference local properties that are valid input, or functions that return valid input.
-    @param {Array<Any>} sources potential references to resolve.  The first valid input will be returned.
+    @param {<Any>, Array<Any>} sources potential references to resolve.  The first valid input will be returned.
     @param {Object} opts options to configure element lookup
     @option opts {Function} query Defaults to `document` an object with `querySelector`, that can lookup elements.
     @return {HTMLElement} The HTML element referenced, if found.
@@ -46,7 +46,9 @@ include "../lib/blade-warning"
         return switch
           when source instanceof HTMLElement then source
           when source instanceof Function then lookup source()
+          when Array.isArray(source)
+            for item in source
+              if (found = lookup item) and found instanceof HTMLElement then return found
           when typeof source is "string" and @ and (ref = @[source]) then lookup ref
           when typeof source is "string" and opts.query?.querySelector? and (ref = opts.query.querySelector(source)) then ref
-      for source in sources when source
-        if (found = lookup source) and found instanceof HTMLElement then return found
+      lookup sources

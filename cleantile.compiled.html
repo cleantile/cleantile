@@ -12751,7 +12751,7 @@ Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings t
 @return {HTMLElement} The HTML element referenced, if found.
      */
     getElementReference: function(sources, opts) {
-      var found, i, len, lookup, source;
+      var lookup;
       if (sources == null) {
         sources = [];
       }
@@ -12763,12 +12763,20 @@ Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings t
       }
       lookup = (function(_this) {
         return function(source) {
-          var ref, ref1;
+          var found, i, item, len, ref, ref1;
           switch (false) {
             case !(source instanceof HTMLElement):
               return source;
             case !(source instanceof Function):
               return lookup(source());
+            case !Array.isArray(source):
+              for (i = 0, len = source.length; i < len; i++) {
+                item = source[i];
+                if ((found = lookup(item)) && found instanceof HTMLElement) {
+                  return found;
+                }
+              }
+              break;
             case !(typeof source === "string" && _this && (ref = _this[source])):
               return lookup(ref);
             case !(typeof source === "string" && (((ref1 = opts.query) != null ? ref1.querySelector : void 0) != null) && (ref = opts.query.querySelector(source))):
@@ -12776,14 +12784,7 @@ Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings t
           }
         };
       })(this);
-      for (i = 0, len = sources.length; i < len; i++) {
-        source = sources[i];
-        if (source) {
-          if ((found = lookup(source)) && found instanceof HTMLElement) {
-            return found;
-          }
-        }
-      }
+      return lookup(sources);
     }
   };
 
