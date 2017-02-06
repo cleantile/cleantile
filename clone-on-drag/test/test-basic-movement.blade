@@ -1,0 +1,58 @@
+- var opts = {title: "CloneOnDrag Basic Usage", path: "../../../"}
+include "../../lib/test" exposing opts
+
+append imports
+  link(rel="import", href=opts.path+"promise-polyfill/promise-polyfill-lite.html")
+  //- TODO: change path once using Bower
+  //-link(rel="import", href=opts.path+"iron-test-helpers/mock-interactions.html")
+  link(rel="import", href="../cleantile-clone-on-drag.html")
+
+append fixtures
+  dom-module#test-square
+    template
+      :stylus
+        :host, #target
+          display block
+          width 100px
+          height 100px
+      #target(on-track="cloneTrack")
+    :coffeescript
+      HTMLImports.whenReady ->
+        Polymer
+          is: "test-square"
+          behaviors: [CleanTile.CloneOnDrag]
+  test-fixture#default
+    template
+      test-square
+
+append tests
+  //- `test-basic-movement` is intended to ensure a basic set of options works when dragging a CloneOnDrag element.
+  //- Testing every option or edge cases should be done in other files that are more specific.
+  :coffeescript
+    flushAsync = -> new Promise (resolve) -> flush -> resolve()
+    
+    ###
+    Simulates the start of a `track` event.
+    ###
+    trackStart = (target) ->
+      {x, y} = MockInteractions.topLeftOfNode target
+      MockInteractions.down target, {x: x + 5, y: y + 5}
+      MockInteractions.move target, {x: x + 5, y: y + 10}, {x: x + 10, y: y + 15}, 0
+      flushAsync()
+    
+    describe "CloneOnDrag Basic Usage", ->
+      
+      [square, clone] = []
+      beforeEach ->
+        square = fixture "default"
+        target = square.querySelector "#target"
+      
+      afterEach ->
+        square.cloneTrackEnd()
+      
+      it.skip "should set _cloneTrackPosition", ->
+        {x, y} = MockInteractions.topLeftOfNode target
+        trackStart target
+          .then ->
+            expect(square._cloneTrackPosition).should.deep.equal {x: x + 10, y: y + 15}
+        

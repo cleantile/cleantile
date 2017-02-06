@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "promise-polyfill": "polymerlabs/promise-polyfill#^1.0.0",
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5"
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.4.0"
   }
 }

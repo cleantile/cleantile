@@ -1,0 +1,10 @@
+- var opts = {title: "CleanTile.CloneOnDrag tests", path: "../../../"}
+include "../../lib/test" exposing opts
+
+render replace imports(true)
+
+replace tests
+  :coffeescript
+    WCT.loadSuites [
+      "./test-basic-movement.html"
+    ]

@@ -1,4 +1,5 @@
 module.exports = [
+  "clone-on-drag"
   "container"
   "drag"
   "drag-behavior"

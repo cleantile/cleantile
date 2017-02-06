@@ -48,7 +48,7 @@ Provides methods that can lookup values from multiple sources.
     /**
 Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings that reference queryable
 `HTMLElement`s, strings that reference local properties that are valid input, or functions that return valid input.
-@param {Array<Any>} sources potential references to resolve.  The first valid input will be returned.
+@param {<Any>, Array<Any>} sources potential references to resolve.  The first valid input will be returned.
 @param {Object} opts options to configure element lookup
 @option opts {Function} query Defaults to `document` an object with `querySelector`, that can lookup elements.
 @return {HTMLElement} The HTML element referenced, if found.

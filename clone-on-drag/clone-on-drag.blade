@@ -1,0 +1,130 @@
+include "../lib/license"
+include "../lib/blade-warning"
+link(rel="import", href="../get-reference/cleantile-get-reference.html")
+:coffeescript
+  window.CleanTile ?= {}
+  ###*
+  Describes an element that should be cloned when it is dragged.
+  
+  **Example**
+  
+      <dom-module id="draggable-box">
+        <template>
+          <div on-track="cloneTrack"></div>
+        </template>
+        <script>
+          Polymer({
+            is: "draggable-box",
+            behaviors: [CleanTile.CloneOnDrag]
+          })
+        </ script >
+      </dom-module>
+  
+  **Example with multiple `on-track` listeners**
+  
+      <dom-module id="draggable-box">
+        <template>
+          <div on-track="doTrack"></div>
+        </template>
+        <script>
+          Polymer({
+            is: "draggable-box",
+            // MyDroppable should receive 'droppableTrack' on `on-track` events
+            behaviors: [CleanTile.CloneOnDrag, MyDroppable],
+            doTrack: function(e) {
+              this.cloneTrack(e);
+              this.droppableTrack(e);
+            }
+          })
+        </ script >
+      </dom-module>
+  
+  @polymerBehavior
+  ###
+  CloneOnDrag =
+    properties:
+      ###*
+      An cloned element that should move when this element is dragged.
+      ###
+      _cloneTrackElement:
+        type: Object
+        readOnly: yes
+      
+      ###*
+      The position of the element that is cloned on drag.
+      ###
+      _cloneTrackPosition:
+        type: Object
+        value: -> {x: 0, y: 0}
+      
+      ###*
+      The relative position of the cursor to the moving object.
+      ###
+      _cloneTrackOffset:
+        type: Object
+        value: -> {x: 0, y: 0}
+        readOnly: yes
+    
+    observers: [
+      "_cloneTrackUpdatePosition(_cloneTrackPosition, _cloneTrackOffset)"
+    ]
+    
+    ###*
+    Listens to the `track` event.
+    @param {MouseEvent} e A `track` event
+    @param {Object} opts options to configure the event.  Options not provided will be looked up in `data-` attributes
+      of `e.currentTarget` (element clicked), or as inherited properties.
+    @option opts {HTMLElement, Function, String} target an HTMLElement that should hold clones while dragging.
+      Overrides `data-clone-target`, `this.cloneDragTarget`.  Defaults to `"body"`.
+    @option opts {HTMLElement, Function, String} element the HTMLElement that should be cloned.  Defaults to `this`.
+    @see {@link https://www.polymer-project.org/1.0/docs/devguide/gesture-events} `track` event
+    ###
+    cloneTrack: (e, opts={}) ->
+      switch e.detail.state
+        when "start" then @cloneTrackStart e, opts
+        when "end" then return @cloneTrackEnd e, opts
+      @set "_cloneTrackPosition.x", e.x
+      @set "_cloneTrackPosition.y", e.y
+    
+    _cloneTrackPositionChanged: (position, cursor) ->
+      return unless @_cloneTrackElement and @_cloneTrackElement instanceof HTMLElement
+      @_cloneTrackElement.style.left = position.y - cursor.y
+      @_cloneTrackElement.style.right = position.x - cursor.x
+    
+    ###*
+    Initialize a drag.  Sets `this._cloneTrackElement`.
+    See `cloneTrack` for parameters.
+    ###
+    cloneTrackStart: (e, opts) ->
+      target = @getElementReference [
+        opts.target
+        e.currentTarget.getAttribute "data-clone-target"
+        @cloneDragTarget, "body"
+      ]
+      element = @getElementReference [
+        opts.element,
+        e.currentTarget.getAttribute "data-clone-element"
+        @cloneDragElement, @
+      ]
+      unless target
+        return console.warn new Error "CloneOnDrag can't find the 'target' element"
+      unless element
+        return console.warn new Error "CloneOnDrag can't find the 'element' to clone"
+      rect = element.getBoundingClientRect()
+      @_set_cloneTrackOffset {x: e.x - rect.left, y: e.y - rect.top}
+      @_set_cloneTrackElement element.cloneNode()
+      @_cloneTrackElement.style.position = "absolute"
+      target.appendChild @_cloneTrackElement
+    
+    ###*
+    Finalizes a drag.  Removes `this._cloneTrackElement`.
+    See `cloneTrack` for parameters.
+    ###
+    cloneTrackEnd: (e, opts) ->
+      unless @_cloneTrackElement
+        return console.warn new Error "CloneOnDrag can't terminate the drag: element not found"
+      @_cloneTrackElement.parentNode.removeChild @_cloneTrackElement
+      @_set_cloneTrackElement null
+      @_set_cloneTrackOffset {x: 0, y: 0}
+  
+  CleanTile.CloneOnDrag = [CleanTile.GetReference, CloneOnDrag]

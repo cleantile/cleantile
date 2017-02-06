@@ -62,6 +62,12 @@ raw =
       "^0.0.3": ["dev"]
     bower:
       "PolymerElements/iron-demo-helpers#^1.2.5": ["dev"]
+  "@polymer/iron-test-helpers":
+    names: {bower: "iron-test-helpers"}
+    #npm:
+      # "^0.0.3": ["dev"] # Out of date
+    bower:
+      "PolymerElements/iron-test-helpers#^1.4.0": ["dev"]
 
 ###
 Checks that a version of a package isn't just used for "dev".

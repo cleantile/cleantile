@@ -3,6 +3,265 @@
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
 --><!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><script type="text/javascript">
+(function() {
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+
+  /**
+Provides methods that can lookup values from multiple sources.
+
+**Example referencing an HTML element**
+
+    <dom-module id="draggable-box">
+      <template>
+        <div on-click="handleClick" data-act-on="#login button"></div>
+      </template>
+      <script>
+        Polymer({
+          is: "draggable-box",
+          properties: {
+            parent: {
+              type: Object,
+              value: document.querySelector("body")
+            }
+          },
+          behaviors: [CleanTile.GetReference],
+          handleClick: function(e) {
+            var target = this.getElementReference([e.currentTarget["data-act-on"], this.parent]);
+          }
+        });
+      </ script >
+    </dom-module>
+
+@polymerBehavior
+   */
+
+  CleanTile.GetReference = {
+
+    /**
+Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings that reference queryable
+`HTMLElement`s, strings that reference local properties that are valid input, or functions that return valid input.
+@param {<Any>, Array<Any>} sources potential references to resolve.  The first valid input will be returned.
+@param {Object} opts options to configure element lookup
+@option opts {Function} query Defaults to `document` an object with `querySelector`, that can lookup elements.
+@return {HTMLElement} The HTML element referenced, if found.
+     */
+    getElementReference: function(sources, opts) {
+      var lookup;
+      if (sources == null) {
+        sources = [];
+      }
+      if (opts == null) {
+        opts = {};
+      }
+      if (opts.query == null) {
+        opts.query = document;
+      }
+      lookup = (function(_this) {
+        return function(source) {
+          var found, i, item, len, ref, ref1;
+          switch (false) {
+            case !(source instanceof HTMLElement):
+              return source;
+            case !(source instanceof Function):
+              return lookup(source());
+            case !Array.isArray(source):
+              for (i = 0, len = source.length; i < len; i++) {
+                item = source[i];
+                if ((found = lookup(item)) && found instanceof HTMLElement) {
+                  return found;
+                }
+              }
+              break;
+            case !(typeof source === "string" && _this && (ref = _this[source])):
+              return lookup(ref);
+            case !(typeof source === "string" && (((ref1 = opts.query) != null ? ref1.querySelector : void 0) != null) && (ref = opts.query.querySelector(source))):
+              return ref;
+          }
+        };
+      })(this);
+      return lookup(sources);
+    }
+  };
+
+}).call(this);
+
+</script><script type="text/javascript">
+(function() {
+  var CloneOnDrag;
+
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+
+  /**
+Describes an element that should be cloned when it is dragged.
+
+**Example**
+
+    <dom-module id="draggable-box">
+      <template>
+        <div on-track="cloneTrack"></div>
+      </template>
+      <script>
+        Polymer({
+          is: "draggable-box",
+          behaviors: [CleanTile.CloneOnDrag]
+        })
+      </ script >
+    </dom-module>
+
+**Example with multiple `on-track` listeners**
+
+    <dom-module id="draggable-box">
+      <template>
+        <div on-track="doTrack"></div>
+      </template>
+      <script>
+        Polymer({
+          is: "draggable-box",
+          // MyDroppable should receive 'droppableTrack' on `on-track` events
+          behaviors: [CleanTile.CloneOnDrag, MyDroppable],
+          doTrack: function(e) {
+            this.cloneTrack(e);
+            this.droppableTrack(e);
+          }
+        })
+      </ script >
+    </dom-module>
+
+@polymerBehavior
+   */
+
+  CloneOnDrag = {
+    properties: {
+
+      /**
+An cloned element that should move when this element is dragged.
+       */
+      _cloneTrackElement: {
+        type: Object,
+        readOnly: true
+      },
+
+      /**
+The position of the element that is cloned on drag.
+       */
+      _cloneTrackPosition: {
+        type: Object,
+        value: function() {
+          return {
+            x: 0,
+            y: 0
+          };
+        }
+      },
+
+      /**
+The relative position of the cursor to the moving object.
+       */
+      _cloneTrackOffset: {
+        type: Object,
+        value: function() {
+          return {
+            x: 0,
+            y: 0
+          };
+        },
+        readOnly: true
+      }
+    },
+    observers: ["_cloneTrackUpdatePosition(_cloneTrackPosition, _cloneTrackOffset)"],
+
+    /**
+Listens to the `track` event.
+@param {MouseEvent} e A `track` event
+@param {Object} opts options to configure the event.  Options not provided will be looked up in `data-` attributes
+  of `e.currentTarget` (element clicked), or as inherited properties.
+@option opts {HTMLElement, Function, String} target an HTMLElement that should hold clones while dragging.
+  Overrides `data-clone-target`, `this.cloneDragTarget`.  Defaults to `"body"`.
+@option opts {HTMLElement, Function, String} element the HTMLElement that should be cloned.  Defaults to `this`.
+@see {@link https://www.polymer-project.org/1.0/docs/devguide/gesture-events} `track` event
+     */
+    cloneTrack: function(e, opts) {
+      if (opts == null) {
+        opts = {};
+      }
+      switch (e.detail.state) {
+        case "start":
+          this.cloneTrackStart(e, opts);
+          break;
+        case "end":
+          return this.cloneTrackEnd(e, opts);
+      }
+      this.set("_cloneTrackPosition.x", e.x);
+      return this.set("_cloneTrackPosition.y", e.y);
+    },
+    _cloneTrackPositionChanged: function(position, cursor) {
+      if (!(this._cloneTrackElement && this._cloneTrackElement instanceof HTMLElement)) {
+        return;
+      }
+      this._cloneTrackElement.style.left = position.y - cursor.y;
+      return this._cloneTrackElement.style.right = position.x - cursor.x;
+    },
+
+    /**
+Initialize a drag.  Sets `this._cloneTrackElement`.
+See `cloneTrack` for parameters.
+     */
+    cloneTrackStart: function(e, opts) {
+      var element, rect, target;
+      target = this.getElementReference([opts.target, e.currentTarget.getAttribute("data-clone-target"), this.cloneDragTarget, "body"]);
+      element = this.getElementReference([opts.element, e.currentTarget.getAttribute("data-clone-element"), this.cloneDragElement, this]);
+      if (!target) {
+        return console.warn(new Error("CloneOnDrag can't find the 'target' element"));
+      }
+      if (!element) {
+        return console.warn(new Error("CloneOnDrag can't find the 'element' to clone"));
+      }
+      rect = element.getBoundingClientRect();
+      this._set_cloneTrackOffset({
+        x: e.x - rect.left,
+        y: e.y - rect.top
+      });
+      this._set_cloneTrackElement(element.cloneNode());
+      this._cloneTrackElement.style.position = "absolute";
+      return target.appendChild(this._cloneTrackElement);
+    },
+
+    /**
+Finalizes a drag.  Removes `this._cloneTrackElement`.
+See `cloneTrack` for parameters.
+     */
+    cloneTrackEnd: function(e, opts) {
+      if (!this._cloneTrackElement) {
+        return console.warn(new Error("CloneOnDrag can't terminate the drag: element not found"));
+      }
+      this._cloneTrackElement.parentNode.removeChild(this._cloneTrackElement);
+      this._set_cloneTrackElement(null);
+      return this._set_cloneTrackOffset({
+        x: 0,
+        y: 0
+      });
+    }
+  };
+
+  CleanTile.CloneOnDrag = [CleanTile.GetReference, CloneOnDrag];
+
+}).call(this);
+
+</script><!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
 `<cleantile-container>` holds [`<cleantile-pane>`][] and [`<cleantile-split>`][] elements, and provides an API for
 querying tabs inside and inserting new elements.
 
@@ -12701,96 +12960,6 @@ Keeps the parent `<cleantile-split>` in sync with this split's `width`.
 }).call(this);
 
 </script></dom-module><!--
-  @license
-  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
-  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
---><script type="text/javascript">
-(function() {
-  if (window.CleanTile == null) {
-    window.CleanTile = {};
-  }
-
-
-  /**
-Provides methods that can lookup values from multiple sources.
-
-**Example referencing an HTML element**
-
-    <dom-module id="draggable-box">
-      <template>
-        <div on-click="handleClick" data-act-on="#login button"></div>
-      </template>
-      <script>
-        Polymer({
-          is: "draggable-box",
-          properties: {
-            parent: {
-              type: Object,
-              value: document.querySelector("body")
-            }
-          },
-          behaviors: [CleanTile.GetReference],
-          handleClick: function(e) {
-            var target = this.getElementReference([e.currentTarget["data-act-on"], this.parent]);
-          }
-        });
-      </ script >
-    </dom-module>
-
-@polymerBehavior
-   */
-
-  CleanTile.GetReference = {
-
-    /**
-Resolves a reference to an HTML element.  Can be given `HTMLElement`s, strings that reference queryable
-`HTMLElement`s, strings that reference local properties that are valid input, or functions that return valid input.
-@param {Array<Any>} sources potential references to resolve.  The first valid input will be returned.
-@param {Object} opts options to configure element lookup
-@option opts {Function} query Defaults to `document` an object with `querySelector`, that can lookup elements.
-@return {HTMLElement} The HTML element referenced, if found.
-     */
-    getElementReference: function(sources, opts) {
-      var lookup;
-      if (sources == null) {
-        sources = [];
-      }
-      if (opts == null) {
-        opts = {};
-      }
-      if (opts.query == null) {
-        opts.query = document;
-      }
-      lookup = (function(_this) {
-        return function(source) {
-          var found, i, item, len, ref, ref1;
-          switch (false) {
-            case !(source instanceof HTMLElement):
-              return source;
-            case !(source instanceof Function):
-              return lookup(source());
-            case !Array.isArray(source):
-              for (i = 0, len = source.length; i < len; i++) {
-                item = source[i];
-                if ((found = lookup(item)) && found instanceof HTMLElement) {
-                  return found;
-                }
-              }
-              break;
-            case !(typeof source === "string" && _this && (ref = _this[source])):
-              return lookup(ref);
-            case !(typeof source === "string" && (((ref1 = opts.query) != null ? ref1.querySelector : void 0) != null) && (ref = opts.query.querySelector(source))):
-              return ref;
-          }
-        };
-      })(this);
-      return lookup(sources);
-    }
-  };
-
-}).call(this);
-
-</script><!--
   @license
   Copyright (c) 2016 Ryan Leonard.  All rights reserved.
   This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
