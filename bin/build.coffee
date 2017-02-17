@@ -53,6 +53,7 @@ args
   .description "Build documentation using iron-component-pages"
   .option "-S, --serve [port]", "Serve the compiled pages on the given port."
   .option "-P, --publish", "Publish the compiled docs to gh-pages."
+  .option "--ssh-agent", "Use an active SSH agent."
   .option "--ssh-key <path>", "An SSH key to use for publishing."
   .action (opts) ->
     DocsCommand = require "./_docs"

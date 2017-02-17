@@ -218,7 +218,9 @@ class DocsCommand
   nodeGitAuth: (NodeGit) ->
 
     auth = (url, username) =>
-      if process.env.CI
+      if @opts.sshAgent
+        return NodeGit.Cred.sshKeyFromAgent username
+      else if process.env.CI
         return NodeGit.Cred.sshKeyNew username,
           path.resolve "#{__dirname}", "../", "lib", "deploy_key.pub",
           path.resolve "#{__dirname}", "../", "lib", "deploy_key"
