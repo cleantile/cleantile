@@ -4,7 +4,8 @@ chalk = require "chalk"
 Promise = require "bluebird"
 {exec, spawn} = require "child-process-promise"
 PromiseBar = require "promise.bar"
-PromiseBar.enable()
+unless process.env.CI
+  PromiseBar.enable()
 Promise.bar = (args...) -> PromiseBar.all args...
 
 pkg = require "#{__dirname}/../package.json"
