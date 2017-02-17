@@ -221,12 +221,9 @@ class DocsCommand
           path.resolve "#{__dirname}", "../", "lib", "deploy_key.pub",
           path.resolve "#{__dirname}", "../", "lib", "deploy_key"
       else if @opts.sshKey
-        console.log "Using ssh key for #{username}: #{path.resolve __dirname, "../", "#{@opts.sshKey}.pub"}"
         key = NodeGit.Cred.sshKeyNew username,
           path.resolve __dirname, "../", "#{@opts.sshKey}.pub",
           path.resolve __dirname, "../", @opts.sshKey
-        console.log "Key: vvvvvv"
-        console.log "Key: #{key}"
         return key
       else
         return NodeGit.Cred.sshKeyFromAgent username
