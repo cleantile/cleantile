@@ -1,0 +1,4 @@
+{
+  "name": "container",
+  "description": "Encapsulates elements of the tiling window manager to provide a top-level API."
+}

@@ -9,6 +9,9 @@ addons:
     packages:
       - google-chrome-stable
 
+env:
+  - TASK="test"
+
 before_script:
   - 'if [ "$TRAVIS_SECURE_ENV_VARS" == "false" ]; then
     echo "Secure environment variables disabled for unsecure build.  Unable to fully test.";
@@ -21,8 +24,8 @@ before_script:
     SAUCE_USERNAME=$SAUCE_USERNAME_MASTER;
     SAUCE_ACCESS_KEY=$SAUCE_ACCESS_KEY_MASTER;
   fi'
-  - npm install
 
 script:
-  - xvfb-run $(npm bin)/wct --skip-plugin sauce
-  - test "$TRAVIS_SECURE_ENV_VARS" != "false" && $(npm bin)/wct --skip-plugin local
+  - 'if [ "$TASK" == "test" ]; then
+    xvfb-run bin/build.coffee test -l
+    test "$TRAVIS_SECURE_ENV_VARS" != "false" && bin/build.coffee test -s'

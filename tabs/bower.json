@@ -1,0 +1,7 @@
+{
+  "name": "tabs",
+  "description": "A dynamic tab bar",
+  "dependencies": {
+    "tab": "../tab"
+  }
+}

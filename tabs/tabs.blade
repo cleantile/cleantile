@@ -1,5 +1,5 @@
 - var id="cleantile-tabs"
-include "../lib/tag" exposing id
+include "../lib/tag" exposing id, path
 
 replace docs
   /**
@@ -23,8 +23,8 @@ Custom Property | Description | Default
 
 See [`<cleantile-tab>`](#cleantile-tab) for styling properties that modify individual tabs.
 
-@demo tabs/demo/pane-tabs.compiled.html Tabs inside a Pane
-@demo tabs/demo/split-tabs.compiled.html Tabs inside a Split
+@demo tabs/demo/pane-tabs.html Tabs inside a Pane
+@demo tabs/demo/split-tabs.html Tabs inside a Split
   */
 
 replace style
@@ -35,7 +35,8 @@ replace style
       background-color unquote("var(--cleantile-tabs-background, #424242)")
 
 append imports
-  link(rel="import", href="../tab/cleantile-tab.html")
+  - var tabPath = unified ? (isCopy ? "" : "../")+"tab/cleantile-tab.html" : path + "cleantile-tabs/cleantile-tab.html";
+  link(rel="import", href=tabPath)
 
 replace template
   template(is="dom-repeat", items="{{views}}")

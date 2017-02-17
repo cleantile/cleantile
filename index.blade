@@ -5,12 +5,12 @@ html
   head
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width, inital-scale=1.0")
-    script(src="../webcomponentsjs/lite.js")
-    link(rel="import", href="../polymer/polymer.html")
-    link(rel="import", href="../iron-component-page/iron-component-page.html")
-    :stylus
+    script(src=path+"webcomponentsjs/webcomponents-lite.js")
+    link(rel="import", href=path+"polymer/polymer.html")
+    link(rel="import", href=path+"iron-component-page/iron-component-page.html")
+    //-:stylus
       .docs-header option:not([value^="cleantile"]):not([value^="CleanTile"])
         display none
   body
     //-iron-component-page(doc-src="hydrolysis.json")
-    iron-component-page(src="cleantile.compiled.html", active="cleantile-pane")
+    iron-component-page(src="cleantile.html", active="cleantile-pane")

@@ -1,0 +1,10 @@
+- var opts = {title: title, path: "../../"}
+include "../lib/test" exposing opts
+render replace imports(true)
+replace tests
+  :_coffeescript
+    WCT.loadSuites [
+      ```
+      !{files}
+      ```
+    ]
