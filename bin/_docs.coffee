@@ -61,6 +61,9 @@ class DocsCommand
       .then =>
         if @opts.serve
           @serveFiles()
+      .catch (err) ->
+        console.error err
+        process.exit 1
 
   ###
   Find and compile both global demos as well as per-element demos.

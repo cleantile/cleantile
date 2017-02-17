@@ -26,6 +26,9 @@ class TestCommand
       .then =>
         PromiseBar.end()
         @runWCT()
+      .catch (err) =>
+        console.error err
+        process.exit 1
 
   ###
   Compiles all files needed to run Web Component Tester.

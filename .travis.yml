@@ -27,6 +27,6 @@ before_script:
 
 script:
   - 'if [ "$TASK" == "test" ]; then
-    xvfb-run bin/build.coffee test -l;
+    xvfb-run bin/build.coffee test -l &&
     test "$TRAVIS_SECURE_ENV_VARS" != "false" && bin/build.coffee test -s;
   fi'
