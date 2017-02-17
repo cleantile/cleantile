@@ -39,7 +39,9 @@ script:
       openssl aes-256-cbc -K $encrypted_7f70595bf749_key -iv $encrypted_7f70595bf749_iv -in lib/deploy_key.enc -out lib/deploy_key -d &&
       chmod 600 lib/deploy_key &&
       npm install nodegit &&
-      bin/build.coffee docs --publish;
+      ssh-agent &&
+      ssh-add lib/deploy_key &&
+      bin/build.coffee docs --publish --ssh-agent;
     else
       bin/build.coffee docs;
     fi

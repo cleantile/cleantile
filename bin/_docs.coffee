@@ -214,6 +214,7 @@ class DocsCommand
   Returns the authentication details that NodeGit needs.  Uses an RSA key if on CI, otherwise uses local SSH agent.
   @param {NodeGit} a NodeGit instance
   @return {Object} pass to `fetchOpts` or `remote.push(...)`
+  @todo Switch Travis to loading SSH key instead of using SSH agent (currently has bugs, wasn't easily fixed)
   ###
   nodeGitAuth: (NodeGit) ->
 
