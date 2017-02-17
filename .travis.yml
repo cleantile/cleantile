@@ -25,7 +25,7 @@ before_script:
     SAUCE_USERNAME=$SAUCE_USERNAME_MASTER;
     SAUCE_ACCESS_KEY=$SAUCE_ACCESS_KEY_MASTER;
   fi'
-  - openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in lib/deploy_key.enc -out lib/deploy_key -d
+  - openssl aes-256-cbc -K $encrypted_7f70595bf749_key -iv $encrypted_7f70595bf749_iv -in lib/deploy_key.enc -out lib/deploy_key -d
   - chmod 600 lib/deploy_key
 
 script:
