@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CleanTile Build Script</title>
+  <script src='../javascript/application.js'></script>
+  <script src='../javascript/search.js'></script>
+  <link rel='stylesheet' href='../stylesheets/application.css' type='text/css'>
+</head>
+  <body>
+    <div id='base' data-path='../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../extra/bin/BUILDING.md.html' title='CleanTile Build Script'>
+      CleanTile Build Script
+    </a>
+    &raquo;
+    <a href='../alphabetical_index.html' title='Index'>
+      Index
+    </a>
+    &raquo;
+    <span class='title'>Element</span>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        Class:
+        Element
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>bin&#47;elements.coffee</td>
+        </tr>
+      </table>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Consider namespacing (to link Element/Elements) to improve documentation output.  Apply to other scripts. 
+  </div>
+  <p>Describes a Polymer element that is part of CleanTile.</p>
+</div>
+<div class='tags'>
+</div>
+      <h2>Instance Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#_compile-dynamic'>
+        #
+(Promise)
+<b>_compile</b><span>(opts, fileDir = false, isCopy = false)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Shared compilation function. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#compile-dynamic'>
+        #
+(Promise)
+<b>compile</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Compile the element&#39;s Blade definition into an HTML file. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#compileDuplicate-dynamic'>
+        #
+(Boolean, Promise)
+<b>compileDuplicate</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Compile the element&#39;s Blade definition into an HTML file located in the root output directory. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#manifest-dynamic'>
+        #
+(Object)
+<b>manifest</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Read the manifest file for this element 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#description-dynamic'>
+        #
+(Promise&lt;String&gt;)
+<b>description</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Find the element&#39;s description. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#deps-dynamic'>
+        #
+(Promise&lt;Object&gt;)
+<b>deps</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Find this element&#39;s dependencies. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#devDeps-dynamic'>
+        #
+(Promise&lt;Object&gt;)
+<b>devDeps</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Find this element&#39;s development dependencies. 
+    </span>
+  </li>
+</ul>
+      <h2>Constructor Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='constructor-dynamic'>
+      #
+(void)
+<b>constructor</b><span>(name, opts = {})</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>name this file&#39;s name</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options to configure the file copy. </span>
+    </li>
+  </ul>
+  <h3>
+    Options Hash:
+    (opts):
+  </h3>
+  <ul class='options'>
+    <li>
+      <span class='name'>fileDir</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the directory the file is in, relative to the repository root.  Defaults to <code>name</code>. </span>
+    </li>
+    <li>
+      <span class='name'>noDuplicate</span>
+      <span class='type'>
+        (
+          <tt>Boolean</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>if <code>false</code>, a copy of the file will be stored in the root folder of the output. Defaults to <code>false</code>. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+</div>
+      <h2>Instance Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='_compile-dynamic'>
+      #
+(Promise)
+<b>_compile</b><span>(opts, fileDir = false, isCopy = false)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Shared compilation function.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the options passed to the program </span>
+    </li>
+    <li>
+      <span class='name'>fileDir</span>
+      <span class='type'>
+        (
+          <tt>String, Boolean</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the output directory.  <code>false</code> or empty to use <code>opts.fileDir</code> </span>
+    </li>
+    <li>
+      <span class='name'>isCopy</span>
+      <span class='type'>
+        (
+          <tt>Boolean</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>set to <code>true</code> if this file will be stored in the top-level directory. </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise</tt>
+      )
+      &mdash;
+      <span class='desc'>resolves when the file is compiled. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='compile-dynamic'>
+      #
+(Promise)
+<b>compile</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Compile the element&#39;s Blade definition into an HTML file.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the options passed to the program </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise</tt>
+      )
+      &mdash;
+      <span class='desc'>resolves when the file is compiled. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='compileDuplicate-dynamic'>
+      #
+(Boolean, Promise)
+<b>compileDuplicate</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Compile the element&#39;s Blade definition into an HTML file located in the root output directory.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the options passed to the program </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Boolean, Promise</tt>
+      )
+      &mdash;
+      <span class='desc'><code>false</code> if the duplicate shouldn&#39;t be created. Otherwise, resolves when the file is compiled. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='manifest-dynamic'>
+      #
+(Object)
+<b>manifest</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Depending on <code>opts.manager</code>, read <code>package.json</code> 
+  </div>
+  <p>Read the manifest file for this element</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Object</tt>
+      )
+      &mdash;
+      <span class='desc'>the element&#39;s manifest </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='description-dynamic'>
+      #
+(Promise&lt;String&gt;)
+<b>description</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Find the element&#39;s description.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise&lt;String&gt;</tt>
+      )
+      &mdash;
+      <span class='desc'>the element&#39;s description. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='deps-dynamic'>
+      #
+(Promise&lt;Object&gt;)
+<b>deps</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Find this element&#39;s dependencies.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise&lt;Object&gt;</tt>
+      )
+      &mdash;
+      <span class='desc'>this element&#39;s dependencies </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='devDeps-dynamic'>
+      #
+(Promise&lt;Object&gt;)
+<b>devDeps</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Find this element&#39;s development dependencies.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise&lt;Object&gt;</tt>
+      )
+      &mdash;
+      <span class='desc'>this element&#39;s development dependencies </span>
+    </li>
+  </ul>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  By
+  <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
+    Codo
+  </a>
+  2.1.2
+  &#10034;
+  Press H to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/netzpirat' target='_parent'>@netzpirat</a>
+  &#10034;
+  <a href='http://twitter.com/_inossidabile' target='_parent'>@_inossidabile</a>
+</div>
+<iframe id='search_frame'></iframe>
+<div id='fuzzySearch'>
+  <input type='text'>
+  <ol></ol>
+</div>
+<div id='help'>
+  <p>
+    Quickly fuzzy find classes, mixins, methods, file:
+  </p>
+  <ul>
+    <li>
+      <span>T</span>
+      Open fuzzy finder dialog
+    </li>
+  </ul>
+  <p>
+    Control the navigation frame:
+  </p>
+  <ul>
+    <li>
+      <span>L</span>
+      Toggle list view
+    </li>
+    <li>
+      <span>C</span>
+      Show class list
+    </li>
+    <li>
+      <span>I</span>
+      Show mixin list
+    </li>
+    <li>
+      <span>F</span>
+      Show file list
+    </li>
+    <li>
+      <span>M</span>
+      Show method list
+    </li>
+    <li>
+      <span>E</span>
+      Show extras list
+    </li>
+  </ul>
+  <p>
+    You can focus and blur the search input:
+  </p>
+  <ul>
+    <li>
+      <span>S</span>
+      Focus search input
+    </li>
+    <li>
+      <span>Esc</span>
+      Blur search input
+    </li>
+  </ul>
+</div>
+  </body>
+</html>

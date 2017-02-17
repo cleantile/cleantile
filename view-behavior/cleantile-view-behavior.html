@@ -1,0 +1,84 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><script type="text/javascript">
+(function() {
+  if (window.CleanTile == null) {
+    window.CleanTile = {};
+  }
+
+
+  /**
+  Describes a view that can be inserted into [`<cleantile-pane>`][] elements.
+  
+  Use in your own elements, or wrap third-party/legacy elements.
+  
+      <dom-module id="wrapper-file-preview">
+        <template>
+          <file-preview></file-preview>
+        </template>
+        <script>
+          Polymer({
+            is: "wrapper-file-preview",
+            behaviors: [CleanTile.ViewBehavior],
+            ready: function() {
+              // this.name can be preset via `<wrapper-file-preview name="File: index.html">`
+              if(!this.name) {
+                this.name = "File Preview";
+              }
+            }
+            // Can listen to Clean Tile events (like resize) by adding event listeners
+          })
+        </ script >
+      </dom-module>
+  
+  Wrappers can be defined inside `<body>` instead of being in a seperate file, although there are some
+  [considerations][polymer-doc-def] to keep in mind when doing so.
+  Wrap `Polymer({` inside `HTMLImports.whenReady(function() {` when using the above code inside `<body>`.
+  
+  [`<cleantile-pane>`]: #cleantile-pane
+  [polymer-doc-def]: https://www.polymer-project.org/1.0/docs/devguide/registering-elements#main-document-definitions
+  
+  @polymerBehavior
+   */
+
+  CleanTile.ViewBehavior = {
+    properties: {
+
+      /**
+      A human-readable name identifying this tab.
+       */
+      name: {
+        type: String,
+        notify: true,
+        reflectToAttribute: true,
+        observer: '_nameChanged'
+      },
+
+      /**
+      `true` when this view is in view.
+       */
+      active: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true,
+        observer: '_activeChanged'
+      }
+    },
+    _nameChanged: function() {
+      return this.fire("changed-name", this.name);
+    },
+    _activeChanged: function() {
+      return this.fire("changed-active", this.active);
+    }
+  };
+
+}).call(this);
+
+</script>

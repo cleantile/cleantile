@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CleanTile Build Script</title>
+  <script src='../javascript/application.js'></script>
+  <script src='../javascript/search.js'></script>
+  <link rel='stylesheet' href='../stylesheets/application.css' type='text/css'>
+</head>
+  <body>
+    <div id='base' data-path='../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../extra/bin/BUILDING.md.html' title='CleanTile Build Script'>
+      CleanTile Build Script
+    </a>
+    &raquo;
+    <a href='../alphabetical_index.html' title='Index'>
+      Index
+    </a>
+    &raquo;
+    <span class='title'>Manifest</span>
+  </div>
+</div>
+    <div id='content'>
+      <h1>
+        Class:
+        Manifest
+      </h1>
+      <table class='box'>
+        <tr>
+          <td>Defined in:</td>
+          <td>bin&#47;manifest.coffee</td>
+        </tr>
+      </table>
+      <h2>Overview</h2>
+      <div class='docstring'>
+  <p>Describes a <code>package.json</code>/<code>bower.json</code> file that should be built.</p>
+</div>
+<div class='tags'>
+</div>
+      <h2>Direct Known Subclasses</h2>
+      <p class='children'>
+        <a href='../class/GlobalManifest.html'>GlobalManifest</a>
+        <a href='../class/ElementManifest.html'>ElementManifest</a>
+      </p>
+      <h2>Instance Method Summary</h2>
+      <ul class='summary'>
+  <li>
+    <span class='signature'>
+      <a href='#name-dynamic'>
+        #
+(Promise&lt;String&gt;)
+<b>name</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Fetch the package name to use in the manifest. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#description-dynamic'>
+        #
+(Promise&lt;String&gt;)
+<b>description</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Fetch a description to include in the manifest. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#deps-dynamic'>
+        #
+(Promise&lt;Object&gt;)
+<b>deps</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Fetch the package dependencies. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#devDeps-dynamic'>
+        #
+(Promise&lt;Object&gt;)
+<b>devDeps</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Fetch the package development dependencies. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#manifest-dynamic'>
+        #
+(Promise&lt;Object&gt;)
+<b>manifest</b><span>(opts)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Construct the manifest structure. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#write-dynamic'>
+        #
+(Promise)
+<b>write</b><span>(opts, manifest)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Write a manifest out to the proper file 
+    </span>
+  </li>
+</ul>
+      <h2>Instance Method Details</h2>
+      <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='name-dynamic'>
+      #
+(Promise&lt;String&gt;)
+<b>name</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Fetch the package name to use in the manifest.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script. </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      <tt>Promise&lt;String&gt;</tt>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='description-dynamic'>
+      #
+(Promise&lt;String&gt;)
+<b>description</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Fetch a description to include in the manifest.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script. </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      <tt>Promise&lt;String&gt;</tt>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='deps-dynamic'>
+      #
+(Promise&lt;Object&gt;)
+<b>deps</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Depending on <code>opts.manager</code>, return NPM version. 
+  </div>
+  <p>Fetch the package dependencies.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise&lt;Object&gt;</tt>
+      )
+      &mdash;
+      <span class='desc'>the package dependencies </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='devDeps-dynamic'>
+      #
+(Promise&lt;Object&gt;)
+<b>devDeps</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Depending on <code>opts.manager</code>, return NPM version. 
+  </div>
+  <p>Fetch the package development dependencies.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise&lt;Object&gt;</tt>
+      )
+      &mdash;
+      <span class='desc'>the development dependencies </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='manifest-dynamic'>
+      #
+(Promise&lt;Object&gt;)
+<b>manifest</b><span>(opts)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Depending on <code>opts.manager</code>, return NPM version. 
+  </div>
+  <p>Construct the manifest structure.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise&lt;Object&gt;</tt>
+      )
+      &mdash;
+      <span class='desc'>the manifest file as an object. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='write-dynamic'>
+      #
+(Promise)
+<b>write</b><span>(opts, manifest)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Depending on <code>opts.manager</code>, write <code>package.json</code> 
+  </div>
+  <p>Write a manifest out to the proper file</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>opts</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>options passed to the build script </span>
+    </li>
+    <li>
+      <span class='name'>manifest</span>
+      <span class='type'>
+        (
+          <tt>Object</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'>the manifest file to write.  See <a href='../class/Manifest.html#manifest-dynamic'>Manifest#manifest</a>. </span>
+    </li>
+  </ul>
+  <h3>Returns:</h3>
+  <ul class='return'>
+    <li>
+      <span class='type'></span>
+      (
+        <tt>Promise</tt>
+      )
+      &mdash;
+      <span class='desc'>resolves when the manifest file has been written. </span>
+    </li>
+  </ul>
+</div>
+  </div>
+</div>
+    </div>
+    <div id='footer'>
+  By
+  <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
+    Codo
+  </a>
+  2.1.2
+  &#10034;
+  Press H to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/netzpirat' target='_parent'>@netzpirat</a>
+  &#10034;
+  <a href='http://twitter.com/_inossidabile' target='_parent'>@_inossidabile</a>
+</div>
+<iframe id='search_frame'></iframe>
+<div id='fuzzySearch'>
+  <input type='text'>
+  <ol></ol>
+</div>
+<div id='help'>
+  <p>
+    Quickly fuzzy find classes, mixins, methods, file:
+  </p>
+  <ul>
+    <li>
+      <span>T</span>
+      Open fuzzy finder dialog
+    </li>
+  </ul>
+  <p>
+    Control the navigation frame:
+  </p>
+  <ul>
+    <li>
+      <span>L</span>
+      Toggle list view
+    </li>
+    <li>
+      <span>C</span>
+      Show class list
+    </li>
+    <li>
+      <span>I</span>
+      Show mixin list
+    </li>
+    <li>
+      <span>F</span>
+      Show file list
+    </li>
+    <li>
+      <span>M</span>
+      Show method list
+    </li>
+    <li>
+      <span>E</span>
+      Show extras list
+    </li>
+  </ul>
+  <p>
+    You can focus and blur the search input:
+  </p>
+  <ul>
+    <li>
+      <span>S</span>
+      Focus search input
+    </li>
+    <li>
+      <span>Esc</span>
+      Blur search input
+    </li>
+  </ul>
+</div>
+  </body>
+</html>

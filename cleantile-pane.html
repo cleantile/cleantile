@@ -1,0 +1,215 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><link rel="import" href="bower_components/polymer/polymer.html"/><!--
+`<cleantile-pane>` displays a set of application-specific pages, called **views**.
+
+    <cleantile-pane>
+      <file-editor file="README.md" syntax="markdown"></file-editor>
+      <file-editor file="LICENSE" syntax="text"></file-editor>
+    </cleantile-pane>
+
+See [`CleanTile.ViewBehavior`][] for a longer description of views, as well as instructions to create your own views.
+
+[`CleanTile.ViewBehavior`]: #CleanTile.ViewBehavior
+
+@demo demo/simple-binding.html Polymer Binding between Panes
+@demo demo/pane.html Pane Demo
+ --><dom-module id="cleantile-pane"><template><style type="text/css">
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#contents,
+#contents ::content > :not(cleantile-tabs),
+#contents::after {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#contents ::content > cleantile-tabs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 15;
+}
+#contents ::content > cleantile-tabs ~ :not(cleantile-tabs) {
+  top: var(--cleantile-tabs-height, 30px);
+  height: calc(100% - var(--cleantile-tabs-height, 30px));
+}
+#contents ::content > :not(cleantile-tabs)[active] {
+  z-index: 10;
+}
+#contents ::content > :not(cleantile-tabs):not([active]) {
+  z-index: -10;
+}
+#contents::after {
+  content: " ";
+  background-color: var(--cleantile-pane-background, white);
+  z-index: 0;
+}
+
+</style><div id="contents"><content></content></div></template><script type="text/javascript">
+(function() {
+  Polymer({
+    is: "cleantile-pane",
+    properties: {
+
+      /**
+      Lists the **views** inside this pane.
+      
+      @type [{element: HTMLElement, name: String, active: Boolean}]
+       */
+      views: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      }
+    },
+    listeners: {
+      "changed-name": "changed-name",
+      "changed-active": "changed-active"
+    },
+
+    /**
+    Manually refreshes `this.views`, the list of views inside this pane.  Uses low-level DOM queries.
+     */
+    refreshList: function() {
+      var active, child, j, len, ref, ref1, views;
+      views = [];
+      active = null;
+      ref = this.$.contents.children;
+      for (j = 0, len = ref.length; j < len; j++) {
+        child = ref[j];
+        if ((ref1 = child.tagName.toLowerCase()) === "cleantile-tabs" || ref1 === "template" || ref1 === "span" || ref1 === "div") {
+          continue;
+        }
+        views.push({
+          element: child,
+          name: child.name,
+          active: child.active
+        });
+        if (child.active || child.getAttribute("active") === "active") {
+          active = views.length - 1;
+        }
+      }
+      if (active == null) {
+        active = views.length - 1;
+      }
+      this._setViews(views);
+      if (views.length > 0) {
+        return this.activate(active);
+      }
+    },
+
+    /**
+    Manually finds a `cleantile-tabs` element inside this pane, if one exists.
+     */
+    refreshTabs: function() {
+      var tabs;
+      if (!(tabs = this.$.contents.querySelector("cleantile-tabs"))) {
+        return;
+      }
+      this.tabs = tabs;
+      if (this.tabs.initViews) {
+        return this.tabs.initViews();
+      }
+    },
+    ready: function() {
+      this.views = [];
+      this.refreshList();
+      return this.refreshTabs();
+    },
+
+    /**
+    Listens to view name changes, and updates `this.views`.  If a `cleantile-tabs` element has been found in this pane
+    view, also updates the list of views inside `cleantile-tabs`.
+     */
+    "changed-name": function(e) {
+      var child, i, j, len, ref;
+      if (!this.views) {
+        return;
+      }
+      ref = this.views;
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        child = ref[i];
+        if (!(e.target === child.element)) {
+          continue;
+        }
+        e.preventDefault();
+        this.set(["views", i, "name"], e.detail);
+        if (this.tabs && this.tabs.set) {
+          this.tabs.set(["views", i, "name"], e.detail);
+        }
+        return;
+      }
+      return console.log("Couldn't find child to update name.");
+    },
+
+    /**
+    Listens to view `active` changes, and updates `this.views`.  If a `cleantile-tabs` element has been found in this
+    pane view, also updates the list of views inside `cleantile-tabs`.
+     */
+    "changed-active": function(e) {
+      var child, i, j, len, ref;
+      if (!this.views) {
+        return;
+      }
+      ref = this.views;
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        child = ref[i];
+        if (!(e.target === child.element)) {
+          continue;
+        }
+        e.preventDefault();
+        this.set(["views", i, "active"], e.detail);
+        if (this.tabs && this.tabs.set) {
+          this.tabs.set(["views", i, "active"], e.detail);
+        }
+        return;
+      }
+      return console.log("Couldn't find child to update active status.");
+    },
+
+    /**
+    Activate a specific view
+    
+    @param [Integer] i the view to activate
+     */
+    activate: function(i) {
+      var el, j, len, ref;
+      if (!this.views[i]) {
+        return console.error(new ReferenceError("Can't activate view " + i + ": view not found.  Ignoring."));
+      }
+      ref = this.$.contents.querySelectorAll("#contents > [active]");
+      for (j = 0, len = ref.length; j < len; j++) {
+        el = ref[j];
+        if (el.set) {
+          el.set("active", false);
+        } else {
+          el.removeAttribute("active");
+        }
+      }
+      if (this.views[i].element.set) {
+        return this.views[i].element.set("active", true);
+      } else {
+        return this.views[i].element.setAttribute("active", "active");
+      }
+    }
+  });
+
+}).call(this);
+
+</script></dom-module>

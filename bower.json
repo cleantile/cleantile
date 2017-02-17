@@ -1,0 +1,11 @@
+{
+  "name": "cleantile",
+  "description": "A tiling display manager with a twist.",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.6.0"
+  },
+  "devDependencies": {
+    "font-roboto": "PolymerElements/font-roboto#^1.0.1",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.1.8"
+  }
+}

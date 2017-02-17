@@ -1,0 +1,53 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><link rel="import" href="bower_components/polymer/polymer.html"/><!--
+`<cleantile-container>` holds [`<cleantile-pane>`][] and [`<cleantile-split>`][] elements, and provides an API for
+querying tabs inside and inserting new elements.
+
+#### Usage with <cleantile-pane>
+
+    <cleantile-container>
+      <cleantile-pane>
+        <file-editor file="README.md" syntax="markdown"></file-editor>
+        <file-editor file="LICENSE" syntax="text"></file-editor>
+      </cleantile-pane>
+    </cleantile-container>
+
+#### Usage with <cleantile-split>
+
+    <cleantile-container>
+      <cleantile-split>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+        <cleantile-pane>
+          <file-editor file="README.md" syntax="markdown"></file-editor>
+          <file-editor file="LICENSE" syntax="text"></file-editor>
+        </cleantile-pane>
+      </cleantile-split>
+    </cleantile-container>
+
+[`<cleantile-pane>`]: #cleantile-pane
+[`<cleantile-split>`]: #cleantile-split
+ --><dom-module id="cleantile-container"><template><style type="text/css">
+:host {
+  display: block;
+}
+
+</style><content></content></template><script type="text/javascript">
+(function() {
+  Polymer({
+    is: "cleantile-container"
+  });
+
+}).call(this);
+
+</script></dom-module>

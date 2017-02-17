@@ -1,0 +1,99 @@
+<!--
+  @license
+  Copyright (c) 2016 Ryan Leonard.  All rights reserved.
+  This code may only be used under the MIT style license found at http://github.com/cleantile/cleantile/LICENSE
+--><!--
+  This HTML was compiled from [Blade] source code.  Please edit the Blade file instead of the HTML.
+  Most Blade files are in the same directory as the compiled HTML file.
+
+  [Blade]: https://github.com/bminer/node-blade
+--><link rel="import" href="../bower_components/polymer/polymer.html"/><link rel="import" href="../tab/cleantile-tab.html"/><!--
+`<cleantile-tabs>` adds controls to [`<cleantile-pane>`](#cleantile-pane) elements.
+
+    <cleantile-pane>
+      <cleantile-tabs></cleantile-tabs>
+      <file-editor file="README.md" syntax="markdown"></file-editor>
+      <file-editor file="LICENSE" syntax="text"></file-editor>
+    </cleantile-pane>
+
+Tabs ([`<cleantile-tab>`](#cleantile-tab)) are automatically created for each view inside the `<cleantile-pane>`, and
+are updated when the views change.
+
+### Styling
+
+Custom Property | Description | Default
+--------------- | ----------- | -------
+`--cleantile-tabs-height` | The space set aside above views for tabs.  Tabs fill the space with a small margin. | `30px`
+`--cleantile-tabs-background` | A background color used between tabs. | `#424242`
+
+See [`<cleantile-tab>`](#cleantile-tab) for styling properties that modify individual tabs.
+
+@demo tabs/demo/pane-tabs.html Tabs inside a Pane
+@demo tabs/demo/split-tabs.html Tabs inside a Split
+ --><dom-module id="cleantile-tabs"><template><style type="text/css">
+:host {
+  display: block;
+  height: var(--cleantile-tabs-height, 30px);
+  background-color: var(--cleantile-tabs-background, #424242);
+}
+
+</style><template is="dom-repeat" items="{{views}}"><cleantile-tab tab="{{item}}" active="{{item.active}}" on-tap="activate"></cleantile-tab></template><content></content></template><script type="text/javascript">
+(function() {
+  Polymer({
+    is: "cleantile-tabs",
+    properties: {
+
+      /**
+      A list of views inside the `<cleantile-pane>`, syncronized from `<cleantile-pane>`.
+      
+      See [`<cleantile-pane>.views`](#cleantile-pane:property-views) for more information.
+       */
+      views: {
+        type: Array
+      }
+    },
+
+    /*
+    Initialize the views by copying `<cleantile-pane>`.
+     */
+    initViews: function() {
+      var i, len, ref, results, view;
+      if (!(this.pane && this.pane.views)) {
+        return;
+      }
+      if (this.views) {
+        return;
+      }
+      this.views = [];
+      ref = this.pane.views;
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        view = ref[i];
+        results.push(this.push("views", view));
+      }
+      return results;
+    },
+    ready: function() {
+      var pane;
+      pane = Polymer.dom(this).parentNode;
+      if (pane.tagName.toLowerCase() !== "cleantile-pane") {
+        throw new Error("<cleantile-tabs> inserted into <" + (pane.tagName.toLowerCase()) + ">, instead of <cleantile-pane>.");
+      }
+      this.pane = pane;
+      return this.initViews();
+    },
+
+    /**
+    Activates views when the respective tab is clicked.
+     */
+    activate: function(e) {
+      if (!(this.pane && this.pane.activate)) {
+        return console.error("<cleantile-tabs> can't activate tab: missing parent pane.");
+      }
+      return this.pane.activate(this.views.indexOf(e.model.item));
+    }
+  });
+
+}).call(this);
+
+</script></dom-module>

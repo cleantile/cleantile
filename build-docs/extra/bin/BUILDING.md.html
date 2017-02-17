@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset='UTF-8'>
+  <title>CleanTile Build Script</title>
+  <script src='../../javascript/application.js'></script>
+  <script src='../../javascript/search.js'></script>
+  <link rel='stylesheet' href='../../stylesheets/application.css' type='text/css'>
+</head>
+  <body>
+    <div id='base' data-path='../../'></div>
+<div id='header'>
+  <div id='menu'>
+    <a href='../../extra/bin/BUILDING.md.html' title='CleanTile Build Script'>
+      CleanTile Build Script
+    </a>
+    &raquo;
+    <a href='../../alphabetical_index.html' title='Index'>
+      Index
+    </a>
+    &raquo;
+    <span class='title'>bin</span>
+    &raquo;
+    <span class='title'>BUILDING.md</span>
+  </div>
+</div>
+    <div id='content'>
+      <nav class='toc'>
+        <p class='title'>
+          <a class='hide_toc' href='#'>
+            <strong>Table of Contents</strong>
+          </a>
+          <small>
+            (<a class='float_toc' href='#'>left</a>)
+          </small>
+        </p>
+      </nav>
+      <div id='filecontents'>
+        <h1 id="building-clean-tile">Building Clean Tile</h1><p>Clean Tile&#39;s build system is organized as a standard NodeJS script.
+Build commands and options are set via CLI arguments, parsed via <a href="https://www.npmjs.com/package/commander">commander</a>.</p><p>Build steps are built around <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>s, to allow chaining.</p><p>The main repository only holds source files.  Compiled files are stored under an output directory, defaulting to
+<code>./dist</code>.</p><h2 id="build-commands">Build Commands</h2>
+<blockquote><p>See <code>bin/build.coffee --help</code> as well as <code>bin/build.coffee &lt;command&gt; --help</code> for all possible options.</p></blockquote>
+<ul>
+<li><code>build &lt;package&gt;</code><ul>
+<li><code>build cleantile</code>
+Build the main <code>cleantile</code> distribution.</li>
+<li><code>build &lt;element&gt;</code>
+Build a distribution for a single element (e.g. <code>split</code>)</li>
+<li><code>build all</code>
+Build all of the above packages.</li>
+</ul>
+</li>
+<li><code>test</code>
+Compile and run automated tests against Clean Tile.</li>
+<li><code>docs</code>
+Build the documentation for Clean Tile.</li>
+</ul>
+<h2 id="internal-options">Internal Options</h2><p>Most arguments that build steps use are documented as CLI arguments.
+However, build steps also take a few extra options that are set internally.</p><ul>
+<li>String <code>outdir</code>
+A directory inside <code>dist</code> to write compiled files to</li>
+<li>Boolean <code>unified</code>
+Used when building elements.  If <code>unified=true</code>, then the main <code>cleantile</code> distribution is being compiled.
+Otherwise, an individual element (e.g. <code>split</code>) is being built.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> <code>previous</code>
+Steps should wait for <code>previous</code> to resolve before writing files.</li>
+<li>String <code>distDirectory</code>
+For documentation, set to <code>&quot;bower_components/&quot;</code> to link directly to dependencies.</li>
+</ul>
+<h2 id="build-steps">Build Steps</h2><p>Most build functionality is contained in reusable containers.
+See the respective classes for further information.</p><ul>
+<li><strong>Elements</strong> defines the Polymer elements, and compiles them into HTML files.</li>
+<li><strong>Manifests</strong> writes <code>package.json</code>/<code>bower.json</code> files</li>
+<li><strong>MetaFiles</strong> copies standalone files into the build</li>
+<li><strong>OutDir</strong> creates clean output directories</li>
+<li><strong>Tests</strong> compiles testing files into the required HTML, and creates <code>index.html</code> files to point to tests</li>
+</ul>
+<h2 id="publishing-documentation">Publishing Documentation</h2>
+<pre><code class="lang-sh">ssh-agent
+ssh-add lib/deploy_key
+bin/build.coffee docs --publish
+</code></pre>
+
+      </div>
+    </div>
+    <div id='footer'>
+  By
+  <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
+    Codo
+  </a>
+  2.1.2
+  &#10034;
+  Press H to see the keyboard shortcuts
+  &#10034;
+  <a href='http://twitter.com/netzpirat' target='_parent'>@netzpirat</a>
+  &#10034;
+  <a href='http://twitter.com/_inossidabile' target='_parent'>@_inossidabile</a>
+</div>
+<iframe id='search_frame'></iframe>
+<div id='fuzzySearch'>
+  <input type='text'>
+  <ol></ol>
+</div>
+<div id='help'>
+  <p>
+    Quickly fuzzy find classes, mixins, methods, file:
+  </p>
+  <ul>
+    <li>
+      <span>T</span>
+      Open fuzzy finder dialog
+    </li>
+  </ul>
+  <p>
+    Control the navigation frame:
+  </p>
+  <ul>
+    <li>
+      <span>L</span>
+      Toggle list view
+    </li>
+    <li>
+      <span>C</span>
+      Show class list
+    </li>
+    <li>
+      <span>I</span>
+      Show mixin list
+    </li>
+    <li>
+      <span>F</span>
+      Show file list
+    </li>
+    <li>
+      <span>M</span>
+      Show method list
+    </li>
+    <li>
+      <span>E</span>
+      Show extras list
+    </li>
+  </ul>
+  <p>
+    You can focus and blur the search input:
+  </p>
+  <ul>
+    <li>
+      <span>S</span>
+      Focus search input
+    </li>
+    <li>
+      <span>Esc</span>
+      Blur search input
+    </li>
+  </ul>
+</div>
+  </body>
+</html>
