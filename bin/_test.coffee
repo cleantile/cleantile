@@ -20,7 +20,7 @@ class TestCommand
   @param {Object} opts the options passed to the build script.
   ###
   constructor: (opts) ->
-    @opts = Object.assign {}, opts, {manager: "bower", outdir: "test"}
+    @opts = Object.assign {}, opts, {manager: "bower", outdir: "test", unified: yes}
     preTest = if @opts.fixed then Promise.resolve() else @compile()
     preTest
       .then =>
