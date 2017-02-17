@@ -1,11 +1,26 @@
 Promise = require "bluebird"
 blade = Promise.promisifyAll require "blade"
 fs = Promise.promisifyAll require "fs.extra"
+glob = require "glob-promise"
 chalk = require "chalk"
 path = require "path"
 {exec, spawn} = require "child-process-promise"
 PromiseBar = require "promise.bar"
 Promise.bar = (args...) -> PromiseBar.all args...
+
+###
+`require("nodegit")`, installing NodeGit if it's not already installed.
+As NodeGit isn't needed for testing, this prevents the large download.
+@return {Promise<NodeGit>} resolves to the NodeGit package.
+###
+nodegit = ->
+  try
+    nodegit = require "nodegit"
+    return Promise.resolve nodegit
+  catch err
+    console.warn "'nodegit' not installed, installing now."
+    return exec "npm install nodegit", {cwd: path.resolve("#{__dirname}/../")}
+      .then -> require "nodegit"
 
 ###
 Compiles documentation, and optionally publishes it to `gh-pages`.
@@ -59,8 +74,12 @@ class DocsCommand
           #TODO (optionally) publish on gh-pages
         ], {label: chalk.bold "Build docs"}
       .then =>
-        if @opts.serve
-          @serveFiles()
+        publish = if @opts.publish then @publish() else Promise.resolve()
+        serve = if @opts.serve then @serveFiles() else Promise.resolve()
+        publish = Promise
+          .all [publish]
+          .then -> PromiseBar.end()
+        Promise.all [publish, serve]
       .catch (err) ->
         console.error err
         process.exit 1
@@ -171,9 +190,15 @@ class DocsCommand
       .then => fs.writeFileAsync path.join(@opts.dist, "docs", "cleantile.html"), html
     Promise.bar [write], {label: chalk.magenta "Write cleantile.html"}
 
+  ###
+  Create a local server to display the created documentation.
+  @todo Return a promise
+  ###
   serveFiles: ->
     Static = require "node-static"
     file = new Static.Server path.join @opts.dist, "docs"
+    if @opts.serve and not Number.isInteger(@opts.serve)
+      @opts.serve = 8080
     require("http")
       .createServer (req, res) ->
         req
@@ -182,5 +207,93 @@ class DocsCommand
           .resume()
       .listen @opts.serve, =>
         console.log "Documentation hosted at http://localhost:#{@opts.serve}/"
+
+  ###
+  Returns the authentication details that NodeGit needs.  Uses an RSA key if on CI, otherwise uses local SSH agent.
+  @param {NodeGit} a NodeGit instance
+  @return {Object} pass to `fetchOpts` or `remote.push(...)`
+  ###
+  nodeGitAuth: (NodeGit) ->
+
+    auth = (url, username) =>
+      if process.env.CI
+        return NodeGit.Cred.sshKeyNew username,
+          path.resolve "#{__dirname}", "../", "lib", "deploy_key.pub",
+          path.resolve "#{__dirname}", "../", "lib", "deploy_key"
+      else if @opts.sshKey
+        console.log "Using ssh key for #{username}: #{path.resolve __dirname, "../", "#{@opts.sshKey}.pub"}"
+        key = NodeGit.Cred.sshKeyNew username,
+          path.resolve __dirname, "../", "#{@opts.sshKey}.pub",
+          path.resolve __dirname, "../", @opts.sshKey
+        console.log "Key: vvvvvv"
+        console.log "Key: #{key}"
+        return key
+      else
+        return NodeGit.Cred.sshKeyFromAgent username
+
+    return {
+      callbacks:
+        certificateCheck: -> 1
+        credentials: auth
+    }
+
+  ###
+  Publish documentation to `gh-pages`
+  @return {Promise} resolves when documentation has been published.
+  ###
+  publish: ->
+    [NodeGit, repo, index, tree, parent, bot] = []
+
+    nuke = fs.rmrfAsync path.join @opts.dist, "gh-pages"
+
+    clone = nuke
+      .then -> nodegit()
+      .then (git) =>
+        NodeGit = git
+        NodeGit.Clone "git@github.com:cleantile/cleantile.git", path.join(@opts.dist, "gh-pages"),
+          checkoutBranch: "gh-pages"
+          fetchOpts: @nodeGitAuth NodeGit
+
+    clean = clone
+      .then (r) =>
+        repo = r
+        glob path.join @opts.dist, "gh-pages", "*"
+      .filter (p) -> path.basename(p) isnt ".git"
+      .map (p) -> fs.rmrfAsync p
+
+    copy = clean
+      .then =>
+        fs.copyRecursiveAsync path.join(@opts.dist, "docs"), path.join(@opts.dist, "gh-pages")
+
+    commit = copy
+      .then ->
+        repo.refreshIndex()
+      .then (i) ->
+        index = i
+        index.addAll()
+      .then -> index.write()
+      .then -> index.writeTree()
+      .then (t) -> tree = t
+      .then -> NodeGit.Reference.nameToId repo, "HEAD"
+      .then (head) -> repo.getCommit head
+      .then (p) -> parent = p
+      .then ->
+        bot = NodeGit.Signature.now "CleanTile Bot", "cleantile.bot@codelenny.com"
+        repo.createCommit "HEAD", parent.committer(), bot, "Updated Documentation", tree, [parent]
+
+    push = commit
+      .then ->
+        repo.getRemote "origin"
+      .then (remote) =>
+        remote.push ["refs/heads/gh-pages:refs/heads/gh-pages"], @nodeGitAuth NodeGit
+
+    Promise.bar [
+      Promise.bar [nuke], {label: "Clean old builds"}
+      Promise.bar [clone], {label: "Clone"}
+      Promise.bar [clean, copy], {label: "Update docs"}
+      Promise.bar [commit], {label: "Commit files"}
+      Promise.bar [push], {label: "Push changes"}
+    ], {label: "Push to gh-pages"}
+
 
 module.exports = DocsCommand

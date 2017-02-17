@@ -11,6 +11,7 @@ addons:
 
 env:
   - TASK="test"
+  - TASK="docs"
 
 before_script:
   - 'if [ "$TRAVIS_SECURE_ENV_VARS" == "false" ]; then
@@ -24,9 +25,18 @@ before_script:
     SAUCE_USERNAME=$SAUCE_USERNAME_MASTER;
     SAUCE_ACCESS_KEY=$SAUCE_ACCESS_KEY_MASTER;
   fi'
+  - openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in lib/deploy_key.enc -out lib/deploy_key -d
+  - chmod 600 lib/deploy_key
 
 script:
   - 'if [ "$TASK" == "test" ]; then
     xvfb-run bin/build.coffee test -l &&
     test "$TRAVIS_SECURE_ENV_VARS" != "false" && bin/build.coffee test -s;
+  fi'
+  - 'if [ "$TASK" == "docs"]; then
+    if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      bin/build.coffee docs --publish
+    else
+      bin/build.coffee docs
+    fi
   fi'

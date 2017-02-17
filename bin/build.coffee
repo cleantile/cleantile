@@ -51,7 +51,9 @@ args
 args
   .command "docs"
   .description "Build documentation using iron-component-pages"
-  .option "-S, --serve [port]", "Serve the compiled pages on the given port.", 8080
+  .option "-S, --serve [port]", "Serve the compiled pages on the given port."
+  .option "-P, --publish", "Publish the compiled docs to gh-pages."
+  .option "--ssh-key <path>", "An SSH key to use for publishing."
   .action (opts) ->
     DocsCommand = require "./_docs"
     opts = mergeParentOpts opts

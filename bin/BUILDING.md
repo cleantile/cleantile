@@ -50,5 +50,13 @@ See the respective classes for further information.
 - **OutDir** creates clean output directories
 - **Tests** compiles testing files into the required HTML, and creates `index.html` files to point to tests
 
+## Publishing Documentation
+
+```sh
+ssh-agent
+ssh-add lib/deploy_key
+bin/build.coffee docs --publish
+```
+
 [commander]: https://www.npmjs.com/package/commander
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
