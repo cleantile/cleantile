@@ -10,7 +10,9 @@ Promise.bar = (args...) -> PromiseBar.all args...
 
 ###
 `require("nodegit")`, installing NodeGit if it's not already installed.
-As NodeGit isn't needed for testing, this prevents the large download.
+
+NodeGit requires either libstdc++-4.9-dev [link](https://github.com/nodegit/nodegit/issues/853#issuecomment-172116071)
+or to be built from source.  Installing only for docs instead of including in `package.json` improves testing time.
 @return {Promise<NodeGit>} resolves to the NodeGit package.
 ###
 nodegit = ->
@@ -19,7 +21,7 @@ nodegit = ->
     return Promise.resolve nodegit
   catch err
     console.warn "'nodegit' not installed, installing now."
-    return exec "npm install nodegit", {cwd: path.resolve("#{__dirname}/../")}
+    return exec "BUILD_ONLY=true npm install nodegit", {cwd: path.resolve("#{__dirname}/../")}
       .then -> require "nodegit"
 
 ###
