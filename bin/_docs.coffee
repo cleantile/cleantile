@@ -21,7 +21,7 @@ nodegit = ->
     return Promise.resolve nodegit
   catch err
     console.warn "'nodegit' not installed, installing now."
-    return exec "BUILD_ONLY=true npm install nodegit", {cwd: path.resolve("#{__dirname}/../")}
+    return exec "npm install nodegit", {cwd: path.resolve("#{__dirname}/../")}
       .then -> require "nodegit"
 
 ###
