@@ -31,7 +31,7 @@ before_script:
 script:
   - 'if [ "$TASK" == "test" ]; then
     xvfb-run bin/build.coffee test -l &&
-    test "$TRAVIS_SECURE_ENV_VARS" != "false" && bin/build.coffee test -s;
+    test "$TRAVIS_SECURE_ENV_VARS" != "false" && bin/build.coffee test -s --fixed;
   fi'
   # if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then
   - 'if [ "$TASK" == "docs" ]; then
