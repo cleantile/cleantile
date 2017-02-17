@@ -88,7 +88,7 @@ class TestCommand
   ###
   installDeps: ->
     Promise.bar [
-      exec "bower install", {cwd: path.join @opts.dist, "test"}
+      exec "#{__dirname}/../node_modules/.bin/bower install", {cwd: path.join @opts.dist, "test"}
     ], {label: chalk.yellow.dim "bower install"}
 
   ###

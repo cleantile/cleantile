@@ -113,7 +113,7 @@ class DocsCommand
     install = Promise
       .resolve manifest
       .then =>
-        exec "bower install",
+        exec "#{__dirname}/../node_modules/.bin/bower install",
           cwd: path.join @opts.dist, "docs"
     Promise.bar [install], {label: chalk.yellow "bower install"}
 
