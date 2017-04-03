@@ -246,12 +246,25 @@ class DocsCommand
   publish: ->
     [NodeGit, repo, index, tree, parent, bot] = []
 
+    loadNodeGit = nodegit()
+      .then (git) -> NodeGit = git
+
     nuke = fs.rmrfAsync path.join @opts.dist, "gh-pages"
 
+    _committerRepo = null
+    committer = loadNodeGit
+      .then ->
+        NodeGit.Repository.open path.resolve __dirname, "../"
+      .then (r) ->
+        _committerRepo = r
+        NodeGit.Reference.nameToId _committerRepo, "HEAD"
+      .then (head) ->
+        _committerRepo.getCommit head
+      .then (commit) -> commit.committer()
+
     clone = nuke
-      .then -> nodegit()
-      .then (git) =>
-        NodeGit = git
+      .then -> loadNodeGit
+      .then ->
         NodeGit.Clone "git@github.com:cleantile/cleantile.git", path.join(@opts.dist, "gh-pages"),
           checkoutBranch: "gh-pages"
           fetchOpts: @nodeGitAuth NodeGit
@@ -267,7 +280,7 @@ class DocsCommand
       .then =>
         fs.copyRecursiveAsync path.join(@opts.dist, "docs"), path.join(@opts.dist, "gh-pages")
 
-    commit = copy
+    prepCommit = copy
       .then ->
         repo.refreshIndex()
       .then (i) ->
@@ -279,9 +292,11 @@ class DocsCommand
       .then -> NodeGit.Reference.nameToId repo, "HEAD"
       .then (head) -> repo.getCommit head
       .then (p) -> parent = p
-      .then ->
+
+    Promise.all [committer, prepCommit]
+      .then ([user]) ->
         bot = NodeGit.Signature.now "CleanTile Bot", "cleantile.bot@codelenny.com"
-        repo.createCommit "HEAD", parent.committer(), bot, "Updated Documentation", tree, [parent]
+        repo.createCommit "HEAD", user, bot, "Updated Documentation", tree, [parent]
 
     push = commit
       .then ->
